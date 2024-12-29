@@ -1,0 +1,25 @@
+ vector<int> intersectionWithDuplicates(vector<int>& a, vector<int>& b) {
+        // code here
+        // firstly sort the both array
+        sort(a.begin(),a.end());
+        sort(b.begin(),b.end());
+        // create a vector which store the result
+        vector<int>ans;
+        int i=0;
+        int j=0;
+        // check the conditon for iterarting
+        while(i<a.size() && j<b.size()){
+            if(a[i]==b[j]){
+                // check the previous inserted element 
+                if(ans.size()==0 || ans.back()!=a[i])
+                ans.push_back(a[i]);
+                i++;
+                j++;
+            }
+            else if(a[i]>b[j])
+            j++;
+            else
+            i++;
+        }
+        return ans;
+    }
