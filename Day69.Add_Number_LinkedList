@@ -1,0 +1,212 @@
+Detailed Steps
+1. Reverse the Input Lists
+Both input linked lists, num1 and num2, are reversed to facilitate addition from the least significant digit (LSD) to the most significant digit (MSD).
+Use the helper function reverse() to reverse the linked lists.
+The function iteratively reverses the next pointer of each node in the list and returns the new head (previously the tail).
+2. Initialize a Dummy Node for the Result
+Use a dummy node (temp) to simplify the addition process and store the result of the addition.
+3. Perform Addition Digit by Digit
+Traverse both linked lists (n1 and n2) simultaneously, adding corresponding digits along with any carry from the previous step.
+At each step:
+Retrieve the data from the current nodes of both lists. If a list is exhausted, treat its digit as 0.
+Calculate the sum of the two digits and the carry.
+Create a new node for the value of the current sum (digit % 10) and append it to the result list.
+Update the carry (digit / 10) for the next iteration.
+4. Handle Remaining Nodes
+If one list is longer than the other, continue traversing the longer list and add its digits to the carry.
+5. Handle Remaining Carry
+If there's any carry left after traversing both lists, create a new node for it and append it to the result.
+6. Reverse the Resultant List
+Reverse the resultant list to ensure the digits are in the correct order (MSD at the head).
+7. Return the Result
+Return the head of the resultant reversed list.
+Key Points
+Edge Cases:
+
+Leading zeros in the input lists are handled by skipping them (while (num1->data == 0) and similarly for num2).
+Carry handling ensures correct results even when the final sum has an extra digit (e.g., adding 99 + 1 results in 100).
+
+
+
+
+
+
+
+//{ Driver Code Starts
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+using namespace std;
+
+/* Linked list Node */
+struct Node {
+    int data;
+    struct Node* next;
+
+    Node(int x) {
+        data = x;
+        next = NULL;
+    }
+};
+
+Node* buildList() {
+    vector<int> arr;
+    string input;
+    getline(cin, input);
+    stringstream ss(input);
+    int number;
+    while (ss >> number) {
+        arr.push_back(number);
+    }
+    if (arr.empty()) {
+        return NULL;
+    }
+    int val = arr[0];
+    int size = arr.size();
+
+    Node* head = new Node(val);
+    Node* tail = head;
+
+    for (int i = 1; i < size; i++) {
+        val = arr[i];
+        tail->next = new Node(val);
+        tail = tail->next;
+    }
+
+    return head;
+}
+
+void printList(Node* n) {
+    while (n) {
+        cout << n->data << " ";
+        n = n->next;
+    }
+    cout << endl;
+}
+
+
+// } Driver Code Ends
+/* node for linked list:
+
+struct Node {
+    int data;
+    struct Node* next;
+    Node(int x) {
+        data = x;
+        next = NULL;
+    }
+};
+
+*/
+
+class Solution {
+  public:
+  Node* reverse(Node*head)
+  {
+      Node*prev=NULL;
+      Node*next;
+      Node*curr=head;
+      while(curr!=NULL)
+      {
+          next=curr->next;
+          curr->next=prev;
+          prev=curr;
+          curr=next;
+      }
+      return prev;
+  }
+    Node* addTwoLists(Node* num1, Node* num2) 
+    {
+        // code here
+         while(num1->data==0){
+            num1=num1->next;
+        }
+         while(num2->data==0){
+            num2=num2->next;
+        }
+        
+        Node*n1=reverse(num1);
+        Node*n2=reverse(num2);
+        Node*temp=new Node(-1);
+        Node*sum=temp;
+        int carry=0;
+        while(n1!=NULL&&n2!=NULL)
+        {
+            int a=n1->data;
+            int b=n2->data;
+            int digit=a+b+carry;
+            carry=digit/10;
+           int value=digit%10;
+            Node*newNode=new Node(value);
+            temp->next=newNode;
+            temp=newNode;
+            n1=n1->next;
+            n2=n2->next;
+        }
+        while(n1!=NULL)
+        {
+            int a=n1->data;
+            int digit=a+carry;
+             carry=digit/10;
+          int  value=digit%10;
+           
+             Node*newNode=new Node(value);  
+               temp->next=newNode;
+               temp=newNode;
+            
+            n1=n1->next;
+        }
+            
+        
+        while(n2!=NULL)
+        {
+            int b=n2->data;
+            int digit=b+carry;
+             carry=digit/10;
+           int value=digit%10;
+           
+             Node*newNode=new Node(value);  
+             temp->next=newNode;
+            temp=newNode;
+            n2=n2->next;
+           
+            
+        }
+        while(carry!=0)
+        {
+            int digit=carry%10;
+            if(digit==0){
+                break;
+            }
+            carry=carry/10;
+            Node*newNode=new Node(digit);
+            temp->next=newNode;
+            temp=newNode;
+        }
+        Node*ans=reverse(sum->next);
+        return ans;
+        
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore(); // To ignore the newline character after the integer input
+
+    while (t--) {
+        Node* num1 = buildList();
+        Node* num2 = buildList();
+        Solution ob;
+        Node* res = ob.addTwoLists(num1, num2);
+        printList(res);
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
