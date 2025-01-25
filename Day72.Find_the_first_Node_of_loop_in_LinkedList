@@ -1,0 +1,142 @@
+Step 1: Handle the Base Case
+If the list is empty (head == NULL), return NULL since there is no loop.
+Step 2: Use Two Pointers (Floyd's Cycle Detection Algorithm)
+Initialize two pointers:
+slow pointer starts at head and moves one step at a time.
+fast pointer also starts at head but moves two steps at a time.
+Detect if a loop exists:
+Use a while loop that checks slow != NULL and fast != NULL. Move slow and fast pointers as described above.
+If fast and slow meet (i.e., fast == slow), a loop exists in the linked list. Break out of the loop.
+If fast reaches the end of the list (fast == NULL), the linked list has no loop. Return NULL.
+Step 3: Reset One Pointer to the Head
+If a loop is detected:
+Reset the slow pointer to head.
+Keep the fast pointer at the position where the two pointers met (inside the loop).
+Step 4: Find the First Node of the Loop
+Move both slow and fast pointers one step at a time until they meet.
+The point at which they meet is the first node of the loop.
+Step 5: Return the First Node of the Loop
+If a loop exists, return the slow pointer (or fast, as both will point to the same node).
+If no loop exists, return NULL.
+
+
+    
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *next;
+
+    Node(int x) {
+        data = x;
+        next = NULL;
+    }
+};
+
+void printList(Node *node) {
+    while (node != NULL) {
+        cout << node->data << " ";
+        node = node->next;
+    }
+    cout << "\n";
+}
+
+void loopHere(Node *head, Node *tail, int position) {
+    if (position == 0)
+        return;
+
+    Node *walk = head;
+    for (int i = 1; i < position; i++)
+        walk = walk->next;
+    tail->next = walk;
+}
+
+
+// } Driver Code Ends
+// User function Template for C++
+
+/*struct Node
+{
+    int data;
+    struct Node *next;
+    Node(int x) {
+        data = x;
+        next = NULL;
+    }
+
+*/
+class Solution {
+  public:
+    Node* findFirstNode(Node* head) {
+        // your code here
+         if(head==NULL){
+            return NULL;
+        }
+        Node*slow=head;
+        Node*fast=head;
+        while(slow!=NULL&&fast!=NULL){
+          fast=fast->next;
+          if(fast!=NULL){
+              fast=fast->next;
+          }
+          slow=slow->next;
+          // dedect loop
+          if(fast==slow){
+             break;
+          }
+        }
+      if(slow!=fast){
+          return NULL;
+      }
+      
+      slow=head;
+      while(slow!=fast){
+          slow=slow->next;
+          fast=fast->next;
+      }
+      
+      return slow;
+      
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        int k;
+        cin >> k;
+        cin.ignore();
+        assert(k <= arr.size());
+        struct Node *head = new Node(arr[0]);
+        struct Node *tail = head;
+        for (int i = 1; i < arr.size(); ++i) {
+            tail->next = new Node(arr[i]);
+            tail = tail->next;
+        }
+        loopHere(head, tail, k);
+
+        Solution ob;
+        Node *ans = ob.findFirstNode(head);
+        cout << (ans == NULL ? -1 : ans->data) << "\n";
+        cout << "~\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
