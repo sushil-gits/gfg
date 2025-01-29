@@ -1,0 +1,86 @@
+Approach: Efficient Power Calculation (Exponentiation by Squaring)
+The function power(double b, int e) calculates 
+𝑏
+𝑒
+b 
+e
+  efficiently using the Exponentiation by Squaring technique. This method optimizes the computation by reducing the number of multiplications.
+
+Steps and Explanation:
+Handle Base Cases:
+
+If e == 0, return 1.0 (since any number raised to the power of 0 is 1).
+If b == 0, return 0.0 (since 0 raised to any power is 0).
+Handle Negative Exponents:
+
+If e < 0, convert the base into its reciprocal (b = 1/b) and make e positive (e = abs(e)).
+Use Exponentiation by Squaring:
+
+Initialize c = 1.0 to store the final result.
+If e is even, square the base (b *= b) and halve the exponent (e /= 2).
+If e is odd, multiply c by b and decrement e (e--).
+Repeat this process until e becomes 0.
+Return the computed value stored in c.
+
+Time Complexity Analysis:
+Instead of computing power in O(e) time using naive multiplication, this approach takes only O(log e) time by reducing the exponent in half at each step.
+
+
+
+
+
+//{ Driver Code Starts
+// Initial Template for C++
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+// User function Template for C++
+class Solution {
+  public:
+    double power(double b, int e) {
+        // code here
+        double c=1.0;
+        if(e==0)
+        return 1.0;
+        if(b==0)
+        return 0.0;
+        if(e<0)
+        b=1/b;
+        e=abs(e);
+        while(e){
+        if(!(e&1))
+        {
+            b*=b;
+            e/=2;
+        }
+        else
+        {
+           c*=b;
+           e--;
+        }
+        }
+        return c;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    cout << fixed << setprecision(5);
+    int t;
+    cin >> t;
+    while (t--) {
+        double b;
+        cin >> b;
+        int e;
+        cin >> e;
+        Solution ob;
+        cout << ob.power(b, e) << endl;
+        cout << "~" << endl;
+    }
+
+    return 0;
+}
+// } Driver Code Ends
