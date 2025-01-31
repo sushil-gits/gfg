@@ -1,0 +1,173 @@
+Approach: Sudoku Solver Using Backtracking
+This code is an implementation of the Sudoku solver using backtracking. Below is a breakdown of the approach:
+
+1. isPossible Function: Checking Validity of a Value
+Purpose:
+This function checks whether a given value (val) can be placed at a particular cell (currRow, currCol) in the 9x9 Sudoku grid.
+
+Steps:
+Row Check: Ensure that val does not already exist in the current row.
+Column Check: Ensure that val does not already exist in the current column.
+Subgrid Check: Ensure that val does not exist in the 3x3 subgrid that the current cell belongs to.
+Key Formula for Identifying Subgrid:
+Each 3x3 subgrid can be identified using:
+
+subgridRow
+=
+3
+×
+(
+currRow
+/
+3
+)
++
+𝑖
+/
+3
+subgridRow=3×(currRow/3)+i/3
+subgridCol
+=
+3
+×
+(
+currCol
+/
+3
+)
++
+(
+𝑖
+%
+3
+)
+subgridCol=3×(currCol/3)+(i%3)
+This formula ensures we check all 9 elements in the respective 3x3 block.
+
+2. solve Function: Backtracking Algorithm
+Purpose:
+This function recursively attempts to fill the Sudoku grid.
+
+Steps:
+Iterate through the board: Traverse through all rows (i) and columns (j).
+Find an empty cell (0):
+Try placing numbers from 1 to 9.
+If isPossible(i, j, mat, val) returns true, assign val to mat[i][j].
+Recursive Call (nextCall = solve(mat)):
+If solve(mat) returns true, the Sudoku is solved.
+Else, backtrack (reset mat[i][j] = 0).
+Backtracking:
+If no valid number can be placed in the current cell, return false.
+3. solveSudoku Function
+Purpose:
+This function is a wrapper that calls solve(mat) to begin the backtracking process.
+
+Time Complexity Analysis
+Checking Validity (isPossible):
+
+Row and Column checks: O(N) = O(9)
+Subgrid check: O(N) = O(9)
+Total: O(9 + 9 + 9) = O(27) ≈ O(1)
+Recursive Backtracking:
+
+Worst case, we try 9 values for each of the N × N = 81 cells.
+The worst-case complexity is roughly O(9^81) (highly impractical for brute force).
+Optimized by backtracking, making it feasible for most real-world Sudoku puzzles.
+
+Final Thoughts
+Uses Recursion and Backtracking.
+Validates row, column, and subgrid constraints.
+Efficient pruning using the isPossible function`.
+Backtracks when an incorrect number is placed.
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+class Solution {
+  public:
+  int N = 9;
+    bool isPossible(int currRow, int currCol, vector <vector <int>> &mat, int val){
+        for(int i = 0; i < N; i++){
+            if(mat[currRow][i] == val || mat[i][currCol] == val) return false;
+        }
+        
+        for(int i = 0; i < N; i++){
+            if(mat[3*(currRow/3) + i/3][3*(currCol/3) + (i%3)] == val) return false;
+        }
+            
+        return true;
+    }
+    
+    bool solve(vector<vector<int>> &mat){
+        for(int i = 0; i < N; i++){
+            for(int j = 0; j < N; j++){
+                if(mat[i][j] == 0){
+                    for(int val = 1; val <= 9; val++){
+                        if(isPossible(i, j, mat, val)){
+                            mat[i][j] = val;
+                            bool nextCall = solve(mat);
+                            if(nextCall){
+                                return true;
+                            }
+                            else{
+                                mat[i][j] = 0;
+                            }
+                        }
+                    }
+                    
+                    if(!mat[i][j]) return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    void solveSudoku(vector<vector<int>> &mat) {
+        solve(mat);
+    }
+};
+
+//{ Driver Code Starts.
+
+vector<int> inputLine() {
+    string str;
+    getline(cin, str);
+    stringstream ss(str);
+    int num;
+    vector<int> res;
+    while (ss >> num) {
+        res.push_back(num);
+    }
+    return res;
+}
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<vector<int>> grid;
+        for (int i = 0; i < 9; i++) {
+            vector<int> v = inputLine();
+            grid.push_back(v);
+        }
+
+        Solution ob;
+
+        ob.solveSudoku(grid);
+
+        for (auto v : grid) {
+            for (auto elem : v) {
+                cout << elem << " ";
+            }
+            cout << endl;
+        }
+
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
