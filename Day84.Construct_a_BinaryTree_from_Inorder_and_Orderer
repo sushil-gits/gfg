@@ -1,0 +1,142 @@
+Approach
+1. Understanding the Traversals
+Preorder (Root → Left → Right): The first element in preorder is always the root of the current subtree.
+Inorder (Left → Root → Right): The root element splits the inorder array into two parts:
+The left part represents the left subtree.
+The right part represents the right subtree.
+2. Recursive Construction
+Step 1: Pick the first element from preorder as the root.
+Step 2: Find this root element’s index in inorder to determine the left and right subtrees.
+Step 3: Recursively construct the left and right subtrees.
+Step 4: Return the root node.
+Implementation Details
+1. get_index() Function
+Finds the index of a given value in the inorder array.
+Time Complexity: 
+𝑂
+(
+𝑁
+)
+O(N) (for each recursive call).
+2. build() Function (Recursive Construction)
+Base Case: If idx >= n or st > end, return NULL.
+Step 1: Find the root node using preorder[idx].
+Step 2: Locate the root index in inorder using get_index().
+Step 3: Create a new node with this value.
+Step 4: Recursively construct the left and right subtrees.
+3. buildTree() Function
+Initializes index idx = 0 and calls build() to start recursion.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+// Definition of the Node class
+class Node {
+  public:
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int x) {
+        data = x;
+        left = NULL;
+        right = NULL;
+    }
+};
+
+// Function to print the tree in postorder traversal
+void printPostOrder(Node *root) {
+    if (root == NULL)
+        return;
+    printPostOrder(root->left);
+    printPostOrder(root->right);
+    cout << root->data << " ";
+}
+
+
+// } Driver Code Ends
+// Class that contains the logic to build the binary tree
+/*
+Definition of the Node class
+class Node {
+public:
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int x) {
+        data = x;
+        left = NULL;
+        right = NULL;
+    }
+};
+*/
+class Solution {
+  public:
+   int get_index(vector<int> &inorder,int val, int end ,int st){
+        for(int i = st; i <= end ; i++){
+            if(inorder[i] == val) return i;
+        }
+        return 0;
+    }
+     Node * build(vector<int> &inorder, vector<int> &preorder,int st,int end,int &idx,int n){
+        if( idx >= n || st > end) return  NULL;
+         
+        int index = get_index(inorder,preorder[idx], end ,st);
+        Node* root = new Node(inorder[index]);
+        idx++;
+        root->left = build(inorder,preorder,st,index-1,idx,n);
+        root->right = build(inorder,preorder,index+1,end,idx,n);
+        return root;
+    }
+    // Function to build the tree from given inorder and preorder traversals
+    Node *buildTree(vector<int> &inorder, vector<int> &preorder) {
+        // code here
+         int idx = 0;
+        Node * root = build(inorder,preorder,0,inorder.size()-1,idx,inorder.size());
+        return root;
+    }
+};
+
+//{ Driver Code Starts.
+
+// Main function where the test cases are handled
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+
+    while (t--) {
+        vector<int> inorder, preorder;
+
+        // Input the inorder traversal
+        string input;
+        getline(cin, input);
+        stringstream ss1(input);
+        int num;
+        while (ss1 >> num)
+            inorder.push_back(num);
+
+        // Input the preorder traversal
+        getline(cin, input);
+        stringstream ss2(input);
+        while (ss2 >> num)
+            preorder.push_back(num);
+
+        // Create Solution object and build the tree
+        Solution obj;
+        Node *root = obj.buildTree(inorder, preorder);
+
+        // Print the postorder traversal of the constructed tree
+        printPostOrder(root);
+        cout << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
+
