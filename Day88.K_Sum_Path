@@ -1,0 +1,282 @@
+Approach for Optimized Solution (Without Using Map)
+The goal is to find the number of downward paths in a binary tree where the sum of node values equals k. A path can start and end at any node but must always move downward (from parent to child).
+
+Key Idea
+Instead of recalculating sums from scratch for each node (which leads to O(N²) complexity), we maintain a list (vector) of prefix sums representing the path from the root to the current node.
+
+Step-by-Step Explanation
+Use Depth-First Search (DFS):
+
+Start from the root and recursively traverse all nodes.
+Maintain a Path Sum Array (s):
+
+This stores all node values encountered along the current path.
+Check All Downward Paths Efficiently:
+
+At each node, traverse the stored prefix sums in reverse order (from current node to root).
+Compute the sum dynamically and check if it equals k.
+This avoids redundant recalculations and makes checking previous paths efficient.
+Recur for Left and Right Subtrees:
+
+Continue exploring both left and right children.
+Backtrack (Undo Changes After Returning):
+
+Since the path is specific to each recursion call, remove the current node from the list (s.pop_back()) before returning.
+Complexity Analysis
+Time Complexity:
+
+Each node is visited once → O(N)
+Each node checks O(H) previous sums → O(N × H) worst-case
+Best case (balanced tree): O(N log N)
+Worst case (skewed tree): O(N²) (similar to brute force but better in practice)
+Space Complexity:
+
+O(H) for recursion stack (DFS)
+O(H) for the prefix sum array
+Total Space Complexity: O(H)
+Why is This Optimized?
+✅ Avoids recomputing sums for every node from scratch
+✅ Reduces redundant calculations compared to brute-force O(N²)
+✅ Works efficiently for balanced trees
+
+// optimized approach--without using map
+    int paths(Node *root,int k,vector<int>&s)
+    {
+        if(!root)
+        return 0;
+        // add current nodes value
+        s.push_back(root->data);
+        int count=0;
+        long long sum=0;
+        // checking all subarrays (downward paths) in reverse order
+        for(int i=s.size()-1;i>=0;i--)
+        {
+            sum+=s[i];
+            if(sum==k)
+            count++;
+        }
+        // recure for the left and right subtree
+        count+=paths(root->left,k,s);
+        count+=paths(root->right,k,s);
+        // backtrack remove the curent nodes value
+        s.pop_back();
+        return count;
+    }
+    
+    int sumK(Node *root,int k){
+        if(!root)
+        return 0;
+        vector<int>s;
+        return paths(root,k,s);
+    }
+
+
+Approach Explanation
+The brute-force solution follows a recursive depth-first search (DFS) approach. It considers every possible path in the tree by treating each node as a potential starting point for a valid path.
+
+Step-by-Step Breakdown
+Define a Helper Function (countfromNodes):
+
+This function calculates the number of downward paths starting from the current node that sum up to k.
+It recursively explores both left and right subtrees while keeping track of the running sum (currSum).
+If currSum == k, it increases the count.
+Recursively Check Each Node (sumK Function):
+
+The idea is to treat every node as a potential starting point for a valid path.
+For each node:
+Call countfromNodes(root, k, 0) to count paths starting from the current node.
+Recursively check the left subtree (sumK(root->left, k)) and right subtree (sumK(root->right, k)) for additional paths.
+Base Case:
+
+If the node is NULL, return 0 (no valid path).
+Time Complexity Analysis
+Each node is visited once per recursive call (sumK) → O(N)
+Each node calls countfromNodes, which can traverse the entire subtree (O(N))
+Overall Complexity:
+Worst case: O(N²) (for skewed trees)
+Best case: O(N log N) (for balanced trees)
+Space Complexity
+O(H) due to recursion stack (H is the tree height).
+Why is This Approach Inefficient?
+🚫 Redundant Calculations: Each node recomputes sums for all possible paths starting from it.
+🚫 Unnecessary Traversals: The same paths get checked multiple times from different starting points.
+
+🔹 Optimized Approach: We can use prefix sums with backtracking (as discussed earlier) to avoid redundant calculations and bring down the time complexity. 🚀
+
+
+//{ Driver Code Starts
+// Initial template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int val) {
+        data = val;
+        left = right = NULL;
+    }
+};
+
+// Function to Build Tree
+Node *buildTree(string str) {
+    // Corner Case
+    if (str.length() == 0 || str[0] == 'N')
+        return NULL;
+
+    // Creating vector of strings from input
+    // string after spliting by space
+    vector<string> ip;
+
+    istringstream iss(str);
+    for (string str; iss >> str;)
+        ip.push_back(str);
+
+    // Create the root of the tree
+    Node *root = new Node(stoi(ip[0]));
+
+    // Push the root to the queue
+    queue<Node *> queue;
+    queue.push(root);
+
+    // Starting from the second element
+    int i = 1;
+    while (!queue.empty() && i < ip.size()) {
+
+        // Get and remove the front of the queue
+        Node *currNode = queue.front();
+        queue.pop();
+
+        // Get the current Node's value from the string
+        string currVal = ip[i];
+
+        // If the left child is not null
+        if (currVal != "N") {
+
+            // Create the left child for the current Node
+            currNode->left = new Node(stoi(currVal));
+
+            // Push it to the queue
+            queue.push(currNode->left);
+        }
+
+        // For the right child
+        i++;
+        if (i >= ip.size())
+            break;
+        currVal = ip[i];
+
+        // If the right child is not null
+        if (currVal != "N") {
+
+            // Create the right child for the current Node
+            currNode->right = new Node(stoi(currVal));
+
+            // Push it to the queue
+            queue.push(currNode->right);
+        }
+        i++;
+    }
+
+    return root;
+}
+
+
+// } Driver Code Ends
+/*
+struct Node {
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int val) {
+        data = val;
+        left = right = NULL;
+    }
+};
+*/
+class Solution {
+  public:
+  
+//   brutt force aproach
+//   helper function to count paths starting from current nodes
+// int countfromNodes(Node *root,int k,long long currSum)
+// {
+//     if(!root)
+//     return 0;
+//     currSum+=root->data;
+//     int count=(currSum==k)?1:0;
+//     count+=countfromNodes(root->left,k,currSum);
+//     count+=countfromNodes(root->right,k,currSum);
+//     return count;
+// }
+  
+    // int sumK(Node *root, int k) {
+    //     // code here
+    //     if(!root)
+    //     return 0;
+    //     int count=countfromNodes(root,k,0);
+    //     count+=sumK(root->left,k);
+    //     count+=sumK(root->right,k);
+    //     return count;
+    // }
+    
+    
+    // optimized approach--without using map
+    int paths(Node *root,int k,vector<int>&s)
+    {
+        if(!root)
+        return 0;
+        // add current nodes value
+        s.push_back(root->data);
+        int count=0;
+        long long sum=0;
+        // checking all subarrays (downward paths) in reverse order
+        for(int i=s.size()-1;i>=0;i--)
+        {
+            sum+=s[i];
+            if(sum==k)
+            count++;
+        }
+        // recure for the left and right subtree
+        count+=paths(root->left,k,s);
+        count+=paths(root->right,k,s);
+        // backtrack remove the curent nodes value
+        s.pop_back();
+        return count;
+    }
+    
+    int sumK(Node *root,int k){
+        if(!root)
+        return 0;
+        vector<int>s;
+        return paths(root,k,s);
+    }
+    
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    string tc;
+    getline(cin, tc);
+    int t = stoi(tc);
+
+    while (t--) {
+        string s, ch;
+        getline(cin, s);
+        Node *root = buildTree(s);
+
+        string key;
+        getline(cin, key);
+        int k = stoi(key);
+        Solution ob;
+        cout << ob.sumK(root, k) << "\n";
+        cout << "~\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
