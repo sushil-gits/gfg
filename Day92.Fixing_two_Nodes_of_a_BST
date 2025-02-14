@@ -1,0 +1,312 @@
+Stepwise Approach for Correcting the BST (Swapped Nodes Detection and Correction)
+1. Initialize Variables
+Declare three global pointers:
+Node* first = NULL; → Stores the first misplaced node.
+Node* second = NULL; → Stores the second misplaced node.
+Node* prev = NULL; → Keeps track of the previous node in inorder traversal.
+2. Perform Inorder Traversal to Detect Swapped Nodes
+Function: void inorder(Node* root)
+Steps:
+Base Case: If root == NULL, return (end of traversal).
+Left Subtree Traversal: Recursively call inorder(root->left).
+Check for Misplaced Nodes:
+If prev is not NULL and prev->data > root->data, it means a BST property violation has occurred.
+Identify first misplaced node (first):
+If first is NULL, assign first = prev (stores the first out-of-place node).
+Identify second misplaced node (second):
+Assign second = root (stores the second out-of-place node).
+Update prev: Set prev = root to track the last visited node.
+Right Subtree Traversal: Recursively call inorder(root->right).
+3. Swap the Misplaced Nodes
+Function: void correctBST(Node* root)
+Steps:
+Call inorder(root) to detect the swapped nodes.
+If both first and second are found, swap their data values.
+This restores the BST property.
+Time and Space Complexity
+Time Complexity: 
+𝑂
+(
+𝑁
+)
+O(N) → We perform a single inorder traversal.
+Space Complexity: 
+𝑂
+(
+𝐻
+)
+O(H) → Recursive stack space (where 
+𝐻
+H is the height of the tree).
+Example Walkthrough
+Input (Swapped BST)
+        10
+       /  \
+      5    8   <-- Swapped (Should be 20)
+     / \  / \
+    2  7 15  20  <-- Swapped (Should be 8)
+Expected Correct BST
+        10
+       /  \
+      5    20
+     / \   / \
+    2   7 15  8
+Inorder Traversal Before Fixing
+2, 5, 7, 10, 15, 8, 20
+
+Issue Detected: 15 > 8 (Nodes swapped)
+Inorder Traversal After Fixing
+2, 5, 7, 10, 8, 15, 20
+
+BST Property Restored ✅
+
+Stepwise Approach for the Given Code
+1. Define the Node Class
+A Node class is created to represent a binary tree node.
+Each node has three attributes:
+data: Stores the integer value of the node.
+left: Pointer to the left child.
+right: Pointer to the right child.
+The constructor initializes the node with the given value and sets left and right to NULL.
+2. Build the Tree from a String Representation
+The buildTree(string str) function converts a space-separated string representation of a tree into an actual binary tree.
+Steps:
+If the input string is empty or starts with 'N', return NULL (empty tree case).
+Split the string into a vector of string values (ip).
+Create the root node using ip[0] and push it into a queue.
+Traverse through the ip vector:
+Extract node values sequentially and assign them as left and right children of the current node.
+If a value is 'N', it means there is no child.
+Use a queue to maintain the level-order construction of the tree.
+Return the constructed tree.
+3. Checking if a Tree is a BST
+bool isBST(Node* n, int lower, int upper) checks if a tree is a valid Binary Search Tree (BST).
+Logic:
+If the node is NULL, return true (base case).
+Check if n->data falls within the allowed range (lower < n->data < upper).
+Recursively check the left and right subtrees:
+Left subtree values should be in the range (lower, n->data).
+Right subtree values should be in the range (n->data, upper).
+4. Compare Two Trees
+bool compare(Node* a, Node* b, vector<pair<int, int>>& mismatch) compares two trees and identifies mismatching nodes.
+Logic:
+If both nodes are NULL, return true (base case).
+If one node is NULL while the other is not, return false.
+If node values are different, store the mismatch in a vector.
+Recursively compare left and right subtrees.
+5. Correcting the BST
+void correctBST(Node* root) corrects a BST where two nodes have been swapped.
+Logic:
+Perform an inorder traversal to find the misplaced nodes.
+Track first, second, and prev nodes:
+If prev->data > root->data, it indicates a misplaced node.
+The first occurrence is stored in first, and the second misplaced node is stored in second.
+After traversal, swap first->data and second->data to correct the tree.
+6. Driver Code (Main Function)
+Steps:
+Read the number of test cases.
+Build the tree from input.
+Create a duplicate tree for validation.
+Call correctBST() to fix the incorrect BST.
+Validate if the corrected tree is now a BST using isBST().
+Compare it with the original tree to ensure only two nodes were swapped.
+If all checks pass, print 1; otherwise, print 0.
+Key Takeaways
+Tree Construction: Level-order traversal using a queue.
+BST Validation: Recursively check if the tree satisfies BST properties.
+Fixing Swapped Nodes: Use inorder traversal to identify misplaced nodes and swap them.
+Efficiency: The approach runs in O(N) time complexity and uses O(H) space for recursion.
+
+
+
+//{ Driver Code Starts
+//
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Node {
+  public:
+    int data;
+    Node *left, *right;
+
+    Node(int val) {
+        data = val;
+        left = right = NULL;
+    }
+};
+
+Node* buildTree(string str) {
+    // Corner Case
+    if (str.length() == 0 || str[0] == 'N')
+        return NULL;
+
+    // Creating vector of strings from input
+    // string after spliting by space
+    vector<string> ip;
+
+    istringstream iss(str);
+    for (string str; iss >> str;)
+        ip.push_back(str);
+
+    // Create the root of the tree
+    Node* root = new Node(stoi(ip[0]));
+
+    // Push the root to the queue
+    queue<Node*> queue;
+    queue.push(root);
+
+    // Starting from the second element
+    int i = 1;
+    while (!queue.empty() && i < ip.size()) {
+
+        // Get and remove the front of the queue
+        Node* currNode = queue.front();
+        queue.pop();
+
+        // Get the current node's value from the string
+        string currVal = ip[i];
+
+        // If the left child is not null
+        if (currVal != "N") {
+
+            // Create the left child for the current node
+            currNode->left = new Node(stoi(currVal));
+
+            // Push it to the queue
+            queue.push(currNode->left);
+        }
+
+        // For the right child
+        i++;
+        if (i >= ip.size())
+            break;
+        currVal = ip[i];
+
+        // If the right child is not null
+        if (currVal != "N") {
+
+            // Create the right child for the current node
+            currNode->right = new Node(stoi(currVal));
+
+            // Push it to the queue
+            queue.push(currNode->right);
+        }
+        i++;
+    }
+
+    return root;
+}
+
+bool isBST(Node* n, int lower, int upper) {
+    if (!n)
+        return true;
+    if (n->data <= lower || n->data >= upper)
+        return false;
+    return (isBST(n->left, lower, n->data) && isBST(n->right, n->data, upper));
+}
+
+bool compare(Node* a, Node* b, vector<pair<int, int>>& mismatch) {
+    if (!a && !b)
+        return true;
+    if (!a || !b)
+        return false;
+
+    if (a->data != b->data)
+        mismatch.push_back(pair<int, int>(a->data, b->data));
+
+    return (compare(a->left, b->left, mismatch) &&
+            compare(a->right, b->right, mismatch));
+}
+
+
+// } Driver Code Ends
+/*
+class Node
+{
+    public:
+    int data;
+    Node *left, *right;
+    Node(int val)
+    {
+        data = val;
+        left = right = NULL;
+    }
+};
+*/
+
+class Solution {
+  public:
+  Node *first=NULL,*second=NULL,*prev=NULL;
+  void inorder(Node*root)
+  {
+      if(!root)
+      return;
+      inorder(root->left);
+      if(prev && prev->data>root->data)
+      {
+          if(!first)
+          first=prev; //first misplaced node
+          second=root; //second misplaced node
+      }
+      prev=root;
+      inorder(root->right);
+  }
+    void correctBST(Node* root) {
+        // add code here.
+        inorder(root);
+        if(first&&second)
+        swap(first->data,second->data);
+        
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    getchar();
+
+    while (t--) {
+        string s;
+        getline(cin, s);
+
+        Node* root = buildTree(s);
+        Node* duplicate = buildTree(s);
+
+        Solution ob;
+        ob.correctBST(root);
+
+        // check 1: is tree now a BST
+        if (!isBST(root, INT_MIN, INT_MAX)) {
+            cout << "0\n";
+            continue;
+        }
+
+        // check 2: comparing with duplicate tree
+
+        vector<pair<int, int>> mismatch;
+        // a vector to store data of mismatching nodes
+
+        if (!compare(root, duplicate, mismatch)) {
+            // false output from this function indicates change in structure of tree
+            cout << "0\n";
+            continue;
+        }
+
+        // finally, analysing the mismatching nodes
+        if (mismatch.size() != 2 || mismatch[0].first != mismatch[1].second ||
+            mismatch[0].second != mismatch[1].first)
+            cout << "0\n";
+        else
+            cout << "1\n";
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
