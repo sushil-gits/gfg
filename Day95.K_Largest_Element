@@ -1,0 +1,96 @@
+Stepwise Approach for Finding k Largest Elements in an Array
+The given function kLargest returns the k largest elements from an array in descending order. Below is the stepwise breakdown of the approach:
+
+Step 1: Function Signature
+vector<int> kLargest(vector<int>& arr, int k)
+The function takes two parameters:
+arr: A reference to a vector of integers.
+k: The number of largest elements to retrieve.
+The function returns a vector containing the k largest elements.
+Step 2: Declare the Answer Vector
+vector<int> ans;
+This vector will store the k largest elements.
+Step 3: Sort the Array in Descending Order
+sort(arr.rbegin(), arr.rend());
+sort(arr.rbegin(), arr.rend()) sorts the array in descending order.
+rbegin() gives a reverse iterator pointing to the last element.
+rend() gives a reverse iterator pointing before the first element.
+This ensures the largest elements come first.
+Step 4: Extract the First k Elements
+for(int i = 0; i < k; i++) {
+    ans.push_back(arr[i]);
+}
+Iterate through the first k elements of the sorted array.
+Push each element into the ans vector.
+Step 5: Return the Result
+return ans;
+The function returns the vector containing the k largest elements.
+Time Complexity Analysis
+Sorting the Array → O(N log N)
+Extracting the k Largest Elements → O(k)
+Overall Time Complexity:
+
+O(N log N) (due to sorting, which dominates).
+Example Execution
+Input:
+vector<int> arr = {7, 10, 4, 3, 20, 15};
+int k = 3;
+Sorting Step:
+arr = {20, 15, 10, 7, 4, 3};  // Sorted in descending order
+Selecting k=3 Largest Elements:t
+ans = {20, 15, 10};
+Output:
+{20, 15, 10}
+Alternative Approach (Using Min-Heap)
+Instead of sorting, we can use a Min-Heap (priority queue) to optimize this for large N. The complexity would reduce to O(N log K).
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+class Solution {
+  public:
+    vector<int> kLargest(vector<int>& arr, int k) {
+        // Your code here
+        vector<int>ans;
+        sort(arr.rbegin(),arr.rend());
+     for(int i=0;i<k;i++)
+     {
+         ans.push_back(arr[i]);
+     }
+     return ans;
+    }
+};
+
+//{ Driver Code Starts.
+int main() {
+    string ts;
+    getline(cin, ts);
+    int t = stoi(ts);
+    while (t--) {
+
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        string ks;
+        getline(cin, ks);
+        int k = stoi(ks);
+        Solution ob;
+        vector<int> ans = ob.kLargest(arr, k);
+        for (auto it : ans) {
+            cout << it << " ";
+        }
+        cout << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
