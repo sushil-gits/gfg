@@ -1,0 +1,155 @@
+Stepwise Approach to Solve kClosest Problem
+The problem requires finding the k closest points to the origin (0,0) from a given list of points using a Max Heap (Priority Queue).
+
+Step 1: Understand the Distance Calculation
+Each point (x, y) in the 2D plane has a Euclidean distance from the origin, which is calculated as:
+
+distance
+=
+𝑥
+2
++
+𝑦
+2
+distance= 
+x 
+2
+ +y 
+2
+ 
+​
+ 
+Since we only need to compare distances, we can use x² + y² instead of computing the square root to avoid unnecessary computations.
+
+Step 2: Use a Max Heap (Priority Queue)
+Since we need to keep only the closest k points, we use a max heap (priority_queue<pair<int, pair<int, int>>> p) to store the farthest k points.
+The heap will store pairs in the form {distance, {x, y}}.
+In a max heap, the element with the largest key (distance) stays at the top.
+Step 3: Iterate Over the Given Points
+Calculate Distance: Compute x² + y² for each point.
+Push into Max Heap: Store {distance, {x, y}} in the heap.
+Maintain only k Elements: If the heap size exceeds k, remove the farthest point (top of the heap).
+Step 4: Extract k Closest Points
+Pop elements from the max heap and store them in a result vector.
+Code Implementation
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
+    // Max Heap to store {distance, {x, y}}
+    priority_queue<pair<int, pair<int, int>>> p;
+    
+    int n = points.size();
+    for (int i = 0; i < n; i++) {
+        int x = points[i][0], y = points[i][1];
+        int distance = (x * x) + (y * y); // Compute squared distance
+        
+        // Push {distance, {x, y}} into max heap
+        p.push({distance, {x, y}});
+        
+        // Maintain only k closest points
+        if (p.size() > k) {
+            p.pop(); // Remove the farthest point
+        }
+    }
+
+    // Store the closest k points in the answer vector
+    vector<vector<int>> ans;
+    while (!p.empty()) {
+        ans.push_back({p.top().second.first, p.top().second.second});
+        p.pop();
+    }
+
+    return ans;
+}
+
+// Example Usage
+int main() {
+    vector<vector<int>> points = {{3,3},{5,-1},{-2,4}};
+    int k = 2;
+    
+    vector<vector<int>> result = kClosest(points, k);
+    
+    // Print result
+    for (auto point : result) {
+        cout << "[" << point[0] << "," << point[1] << "] ";
+    }
+    return 0;
+}
+Time Complexity Analysis
+Inserting into a max heap takes O(log k) time.
+Iterating through n points takes O(n log k) since we maintain only k elements.
+Extracting k elements takes O(k log k).
+Overall Complexity: O(n log k), which is efficient for large n.
+Space Complexity Analysis
+Heap stores at most k elements → O(k)
+Result vector stores k points → O(k)
+Total Space Complexity: O(k).
+Key Takeaways
+✅ Use a max heap to keep track of the k closest points efficiently.
+✅ Avoid unnecessary sqrt() operations by comparing squared distances.
+✅ Time Complexity is optimized to O(n log k) using heap operations.
+✅ Space Complexity is O(k), which is optimal.
+
+
+//{ Driver Code Starts
+// Initial Template for C++
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+class Solution {
+  public:
+    vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
+        // Your code here
+        priority_queue<pair<int,pair<int,int>>>p;
+        int n=points.size();
+        for(int i=0;i<n;i++)
+        {
+            int x=points[i][0],y=points[i][1];
+            int s=(x*x)+(y*y);
+            int d=sqrt(s);
+            p.push({d,{x,y}});
+            while(p.size()>k)
+            {
+                p.pop();
+            }
+        }
+        vector<vector<int>>ans;
+        while(!p.empty())
+        {
+            ans.push_back({p.top().second.first,p.top().second.second});
+            p.pop();
+        }
+        return ans;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int k;
+        cin >> k;
+        int n;
+        cin >> n;
+        vector<vector<int>> points(n, vector<int>(2));
+        for (int i = 0; i < n; i++) {
+            cin >> points[i][0] >> points[i][1];
+        }
+        Solution ob;
+        vector<vector<int>> ans = ob.kClosest(points, k);
+        sort(ans.begin(), ans.end());
+        for (const vector<int>& point : ans) {
+            cout << point[0] << " " << point[1] << endl;
+        }
+        cout << "~" << endl;
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
