@@ -1,0 +1,150 @@
+Stepwise Approach:
+Get the Size of Input List
+
+Store the number of linked lists (n) in a variable using arr.size().
+If n is 0, return NULL (no linked lists to merge).
+Initialize a Min-Heap (Priority Queue)
+
+Use a min-heap (priority_queue) to store pairs of {node value, node pointer}.
+The heap will ensure that the smallest node value is always at the top.
+Use greater<> to implement a min-heap (since the default priority_queue is a max-heap).
+Push All Nodes Into the Min-Heap
+
+Iterate through all n linked lists.
+Traverse each linked list node-by-node.
+Push {current node's data, current node} into the min-heap.
+Create a Dummy Head for the Merged List
+
+Create a dummy node head with a value -1.
+Maintain a temp pointer pointing to head (used to build the merged list).
+Extract Nodes from the Min-Heap & Build the Merged List
+
+While the min-heap is not empty:
+Extract the smallest element (top of heap).
+Append it to the result linked list (temp->next).
+Move temp forward.
+Remove the top element from the heap.
+Return the Merged Linked List
+
+Return head->next (skipping the dummy node).
+Time Complexity Analysis:
+Inserting N nodes into the heap takes O(N log N).
+Extracting N nodes from the heap takes O(N log N).
+Overall complexity: O(N log N), where N is the total number of nodes in all lists.
+
+
+
+
+
+
+//{ Driver Code Starts
+// C++ program to merge k sorted arrays of size n each
+#include <bits/stdc++.h>
+using namespace std;
+
+// A Linked List node
+struct Node {
+    int data;
+    Node* next;
+
+    Node(int x) {
+        data = x;
+        next = NULL;
+    }
+};
+
+/* Function to print nodes in a given linked list */
+void printList(Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    cout << endl;
+}
+
+
+// } Driver Code Ends
+/*Linked list Node structure
+
+struct Node
+{
+    int data;
+    Node* next;
+
+    Node(int x){
+        data = x;
+        next = NULL;
+    }
+
+};
+*/
+
+class Solution {
+  public:
+    Node* mergeKLists(vector<Node*>& arr) {
+        // Your code here
+        int n=arr.size();
+        if(!n)
+        return NULL;
+        priority_queue<pair<int,Node*>,vector<pair<int,Node*>>,greater<pair<int,Node*>>>q;
+        for(int i=0;i<n;i++)
+        {
+            Node*curr=arr[i];
+            while(curr)
+            {
+                q.push({curr->data,curr});
+                curr=curr->next;
+            }
+        }
+        Node *head=new Node(-1);
+        Node *temp=head;
+        while(!q.empty())
+        {
+            temp->next=q.top().second;
+            temp=temp->next;
+            q.pop();
+        }
+        return head->next;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+// Driver program to test the above functions
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        int n;
+        cin >> n;
+        cin.ignore();
+
+        vector<Node*> v(n);
+
+        for (int i = 0; i < n; i++) {
+            string line;
+            getline(cin, line);
+            stringstream ss(line);
+
+            Node* head = new Node(0);
+            Node* temp = head;
+            int x;
+            while (ss >> x) {
+                Node* newNode = new Node(x);
+                temp->next = newNode;
+                temp = temp->next;
+            }
+            v[i] = head->next;
+        }
+
+        Solution ob;
+        Node* head = ob.mergeKLists(v);
+        printList(head);
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
