@@ -1,0 +1,163 @@
+Stepwise Approach for vector<double> getMedian(vector<int> &arr)
+This function computes the running median for a given stream of integers using two heaps (max heap and min heap). Below is the stepwise breakdown of the approach:
+
+Step 1: Initialize Required Data Structures
+pq_max → A max heap (stores the smaller half of numbers).
+pq_min → A min heap (stores the larger half of numbers).
+ans → A vector to store the median at each step.
+Step 2: Iterate Through Each Element in arr
+For every new number in the stream:
+
+Insert the number into the correct heap
+If pq_min is empty, insert into pq_max.
+If arr[i] is greater than the top element of pq_min, insert into pq_min.
+Otherwise, insert into pq_max.
+Step 3: Balance Both Heaps
+Since the two heaps represent the two halves of the dataset:
+
+If pq_max (left half) has more than one extra element, move the top element to pq_min.
+If pq_min (right half) has more elements than pq_max, move the top element to pq_max.
+This ensures that:
+
+pq_max always stores the smaller half.
+pq_min always stores the larger half.
+pq_max will either have the same number of elements as pq_min or at most one extra.
+Step 4: Compute the Median
+If both heaps are of equal size, the median is the average of the top elements of pq_max and pq_min.
+If pq_max has more elements, the median is the top element of pq_max (as it contains the middle element in case of an odd-length sequence).
+Step 5: Store the Median in the Result Vector
+After each insertion and balancing step, compute the median and store it in ans.
+Step 6: Return the Result
+After processing all elements, return the ans vector containing the running medians.
+
+Time Complexity Analysis
+Insertion into a heap: 
+𝑂
+(
+log
+⁡
+𝑛
+)
+O(logn)
+Balancing the heaps: 
+𝑂
+(
+log
+⁡
+𝑛
+)
+O(logn)
+Finding median: 
+𝑂
+(
+1
+)
+O(1)
+Overall Complexity: 
+𝑂
+(
+𝑛
+log
+⁡
+𝑛
+)
+O(nlogn) (as each insertion takes 
+𝑂
+(
+log
+⁡
+𝑛
+)
+O(logn), and we do it for all n elements).
+Example Walkthrough
+Input:
+arr = [5, 15, 10, 20, 3]
+
+Processing Steps:
+
+Element	pq_max (max heap)	pq_min (min heap)	Median
+5	[5]	[]	5.0
+15	[5]	[15]	(5+15)/2 = 10.0
+10	[5, 10]	[15]	10.0
+20	[10, 5]	[15, 20]	(10+15)/2 = 12.5
+3	[5, 3]	[10, 15, 20]	10.0
+Output: [5.0, 10.0, 10.0, 12.5, 10.0]
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+class Solution {
+  public:
+    vector<double> getMedian(vector<int> &arr) {
+        // code here
+  vector<double>ans;
+        int n=arr.size();
+        priority_queue<double>pq_max;
+        priority_queue<double,vector<double>,greater<double>>pq_min;
+
+        for(int i=0;i<n;i++){
+            
+            if(pq_min.empty()){
+                pq_max.push(arr[i]);    
+            }
+            else if(pq_min.top()<arr[i]){
+                pq_min.push(arr[i]);
+            }else{
+                pq_max.push(arr[i]);
+            }
+            
+            
+            if(pq_max.size()>pq_min.size()+1){
+                pq_min.push(pq_max.top());
+                pq_max.pop();
+            }
+            else if(pq_max.size()<pq_min.size()){
+                pq_max.push(pq_min.top());
+                pq_min.pop();
+            }
+            
+            
+            if(pq_max.size()==pq_min.size()){
+                double med=(pq_max.top()+pq_min.top())/2;
+                ans.push_back(med);
+            }
+            else{
+                ans.push_back(pq_max.top());
+                
+            }
+        }
+        
+        return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+
+        string s;
+        getline(cin, s);
+        stringstream ss(s);
+        vector<int> nums;
+        int num;
+        while (ss >> num) {
+            nums.push_back(num);
+        }
+        Solution ob;
+        vector<double> ans = ob.getMedian(nums);
+        cout << fixed << setprecision(1);
+        for (auto &i : ans)
+            cout << i << " ";
+        cout << "\n";
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
