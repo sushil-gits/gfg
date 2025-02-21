@@ -1,0 +1,113 @@
+Stepwise Approach for isBalanced Function
+The function isBalanced(string& s) checks whether the given string s has balanced parentheses (i.e., every opening bracket has a corresponding and correctly ordered closing bracket).
+
+Step 1: Initialize a Stack
+Create an empty stack st to store opening brackets ((, {, [).
+The stack helps keep track of unmatched opening brackets.
+stack<char> st;
+Step 2: Traverse the String Character by Character
+Iterate through each character s[i] in the given string.
+for(int i = 0; i < s.size(); i++) {
+Step 3: Push Opening Brackets onto the Stack
+If the current character is an opening bracket ((, {, [), push it onto the stack.
+if(s[i] == '(' || s[i] == '{' || s[i] == '[')
+    st.push(s[i]);
+Step 4: Handle Closing Brackets
+If the current character is a closing bracket (), }, ]):
+Check if the stack is empty. If it is, return false because there is no corresponding opening bracket.
+else {
+    if (st.empty())
+        return false;
+Step 5: Check for Matching Pairs
+Pop the top element from the stack (which should be the last unmatched opening bracket).
+Compare it with the current closing bracket:
+If they form a matching pair (() or {} or []), continue checking the next character.
+Otherwise, return false because the order is incorrect.
+    char temp = st.top();
+    st.pop();
+    if (s[i] == ')' && temp == '(' || 
+        s[i] == '}' && temp == '{' || 
+        s[i] == ']' && temp == '[')
+        continue;
+    else
+        return false;
+}
+Step 6: Final Check for Remaining Unmatched Brackets
+After processing all characters, the stack should be empty if the string is balanced.
+If the stack is not empty, it means there were unmatched opening brackets, so return false.
+return st.empty();
+Example Walkthrough
+✅ Example 1: "({[]})" → Balanced
+Step	Character	Stack Content	Action
+1	(	(	Push (
+2	{	({	Push {
+3	[	({[	Push [
+4	]	({	Pop [
+5	}	(	Pop {
+6	)	Empty	Pop (
+Final Check	-	Empty	✅ Balanced
+❌ Example 2: "(]" → Not Balanced
+Step	Character	Stack Content	Action
+1	(	(	Push (
+2	]	(	Mismatch! Expected ) but got ] → Return false
+Time and Space Complexity
+Time Complexity: O(n) (each character is processed once)
+Space Complexity: O(n) (in the worst case, all opening brackets are stored in the stack)
+Final Thoughts
+This approach ensures that every opening bracket has a correctly ordered and matching closing bracket.
+Using a stack is efficient because it allows checking the last unmatched opening bracket in constant time (O(1)).
+If the stack is empty at the end, the string is balanced. Otherwise, it is not.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    bool isBalanced(string& s) {
+        // code here
+        stack<char>st;
+        for(int i=0;i<s.size();i++)
+        {
+            if(s[i]=='('||s[i]=='{'||s[i]=='[')
+            st.push(s[i]);
+        
+            else
+            {
+                if(st.empty())
+                return false;
+                char temp=st.top();
+                 st.pop();
+                if(s[i]==')'&&temp=='('||s[i]=='}'&&temp=='{'||s[i]==']'&&temp=='[')
+                continue;
+                else
+                return false;
+            }
+        }
+        return st.empty();
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    string a;
+    cin >> t;
+    while (t--) {
+        cin >> a;
+        Solution obj;
+        if (obj.isBalanced(a))
+            cout << "true" << endl;
+        else
+            cout << "false" << endl;
+
+        cout << "~"
+             << "\n";
+    }
+}
+// } Driver Code Ends
