@@ -1,0 +1,157 @@
+Stepwise Solution for Finding the Maximum Length of a Valid Parentheses Substring
+The function maxLength(string& s) calculates the longest valid parentheses substring using Dynamic Programming (DP) and a stack.
+
+Step 1: Define Variables
+int n = s.size();          // Length of the string
+int ans = 0;               // Stores the maximum length of a valid substring
+vector<int> dp(n + 1, 0);  // DP array to store valid substring lengths
+stack<int> st;             // Stack to store indices of '(' characters
+dp[i] holds the length of the longest valid substring ending at index i.
+st stores indices of unmatched '(' to help pair them with ')'.
+Step 2: Traverse the String
+for(int i = 0; i < n; i++) {
+Iterate through each character in the string.
+Step 3: Handle Opening Parentheses '('
+if (s[i] == '(') {
+    st.push(i);  // Store the index of '('
+    continue;
+}
+If the character is '(', push its index onto the stack for future pairing and continue.
+Step 4: Handle Closing Parentheses ')'
+if (st.empty())
+    continue;  // If stack is empty, no matching '(' exists, so ignore
+If the stack is empty, it means there is no '(' to pair with, so move to the next character.
+Step 5: Compute Valid Parentheses Length
+int j = st.top();
+st.pop();
+dp[i] = i - j + 1;  // Length of matched substring from j to i
+Pop the index of the last unmatched '(' and calculate the length of the valid substring.
+dp[i] = i - j + 1 represents the length of this matched substring.
+Step 6: Extend Previous Valid Substring
+if (j >= 1)
+    dp[i] += dp[j - 1];  // Add previous valid substring length before `j`
+If j - 1 is within bounds, add dp[j - 1] to extend the valid substring before this matched pair.
+Step 7: Update Maximum Length
+ans = max(ans, dp[i]);  // Update the maximum valid substring length found so far
+Update the maximum length encountered.
+Step 8: Return the Result
+return ans;
+Return the longest valid parentheses substring length.
+Time Complexity Analysis
+Operation	Time Complexity
+Traversing the string	
+𝑂
+(
+𝑛
+)
+O(n)
+Stack operations (push/pop)	
+𝑂
+(
+𝑛
+)
+O(n)
+DP computations	
+𝑂
+(
+𝑛
+)
+O(n)
+Total Complexity	
+𝑂
+(
+𝑛
+)
+O(n)
+Space Complexity
+𝑂
+(
+𝑛
+)
+O(n) due to:
+dp array of size n
+stack that stores indices
+Example Execution
+Input 1
+string s = "(()))())(";
+cout << maxLength(s);  
+Execution Steps
+'(' at 0 → push onto stack
+'(' at 1 → push onto stack
+')' at 2 → match with '(' at 1, dp[2] = 2
+')' at 3 → match with '(' at 0, dp[3] = dp[2] + 4 = 4
+')' at 4 → no matching '(', ignore
+'(' at 5 → push onto stack
+')' at 6 → match with '(' at 5, dp[6] = 2
+')' at 7 → no matching '(', ignore
+'(' at 8 → push onto stack
+Final DP Array
+dp = [0, 0, 2, 4, 0, 0, 2, 0, 0]
+Output
+4
+Conclusion
+Efficiently finds the longest valid parentheses substring in 
+𝑂
+(
+𝑛
+)
+O(n).
+Uses stack for pairing and DP for extending valid sequences.
+Handles edge cases like consecutive closing brackets and unbalanced parentheses.
+
+//{ Driver Code Starts
+// Initial Template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int maxLength(string& s) {
+        // code here
+        int n=s.size();
+        int ans=0;
+        vector<int>dp(n+1,0);
+        stack<int>st;
+        for(int i=0;i<n;i++)
+        {
+            
+            if(s[i]=='(')
+            {
+                st.push(i);
+                continue;
+            }
+            if(st.empty())
+            continue;
+            int j=st.top();
+            st.pop();
+            dp[i]=i-j+1;
+            if(j>=1)
+            dp[i]+=dp[j-1];
+            ans=max(ans,dp[i]);
+        }
+        return ans;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        string S;
+        cin >> S;
+
+        Solution ob;
+        cout << ob.maxLength(S) << "\n";
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
