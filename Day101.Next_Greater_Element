@@ -1,0 +1,100 @@
+Stepwise Approach for Finding the Next Larger Element
+Step 1: Understand the Problem Statement
+We are given an array arr[], and for each element, we need to find the next greater element to its right.
+If no such greater element exists, return -1 for that element.
+We can solve this using a monotonic decreasing stack in O(n) time complexity.
+Step 2: Initialize Required Data Structures
+stack<int> st → To store the indices of elements.
+vector<int> result(n, -1) → To store the final output, initialized with -1.
+int n = arr.size();
+stack<int> st;
+vector<int> result(n, -1);
+Step 3: Traverse the Array
+Iterate through arr[] from left to right (0 to n-1).
+For each element arr[i]:
+While the stack is not empty and the current element arr[i] is greater than arr[st.top()]:
+The element at st.top() has found its next greater element.
+Update result[st.top()] = arr[i] and pop the stack.
+Push the current index i onto the stack.
+for (int i = 0; i < n; i++) {
+    while (!st.empty() && arr[st.top()] < arr[i]) {
+        result[st.top()] = arr[i];
+        st.pop();
+    }
+    st.push(i);
+}
+Step 4: Return the Result
+The result[] array now contains the next greater element for each position.
+Return result.
+return result;
+Summary of Approach
+Use a stack to store indices of elements in a monotonic decreasing order.
+Iterate through the array:
+Pop elements from the stack if they are smaller than the current element and update their next greater element.
+Push the current element’s index onto the stack.
+Return the result[] array.
+⏳ Time Complexity: O(n) (Each element is pushed and popped at most once).
+📌 Space Complexity: O(n) (For storing indices in the stack in the worst case).
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+class Solution {
+  public:
+    // Function to find the next greater element for each element of the array.
+    vector<int> nextLargerElement(vector<int>& arr) {
+        // code here
+         int n=arr.size();
+       stack<int>st;
+       vector<int>result(n,-1);
+       for(int i=0;i<n;i++)
+       {
+           while(!st.empty() && arr[st.top()]<arr[i])
+           {
+            result[st.top()]=arr[i];
+             st.pop();
+           }
+       st.push(i);
+       }
+       return result;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    int t; // Number of test cases
+    cin >> t;
+    cin.ignore(); // Ignore the newline after reading t
+    while (t--) {
+        vector<int> a;
+        string input;
+
+        // Reading the entire input line for the array
+        getline(cin, input);
+        stringstream ss(input);
+        int num;
+        while (ss >> num)
+            a.push_back(num); // Read the array elements from input string
+
+        Solution obj;
+        vector<int> result = obj.nextLargerElement(a);
+
+        // Print the result in the required format
+        for (int i = 0; i < result.size(); i++) {
+            if (i != 0)
+                cout << " ";
+            cout << result[i];
+        }
+        cout << endl;        // Ensure new line after each test case output
+        cout << "~" << endl; // Ensure new line after each test case output
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
