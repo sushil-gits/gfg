@@ -1,0 +1,88 @@
+Stepwise Approach for calculateSpan Function
+This function calculates the stock span for each day, where the span of a stock’s price on a given day is defined as the maximum number of consecutive days (including the current day) the price has been less than or equal to the price of the current day.
+
+Step 1: Initialize Variables
+n = arr.size(); → Get the size of the input array.
+stack<int> st; → Create a stack to store indices of elements.
+vector<int> ans(n,1); → Initialize the answer vector with size n and set all values to 1.
+Step 2: Traverse the Array from Right to Left
+Start from the last element and move towards the first (i = n-1 to 0).
+Condition: If the stack is not empty and arr[i] > arr[st.top()], it means arr[i] is greater than the element at the top of the stack.
+Step 3: Update the Span for Elements in the Stack
+While loop: As long as the stack is not empty and arr[i] > arr[st.top()]
+The element at st.top() is smaller than arr[i], so its span should be updated.
+ans[st.top()] = st.top() - i; → Update span for the element at st.top().
+st.pop(); → Remove the top index since we have processed it.
+Step 4: Push the Current Index
+Push the current index i onto the stack for future comparisons.
+Step 5: Process Remaining Elements in the Stack
+If any elements remain in the stack after traversing the array, it means they do not have a larger element to their left.
+While loop: Iterate through the remaining elements in the stack.
+ans[st.top()] = st.top() + 1; → Update the span as the index + 1 (since no greater element exists before them).
+st.pop(); → Remove the processed index from the stack.
+Step 6: Return the Result
+The ans vector contains the span values for each element in arr, so return ans.
+Time Complexity Analysis
+Each element is pushed onto the stack once and popped at most once → O(N)
+Overall, the function runs in O(N) time complexity, making it efficient for large inputs.
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+class Solution {
+  public:
+    vector<int> calculateSpan(vector<int>& arr) {
+        // write code here
+        int n=arr.size();
+        stack<int>st;
+        vector<int>ans(n,1);
+        for(int i=n-1;i>=0;i--)
+        {
+            while(!st.empty()&&arr[i]>arr[st.top()])
+            {
+                ans[st.top()]=st.top()-i;
+                st.pop();
+            }
+            st.push(i);
+        }
+        while(!st.empty())
+        {
+            ans[st.top()]=st.top()+1;
+            st.pop();
+        }
+        return ans;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    string ts;
+    getline(cin, ts);
+    int t = stoi(ts);
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        Solution obj;
+        vector<int> ans = obj.calculateSpan(arr);
+        for (int i = 0; i < ans.size(); i++) {
+            cout << ans[i] << " ";
+        }
+        cout << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
