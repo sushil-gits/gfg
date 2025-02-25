@@ -1,0 +1,133 @@
+Stepwise Approach for Largest Rectangle in Histogram (getMaxArea)
+The problem requires finding the largest rectangular area that can be formed in a histogram given an array of heights.
+
+Approach
+We use a monotonic stack to efficiently determine the largest rectangle by maintaining indices of the histogram bars. The approach ensures we process each element in O(N) time complexity.
+
+Step-by-Step Breakdown
+Step 1: Initialize Required Variables
+Create a stack st to store indices of histogram bars.
+Store the size of the array n.
+Initialize maxArea = 0 to keep track of the maximum area found.
+Step 2: Iterate Over Each Bar
+We iterate from i = 0 to i = n (including n).
+Why i = n?
+It ensures that we process all remaining bars in the stack at the end.
+Step 3: Process Smaller Heights in Stack
+Whenever we find a smaller height (arr[i] < arr[st.top()]) or reach the end (i == n), we do the following:
+Pop the top index from the stack.
+Calculate height (h) of the rectangle using arr[st.top()].
+Determine width (w):
+If the stack is empty, w = i (full width).
+Otherwise, w = i - st.top() - 1 (width between current and previous index).
+Update maxArea as max(maxArea, h * w).
+Step 4: Push the Current Index
+If the condition does not trigger the while loop, push i into the stack.
+Example Walkthrough
+
+Example Input:
+arr = [2, 1, 5, 6, 2, 3]
+Dry Run:
+i	arr[i]	Stack (st)	Action
+0	2	[0]	Push 0
+1	1	[1]	Pop 0, calculate area = 2×1=2, Push 1
+2	5	[1,2]	Push 2
+3	6	[1,2,3]	Push 3
+4	2	[1,4]	Pop 3, calculate area = 6×1=6, Pop 2, calculate area = 5×2=10, Push 4
+5	3	[1,4,5]	Push 5
+6	-	[1]	Process remaining stack: Pop 5, Pop 4, Pop 1, Calculate max areas
+Final Complexity Analysis
+Each element is pushed and popped once, making the time complexity O(N).
+Space complexity is O(N) due to stack usage.
+
+Final Code Explanation
+int getMaxArea(vector<int> &arr) {
+    stack<int> st;  // Stack to store indices
+    int n = arr.size();
+    int maxArea = 0;  // Store maximum area
+
+    for (int i = 0; i <= n; i++) {
+        while (!st.empty() && (i == n || arr[st.top()] > arr[i])) {
+            int h = arr[st.top()];  // Height of the bar
+            st.pop();
+            int w;
+            if (st.empty()) w = i;  // If stack is empty, width = i
+            else w = i - st.top() - 1;  // Width between current and previous element
+            maxArea = max(maxArea, h * w);  // Update max area
+        }
+        st.push(i);  // Push current index into stack
+    }
+    return maxArea;
+}
+Key Points:
+
+Stack maintains increasing order of heights.
+Whenever a smaller height is found, we compute the largest area for the bars that are popped.
+Ensuring i == n helps process remaining bars in the stack.
+This is the optimal and efficient solution for finding the largest rectangle in a histogram. 🚀
+
+
+
+//{ Driver Code Starts
+// Initial Template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int getMaxArea(vector<int> &arr) {
+        // Your code here
+        stack<int>st;
+        int n=arr.size();
+        int maxArea=0;
+        for(int i=0;i<=n;i++)
+        {
+            while(!st.empty()&&(i==n||arr[st.top()]>arr[i]))
+            {
+                int h=arr[st.top()];
+                st.pop();
+                int w;
+                if(st.empty())
+                w=i;
+                else
+                w=i-st.top()-1;
+                maxArea=max(maxArea,h*w);
+            }
+            st.push(i);
+        }
+        return maxArea;
+    }
+};
+
+
+
+//{ Driver Code Starts.
+
+int main() {
+    string ts;
+    getline(cin, ts);
+    int t = stoi(ts);
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        Solution obj;
+        int res = obj.getMaxArea(arr);
+        cout << res << endl;
+        cout << "~" << endl;
+        // string tl;
+        // getline(cin, tl);
+    }
+    return 0;
+}
+
+// } Driver Code Ends
