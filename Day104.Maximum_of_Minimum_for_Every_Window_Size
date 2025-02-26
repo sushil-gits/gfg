@@ -1,0 +1,172 @@
+Stepwise Solution for maxOfMins Function
+This function finds the maximum of the minimum values for every window size in a given array.
+
+Brute Force Approach (O(n³) Time Complexity)
+Initialize the answer vector:
+
+Create a vector ans of size arr.size(), initialized with 0.
+This vector will store the maximum of the minimums for each window size.
+Iterate over all possible window sizes:
+
+The outer loop runs from i = 0 to arr.size() - 1, where i represents the window size (starting from 1-element windows to n-element windows).
+Find all subarrays of a given size:
+
+The second loop runs from j = 0 to arr.size() - i - 1, representing the starting index of the window.
+Compute the minimum value in each subarray:
+
+The innermost loop runs from k = j to j + i, iterating over elements in the current window.
+Keep track of the minimum element in this subarray.
+Update the result array:
+
+Store the maximum of these minimum values for the corresponding window size in ans[i].
+Return the final answer vector.
+
+Optimized Approach (O(n) or O(n log n))
+The brute-force approach is inefficient for large arrays. A more optimized approach would use monotonic stacks or deques to efficiently compute window minimums, leveraging the concept of Next Smaller Element (NSE) and Previous Smaller Element (PSE).
+
+
+
+
+
+Stepwise Solution for Optimized Approach using Stack (O(n))
+This approach efficiently computes the maximum of minimum values for each window size using Next Smaller Element (NSE) and Previous Smaller Element (PSE) with a monotonic stack.
+
+Step 1: Initialize Variables
+n = arr.size() → Get the size of the array.
+vector<int> ans(n, 0) → Stores the final result, initialized with 0.
+stack<int> st → Monotonic stack to keep track of elements.
+int range → Stores the window size for each element.
+Step 2: Find the Next Smaller Element (NSE) and Update ans
+(Forward Pass)
+Loop through the array (i = 0 to n - 1):
+While the stack is not empty and arr[st.top()] >= arr[i], pop elements and process their range:
+Get the index of the popped element.
+If the stack is empty, it means the element was the smallest so far, so its range is i.
+Otherwise, compute range = i - st.top() - 1 (distance to the nearest smaller element on the left).
+Update ans[range - 1] with the maximum value found in this window size.
+Push i onto the stack.
+Step 3: Process Remaining Elements in the Stack
+After finishing the first loop, elements still in the stack do not have a next smaller element.
+Process remaining elements:
+If the stack is empty, the element's range is n (it was the smallest element in the array).
+Otherwise, compute range = n - st.top() - 1.
+Update ans[range - 1] as before.
+Step 4: Maintain the Decreasing Order in ans
+The array ans stores correct values at some positions, but not all elements may be updated.
+Fix missing values by iterating from n-2 to 0:
+Update ans[i] = max(ans[i], ans[i + 1]) to ensure each ans[i] holds the max of ans[i] and ans[i+1].
+Step 5: Return the Final Answer
+The ans array now contains the maximum of minimum values for each window size.
+Time Complexity Analysis
+Finding Next Smaller Elements using a Stack → O(n)
+Processing Remaining Stack Elements → O(n)
+Final Pass to Maintain Order → O(n)
+🔹 Total Time Complexity = O(n)
+🔹 Space Complexity = O(n) (for ans and stack)
+
+Summary of the Approach
+Find Next Smaller Elements using a stack and compute the valid range for each element.
+Process Remaining Stack Elements to handle cases where no next smaller element exists.
+Fill ans in decreasing order to ensure correctness.
+Return ans as the final result.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+
+class Solution {
+  public:
+    vector<int> maxOfMins(vector<int>& arr) {
+        // Your code here
+        
+        
+        // brutt force approach ---------T.C=O(n3)
+        // vector<int>ans(arr.size(),0);
+        // for(int i=0;i<arr.size();i++)
+        // {
+        //     for(int j=0;j<arr.size()-i;j++)
+        //     {
+        //          int num=INT_MAX;
+        //         for(int k=j;k<j+i+1;k++)
+        //         {
+        //             num=min(num,arr[k]);
+        //         }
+        //         ans[i]=max(ans[i],num);
+        //     }
+        // }
+        // return ans;
+        
+        
+        // optimised approach using stack 
+        int n=arr.size();
+        int range;
+        vector<int>ans(n,0);
+        stack<int>st;
+    // Find the next smaller element for each element
+    for (int i = 0; i < n; i++) {
+        while (!st.empty() && arr[st.top()] >= arr[i]) {
+            int index = st.top();
+            st.pop();
+            if (st.empty()) {
+                range = i; // Full range from 0 to i
+            } else {
+                range = i - st.top() - 1; // Range between two smaller elements
+            }
+            ans[range - 1] = max(ans[range - 1], arr[index]);
+        }
+        st.push(i);
+    }
+
+    // Handle remaining elements in the stack
+    while (!st.empty()) {
+        int index = st.top();
+        st.pop();
+        if (st.empty()) {
+            range = n; // Full range from 0 to n-1
+        } else {
+            range = n - st.top() - 1;
+        }
+        ans[range - 1] = max(ans[range - 1], arr[index]);
+    }
+
+    // Fill the ans array to maintain decreasing order
+    for (int i = n - 2; i >= 0; i--) {
+        ans[i] = max(ans[i], ans[i + 1]);
+    }
+
+    return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        string line;
+        getline(cin, line);
+        stringstream ss(line);
+        vector<int> arr;
+        int num;
+        while (ss >> num) {
+            arr.push_back(num);
+        }
+        Solution ob;
+        vector<int> res = ob.maxOfMins(arr);
+        for (int i : res)
+            cout << i << " ";
+        cout << endl;
+        cout << "~\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
