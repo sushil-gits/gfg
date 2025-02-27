@@ -1,0 +1,241 @@
+Step-by-Step Explanation of the Code
+The given Solution class implements a stack with the ability to retrieve the minimum element efficiently. It uses:
+
+Stack (st) to store elements in Last In, First Out (LIFO) order.
+Min-Heap (pq) to quickly access the minimum element.
+Hash Map (m) to track the frequency of elements.
+Step-by-Step Code Explanation
+#include <bits/stdc++.h>  // Includes all standard C++ libraries
+using namespace std;
+Step 1: Declare the Class
+class Solution {
+public:
+    stack<int> st;  // Stack to store elements
+    priority_queue<int, vector<int>, greater<int>> pq;  // Min-Heap to track the smallest element
+    unordered_map<int, int> m;  // Hash Map to store the count of elements
+stack<int> st; → Normal stack to store elements.
+priority_queue<int, vector<int>, greater<int>> pq; → Min-heap to keep the minimum element always on top.
+unordered_map<int, int> m; → Tracks the frequency of each element in the stack.
+Step 2: Constructor
+    Solution() {
+        // Constructor initializes the stack, min-heap, and map (implicitly empty)
+    }
+The constructor initializes an empty stack, min-heap, and map.
+Step 3: push(int x) - Insert an Element
+    void push(int x) {
+        st.push(x);  // Push x onto the stack
+        pq.push(x);  // Push x into the min-heap
+        m[x]++;  // Increase the count of x in the hashmap
+    }
+How It Works:
+Push x into st (stack).
+Push x into pq (min-heap).
+Increase count of x in m.
+Time Complexity:
+st.push(x): O(1)
+pq.push(x): O(log N)
+m[x]++: O(1)
+Total Complexity: O(log N) (due to priority queue insertion)
+Step 4: pop() - Remove the Top Element
+    void pop() {
+        if (st.empty()) return;  // If stack is empty, do nothing
+
+        int top = st.top();  // Get the top element
+        st.pop();  // Remove the top element from stack
+        m[top]--;  // Decrease count in the hash map
+
+        // If frequency becomes 0, erase it from map
+        if (m[top] == 0) {
+            m.erase(top);
+        }
+    }
+How It Works:
+If st is empty, do nothing.
+Get the top element and remove it from st.
+Decrease the count of top in m.
+If top is no longer present (m[top] == 0), remove it from m.
+Time Complexity:
+st.pop(): O(1)
+m[top]--: O(1)
+m.erase(top): O(1)
+Total Complexity: O(1)
+Step 5: peek() - Get the Top Element
+    int peek() {
+        if (st.empty()) return -1;  // If stack is empty, return -1
+        return st.top();  // Return the top element
+    }
+How It Works:
+If st is empty, return -1.
+Otherwise, return st.top().
+Time Complexity: O(1)
+Step 6: getMin() - Get the Minimum Element
+    int getMin() {
+        // Remove elements from min-heap that are no longer in stack
+        while (!pq.empty() && m.find(pq.top()) == m.end()) {
+            pq.pop();
+        }
+
+        return pq.empty() ? -1 : pq.top();  // Return min element or -1 if empty
+    }
+How It Works:
+Remove elements from pq (min-heap) that are no longer in the stack.
+If pq is empty, return -1.
+Otherwise, return pq.top(), which is the smallest element.
+Time Complexity:
+The worst-case scenario (if we need to pop multiple invalid elements) is O(log N).
+Best-case scenario: O(1) if the minimum element is valid.
+📌 Example Walkthrough
+Operations:
+Solution obj;
+obj.push(3);
+obj.push(5);
+cout << obj.getMin() << endl; // Output: 3
+
+obj.push(2);
+obj.push(1);
+cout << obj.getMin() << endl; // Output: 1
+
+obj.pop();
+cout << obj.getMin() << endl; // Output: 2
+
+cout << obj.peek() << endl; // Output: 2
+Step-by-Step Execution:
+Operation	Stack (st)	Min-Heap (pq)	Map (m)	getMin() Output
+push(3)	[3]	[3]	{3:1}	3
+push(5)	[3,5]	[3,5]	{3:1, 5:1}	3
+push(2)	[3,5,2]	[2,5,3]	{3:1, 5:1, 2:1}	2
+push(1)	[3,5,2,1]	[1,2,3,5]	{3:1, 5:1, 2:1, 1:1}	1
+pop() (removes 1)	[3,5,2]	[1,2,3,5] (1 removed in getMin())	{3:1, 5:1, 2:1}	2
+peek()	[3,5,2]	[2,3,5]	{3:1, 5:1, 2:1}	Top = 2
+⚡ Alternative Approach: O(1) getMin() using Min-Stack
+Instead of using a priority queue, we can use another stack (minSt) to store the minimum value at each step, achieving O(1) getMin():
+class Solution {
+public:
+    stack<int> st;
+    stack<int> minSt; // Keeps track of the minimum values
+
+    void push(int x) {
+        st.push(x);
+        if (minSt.empty() || x <= minSt.top()) {
+            minSt.push(x);
+        }
+    }
+
+    void pop() {
+        if (st.empty()) return;
+        if (st.top() == minSt.top()) {
+            minSt.pop();
+        }
+        st.pop();
+    }
+
+    int peek() {
+        return st.empty() ? -1 : st.top();
+    }
+
+    int getMin() {
+        return minSt.empty() ? -1 : minSt.top();
+    }
+};
+✅ Advantages of Min-Stack:
+All operations (push, pop, peek, getMin) are O(1).
+No need for a hash map or min-heap cleanup.
+More memory-efficient than the priority queue approach.
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+        stack<int>st;
+        priority_queue<int,vector<int>,greater<int>>pq;
+        unordered_map<int,int>m;
+    Solution() {
+        // code here
+        
+    }
+
+    // Add an element to the top of Stack
+    void push(int x) {
+        // code here
+        st.push(x);
+        pq.push(x);
+        m[x]++;
+    }
+
+    // Remove the top element from the Stack
+    void pop() {
+        // code here
+        if(st.empty())
+        return;
+        int top=st.top();
+        st.pop();
+        m[top]--;
+        if(m[top]==0)
+        m.erase(top);
+    }
+
+    // Returns top element of the Stack
+    int peek() {
+        // code here
+        if(st.empty())
+        return -1;
+        return st.top();
+    }
+
+    // Finds minimum element of Stack
+    int getMin() {
+        // code here
+        while(!pq.empty()&&m.find(pq.top())==m.end())
+        pq.pop();
+        return pq.empty()?-1:pq.top();
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int q;
+        cin >> q;
+
+        Solution ob;
+
+        while (q--) {
+            int qt;
+            cin >> qt;
+
+            if (qt == 1) {
+                // push
+                int att;
+                cin >> att;
+                ob.push(att);
+            } else if (qt == 2) {
+                // pop
+                ob.pop();
+            } else if (qt == 3) {
+                // peek
+                cout << ob.peek() << " ";
+            } else if (qt == 4) {
+                // getMin
+                cout << ob.getMin() << " ";
+            }
+        }
+        cout << endl;
+        cout << "~" << endl;
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
