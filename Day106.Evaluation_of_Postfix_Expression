@@ -1,0 +1,123 @@
+Stepwise Breakdown of Code
+This function evaluates a Reverse Polish Notation (RPN) expression using a stack.
+
+Step 1: Understanding the Problem
+Input: vector<string>& arr, a list of strings representing an RPN expression.
+Output: An int representing the evaluated result.
+Example:
+Input: arr = ["2", "1", "+", "3", "*"]
+Output: 9
+Explanation: (2 + 1) * 3 = 9
+Step 2: Helper Function
+bool isOperator(string s)
+{
+    return s == "+" || s == "-" || s == "*" || s == "/";
+}
+Checks if a given string s is an operator (+, -, *, /).
+Returns true if s is an operator, otherwise false.
+Step 3: Evaluating the RPN Expression
+int evaluate(vector<string>& arr) {
+    stack<int> st; // Stack to store operands
+Initializes an empty stack st to hold integers.
+Step 4: Iterating Through the Expression
+    for (string s : arr) {
+Loops through each element in the given expression.
+Step 4.1: If s is an operator
+        if (isOperator(s)) {
+If the current string is an operator, perform the corresponding operation.
+            int b = st.top(); // Pop the second operand
+            st.pop();
+            int a = st.top(); // Pop the first operand
+            st.pop();
+Pop the top two operands from the stack (since RPN notation is postfix, the second operand is popped first).
+            if (s == "+")
+                st.push(a + b);
+            if (s == "-")
+                st.push(a - b);
+            if (s == "*")
+                st.push(a * b);
+            if (s == "/")
+                st.push(a / b);
+Perform the arithmetic operation based on the operator.
+Push the result back into the stack.
+Step 4.2: If s is an operand (number)
+        else {
+            st.push(stoi(s)); // Convert string to integer and push it
+        }
+Converts the string to an integer using stoi() and pushes it onto the stack.
+Step 5: Returning the Result
+    return st.top(); // The final result is on top of the stack
+}
+After processing all elements, the final result will be at the top of the stack.
+Time Complexity Analysis
+Each element is processed once → O(N)
+Stack operations (push, pop, top) are O(1)
+Overall Complexity: O(N)
+
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+  bool isOperator(string s)
+  {
+      return s=="+"||s=="-"||s=="*"||s=="/";
+  }
+    int evaluate(vector<string>& arr) {
+        // code here
+        stack<int>st;
+        for(string s:arr)
+        {
+            if(isOperator(s))
+            {
+                int b=st.top();
+                st.pop();
+                int a=st.top();
+                st.pop();
+                if(s=="+")
+                st.push(a+b);
+                if(s=="-")
+                st.push(a-b);
+                if(s=="*")
+                st.push(a*b);
+                if(s=="/")
+                st.push(a/b);
+            }
+            else
+            {
+                st.push(stoi(s));
+            }
+        }
+        return st.top();
+        
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    string str;
+    getline(cin, str);
+    int t = stoi(str);
+    while (t--) {
+        getline(cin, str);
+        stringstream ss(str);
+        vector<string> arr;
+        while (ss >> str) {
+            arr.push_back(str);
+        }
+        Solution ob;
+        cout << ob.evaluate(arr) << endl;
+        cout << "~" << endl;
+    }
+}
+// } Driver Code Ends
