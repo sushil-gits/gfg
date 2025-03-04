@@ -1,0 +1,96 @@
+Stepwise Approach for LIS Function
+This function finds the length of the longest increasing subsequence (LIS) using binary search and a greedy approach. Below is the stepwise breakdown:
+
+Step 1: Initialize a Vector (ans)
+Create a vector ans to store elements of the longest increasing subsequence found so far.
+Push the first element of arr into ans, as it will be the starting point.
+Step 2: Iterate Through the Array
+Loop from i = 1 to arr.size() - 1, processing each element.
+Step 3: Compare Current Element (arr[i]) with the Last Element of ans
+If arr[i] is greater than the last element of ans, it means we can extend our increasing subsequence.
+Action: Push arr[i] into ans.
+Otherwise, we need to replace an element in ans to maintain the smallest possible values in an increasing order.
+Step 4: Replace an Element Using Binary Search
+Find the first element in ans that is greater than or equal to arr[i] using lower_bound().
+Replace that element with arr[i].
+This ensures that ans remains an increasing sequence with the smallest values possible.
+Step 5: Return the Length of ans
+The size of ans gives the length of the longest increasing subsequence.
+Key Observations
+Why use lower_bound()?
+It finds the position of the smallest element that is ≥ arr[i] in ans, ensuring the smallest replacement.
+Why not store the actual LIS sequence?
+This method optimizes for length, not for actual subsequence reconstruction.
+Time Complexity:
+The loop runs O(N) times, and lower_bound() runs in O(log N), making the total complexity O(N log N).
+Example Walkthrough
+Input: arr = [10, 9, 2, 5, 3, 7, 101, 18]
+Processing Steps:
+Step	arr[i]	ans before	Action Taken	ans after
+1	10	[]	Push 10	[10]
+2	9	[10]	Replace 10 with 9	[9]
+3	2	[9]	Replace 9 with 2	[2]
+4	5	[2]	Push 5	[2, 5]
+5	3	[2, 5]	Replace 5 with 3	[2, 3]
+6	7	[2, 3]	Push 7	[2, 3, 7]
+7	101	[2, 3, 7]	Push 101	[2, 3, 7, 101]
+8	18	[2, 3, 7, 101]	Replace 101 with 18	[2, 3, 7, 18]
+Output: ans.size() = 4
+LIS Length: 4
+One possible LIS: [2, 3, 7, 18]
+Final Thoughts
+This method does not construct the LIS but finds its length efficiently.
+To reconstruct LIS, extra tracking arrays would be needed.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int lis(vector<int>& arr) {
+        // code here
+        // code here
+        vector<int> ans;
+        ans.push_back(arr[0]);
+        for(int i=1;i<arr.size();i++){
+            if(arr[i]>ans.back())ans.push_back(arr[i]);
+            else ans[lower_bound(ans.begin(),ans.end(),arr[i])-ans.begin()]=arr[i];
+        }
+        return ans.size();
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore(); // to ignore the newline after the integer input
+
+    while (t--) {
+        int n;
+        vector<int> arr;
+        string input;
+
+        // Input format: first number n followed by the array elements
+        getline(cin, input);
+        stringstream ss(input);
+        int num;
+        while (ss >> num)
+            arr.push_back(num);
+
+        Solution obj;
+        cout << obj.lis(arr) << endl;
+        cout << "~" << endl;
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
