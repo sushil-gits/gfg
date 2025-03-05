@@ -1,0 +1,145 @@
+Stepwise Approach for longestStringChain Function
+The function longestStringChain finds the longest string chain in a given list of words. A string chain is formed by removing one character at a time to obtain another valid word from the given list.
+
+Step 1: Initialize Variables
+answer = 1 → This stores the maximum length of a valid string chain.
+arr(11) → A vector of unordered sets to store words based on their length (since words have lengths from 1 to 10).
+m (unordered_map) → This stores the maximum chain length for each word.
+int answer = 1;
+vector<unordered_set<string>> arr(11);
+unordered_map<string, int> m;
+Step 2: Store Words in arr and Initialize m
+Iterate over words, and for each word:
+If it has length 1, initialize m[word] = 1.
+Store the word in arr[word.length()].
+for (auto &s : words) {
+    if (s.size() == 1)
+        m[s] = 1;
+    arr[s.size()].insert(s);
+}
+This allows us to efficiently access words by their length.
+Step 3: Process Words from Length 2 to 10
+Iterate over lengths from 2 to 10.
+For each word in arr[i] (words of length i):
+Initialize m[word] = 1 (minimum chain length is 1).
+
+Try removing each character from word to create a new valid word (ans).
+
+Check if ans exists in arr[i-1] (words of length i-1).
+
+If it does, update m[word] as:
+m[s] = max(m[s], 1 + m[ans]);
+Update the global answer with the maximum chain length.
+for (int i = 2; i <= 10; i++) {
+    for (auto &s : arr[i]) {
+        m[s] = 1;
+        for (int j = 0; j < s.size(); j++) {
+            string ans = s.substr(0, j) + s.substr(j + 1);
+            if (arr[i - 1].count(ans))
+                m[s] = max(m[s], 1 + m[ans]);
+            answer = max(answer, m[s]);
+        }
+    }
+}
+Step 4: Return the Maximum Chain Length
+After processing all words, return the maximum value found in answer.
+return answer;
+Complexity Analysis
+Preprocessing (arr and m Initialization) → 
+𝑂
+(
+𝑁
+)
+O(N), where 
+𝑁
+N is the number of words.
+Iterating Over Word Lengths (2 to 10) → At most 10 iterations.
+Checking Word Transformations → Each word has at most 10 characters, so checking all transformations is 
+𝑂
+(
+10
+)
+O(10).
+Overall Complexity → 
+𝑂
+(
+𝑁
+⋅
+10
+)
+O(N⋅10) → 
+𝑂
+(
+𝑁
+)
+O(N) in practice.
+Summary of Steps
+Store words in arr based on length and initialize m.
+Iterate over word lengths (from 2 to 10).
+For each word, try removing characters and check if the smaller word exists.
+Update m[word] and the maximum chain length.
+Return the maximum chain length found.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int longestStringChain(vector<string>& words) {
+        // Code here
+        int answer=1;
+        vector<unordered_set<string>>arr(11);
+        unordered_map<string,int>m;
+        for(auto &s:words)
+        {
+            if(s.size()==1)
+            m[s]=1;
+            arr[s.size()].insert(s);
+        }
+        for(int i=2;i<=10;i++)
+        {
+            for(auto &s:arr[i])
+            {
+                m[s]=1;
+                for(int j=0;j<s.size();j++)
+                {
+                    string ans=s.substr(0,j)+s.substr(j+1);
+                    if(arr[i-1].count(ans))
+                    m[s]=max(m[s],1+m[ans]);
+                    answer=max(answer,m[s]);
+                }
+            }
+        }
+        return answer;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<string> words;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        string number;
+        while (ss >> number) {
+            words.push_back(number);
+        }
+        Solution obj;
+        cout << obj.longestStringChain(words) << "\n";
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
