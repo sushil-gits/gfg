@@ -1,0 +1,89 @@
+Algorithm for Longest Common Subsequence (LCS)
+Input:
+Two strings s1 and s2 of lengths l1 and l2 respectively.
+
+Output:
+The length of the longest common subsequence (LCS) of s1 and s2.
+
+Algorithm Steps:
+Initialize Variables:
+
+Compute the lengths of both strings: l1 = s1.size() and l2 = s2.size().
+Create a 2D DP table arr[l1+1][l2+1] where arr[i][j] stores the LCS length for s1[0...i-1] and s2[0...j-1].
+Base Case Initialization:
+
+If either string is empty (i == 0 or j == 0), then arr[i][j] = 0, since an empty string has no common subsequence.
+Fill the DP Table Using Bottom-Up Approach:
+
+Iterate through each character index of s1 (from 1 to l1) and s2 (from 1 to l2).
+If characters match (s1[i-1] == s2[j-1]), then extend the LCS:
+arr[i][j] = arr[i-1][j-1] + 1
+If characters do not match, take the maximum LCS length possible:
+arr[i][j] = max(arr[i-1][j], arr[i][j-1])
+Return the Result:
+
+The final answer, i.e., the length of the longest common subsequence, is stored in arr[l1][l2].
+
+
+Complexity Analysis:
+Time Complexity: O(l1 * l2)
+We traverse the l1 × l2 table once.
+Space Complexity: O(l1 * l2)
+We store the full DP table in memory.
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int lcs(string &s1, string &s2) {
+        // code here
+        int l1=s1.size();
+        int l2=s2.size();
+        int arr[l1+1][l2+1];
+        for(int i=0;i<l1+1;i++)
+        {
+            for(int j=0;j<l2+1;j++)
+            {
+                if(i==0||j==0)
+                {
+                    arr[i][j]=0;
+                }
+                else
+                {
+                    if(s1[i-1]!=s2[j-1])
+                    {
+                        arr[i][j]=max(arr[i-1][j],arr[i][j-1]);
+                    }
+                    else
+                    {
+                        arr[i][j]=arr[i-1][j-1]+1;
+                    }
+                }
+            }
+        }
+        return arr[l1][l2];
+    }
+};
+
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        string s1, s2;
+        cin >> s1 >> s2; // Take both the strings as input
+        Solution ob;
+        cout << ob.lcs(s1, s2) << endl; // Call the lcs function
+        cout << "~\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
