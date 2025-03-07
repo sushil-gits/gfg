@@ -1,0 +1,91 @@
+Stepwise Approach
+Understanding the problem
+
+A palindromic subsequence is a subsequence that reads the same forward and backward.
+The longest palindromic subsequence (LPS) problem asks us to find the length of the longest subsequence that forms a palindrome.
+Observing the key property
+
+The longest palindromic subsequence of a string s is the same as the longest common subsequence (LCS) of s and its reverse.
+Defining the recursive function
+
+Let s1 = s and s2 = reverse(s), then the LPS is equivalent to finding the LCS of s1 and s2.
+Define helper(idx1, idx2, s1, s2, dp):
+If s1[idx1] == s2[idx2], the character contributes to the LPS → Add 1 and move both pointers left.
+Else, try excluding either s1[idx1] or s2[idx2] and take the maximum of both cases.
+Base case
+
+If idx1 < 0 or idx2 < 0, return 0 (out of bounds).
+Memoization
+
+Use a dp table (vector<vector<int>> dp) to store previously computed values to avoid redundant calculations.
+Implementation Steps
+
+Create s2 as the reversed version of s1.
+Initialize a dp table of size s1.size() × s2.size() with -1.
+Call the recursive function helper(s1.size()-1, s2.size()-1, s1, s2, dp).
+Return the result.
+Time & Space Complexity
+Time Complexity: O(n^2) (since we compute LCS using recursion with memoization)
+Space Complexity: O(n^2) (for the dp table)
+
+
+//{ Driver Code Starts
+// Initial template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function Template for C++
+
+class Solution {
+  public:
+  int helper(int idx1, int idx2, string &s1, string &s2, vector<vector<int>> &dp)
+    {
+        if(idx1 < 0 || idx2 < 0)
+            return 0;
+        int len = INT_MIN;
+        
+        if(dp[idx1][idx2] != -1)
+            return dp[idx1][idx2];
+            
+        if(s1[idx1] == s2[idx2])
+        {
+            len = max(len, 1 + helper(idx1-1,idx2-1,s1,s2,dp));
+        }
+        else
+        {
+            len = max(len,max(helper(idx1,idx2-1,s1,s2,dp),helper(idx1-1,idx2,s1,s2,dp)));
+        }
+        return dp[idx1][idx2] = len;
+    }
+    int longestPalinSubseq(string &s) {
+        // code here
+          string s1 = s;
+        string s2 = s;
+        reverse(s2.begin(),s2.end());
+        vector<vector<int>> dp(s1.size(),vector<int>(s2.size(),-1));
+        return helper(s1.size()-1, s2.size() -1, s1,s2,dp);
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int32_t main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        string s;
+        cin >> s;
+        Solution ob;
+        cout << ob.longestPalinSubseq(s) << endl;
+
+        cout << "~"
+             << "\n";
+    }
+}
+
+// } Driver Code Ends
