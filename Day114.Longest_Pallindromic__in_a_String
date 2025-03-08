@@ -1,0 +1,145 @@
+Stepwise Approach for Finding the Longest Palindromic Substring (Dynamic Programming)
+The given code follows a Dynamic Programming (DP) approach to find the longest palindromic substring in a given string s. Below is the step-by-step breakdown:
+
+Step 1: Initialize Variables
+n = s.size(); → Store the length of the string.
+ans = 1; → Store the length of the longest palindromic substring found.
+dp[n][n] → A 2D DP table (vector<vector<bool>> dp(n, vector<bool>(n, false));) to track whether s[i...j] is a palindrome.
+pal = s.substr(0,1); → Initialize the longest palindrome as the first character.
+Step 2: Mark All Single Characters as Palindromes
+A single character is always a palindrome, so set dp[i][i] = true for all 0 ≤ i < n.
+for(int i = 0; i < n; i++) {
+    dp[i][i] = true;
+}
+📌 Reason: Every single character is a palindrome of length 1.
+
+Step 3: Check for Two Consecutive Same Characters
+If s[i] == s[i-1], mark dp[i-1][i] = true, meaning substrings of length 2 that are palindromes.
+for(int i = n - 1; i >= 1; i--) {
+    if(s[i] == s[i - 1]) {
+        dp[i - 1][i] = true;
+        ans = 2;  
+        pal = s.substr(i - 1, 2);
+    }
+}
+📌 Reason: A substring of length 2 is a palindrome if both characters are the same.
+
+Step 4: Expand for Length 3 or More
+Iterate for increasing substring lengths i = 3 to n:
+Check for substrings starting at j = 0 to n - i
+k = j + i - 1 → Ending index of the substring
+If s[j] == s[k] and the inner substring s[j+1] to s[k-1] is a palindrome, then mark dp[j][k] = true.
+If a longer palindrome is found, update ans and pal.
+for(int i = 3; i <= n; i++) {
+    for(int j = 0; j <= n - i; j++) {
+        int k = j + i - 1;
+        if ((s[j] == s[k]) && dp[j + 1][k - 1]) {
+            dp[j][k] = true;
+            if (i > ans) {
+                ans = i;
+                pal = s.substr(j, i);
+            }
+        }
+    }
+}
+📌 Reason: If the first and last characters match and the inner substring is already a palindrome, then the full substring is also a palindrome.
+
+Step 5: Return the Longest Palindromic Substring
+After all iterations, pal will store the longest palindromic substring.
+return pal;
+Time and Space Complexity Analysis
+Time Complexity: O(n²)
+The DP table has O(n²) entries.
+We iterate over O(n²) substrings.
+Space Complexity: O(n²)
+A 2D dp array of size n x n is used.
+Example Walkthrough
+Input:
+string s = "babad";
+DP Table Progression:
+i\j	0	1	2	3	4
+0	T	F	T	F	F
+1	-	T	F	T	F
+2	-	-	T	F	T
+3	-	-	-	T	F
+4	-	-	-	-	T
+📌 Final Output: "aba" or "bab" (both are correct).
+
+Summary
+✔ Step 1: Initialize DP table, mark single characters as palindromes.
+✔ Step 2: Mark adjacent same-character pairs as palindromes.
+✔ Step 3: Expand palindromes for length ≥ 3 using the DP table.
+✔ Step 4: Keep track of the longest palindrome found.
+✔ Step 5: Return the longest palindromic substring.
+
+🚀 Efficient DP solution for the longest palindromic substring
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    string longestPalindrome(string &s) {
+        // code here
+        int n=s.size();
+        int ans=1;
+        // creating a vector for dp to track it's presence
+        vector<vector<bool>>dp(n,vector<bool>(n,false));
+        string pal=s.substr(0,1);
+        for(int i=0;i<n;i++)
+        {
+            dp[i][i]=true;
+        }
+        for(int i=n-1;i>=1;i--)
+        {
+            if(s[i]==s[i-1])
+            {
+                dp[i-1][i]=true;
+                ans=2;
+                pal=s.substr(i-1,2);
+            }
+        }
+        for(int i=3;i<=n;i++)
+        {
+            for(int j=0;j<=n-i;j++)
+            {
+                int k=j+i-1;
+                if((s[j]==s[k])&&dp[j+1][k-1])
+                {
+                    dp[j][k]=true;
+                    if(i>ans)
+                    {
+                        ans=i;
+                        pal=s.substr(j,i);
+                    }
+                }
+            }
+        }
+        return pal;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        string S;
+        cin >> S;
+
+        Solution ob;
+        cout << ob.longestPalindrome(S) << endl;
+
+        cout << "~"
+             << "\n";
+    }
+}
+
+// } Driver Code Ends
