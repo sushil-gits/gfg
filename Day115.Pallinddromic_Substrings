@@ -1,0 +1,120 @@
+Stepwise Approach for countPS Function:
+This function counts the number of palindromic subsequences in a given string s using an expand-around-center approach.
+
+Step 1: Initialize Variables
+Extract the length of the string s and store it in n.
+Initialize a variable ans to store the count of palindromic substrings.
+int n = s.size();
+int ans = 0;
+Step 2: Iterate Over Possible Centers
+The function considers both odd-length and even-length palindromes.
+Use a for loop to iterate over each character in s, treating it as the center of a possible palindrome.
+for (int mid = 0; mid < n; mid++) {
+Step 3: Count Odd-Length Palindromes
+Initialize count = 1, as a single character is always a palindrome.
+Expand around the center mid by checking symmetric characters on both sides (mid-i and mid+i).
+If characters are the same, increment count.
+If a mismatch occurs, break the loop.
+int count = 1;  // Single character is a palindrome
+for (int i = 1; i < n - mid && mid - i >= 0; i++) {
+    if (s[mid - i] == s[mid + i]) {
+        count += 1;
+    } else {
+        break;
+    }
+}
+ans += count;
+Step 4: Count Even-Length Palindromes
+Reinitialize count = 0.
+Expand around mid and mid+1 as the center (for even-length palindromes).
+If characters match, increment count.
+If a mismatch occurs, break the loop.
+count = 0;
+for (int i = 0; i < n - mid - 1 && mid - i >= 0; i++) {
+    if (s[mid - i] == s[mid + i + 1]) {
+        count += 1;
+    } else {
+        break;
+    }
+}
+ans += count;
+Step 5: Return Final Count
+The ans variable contains the total number of palindromic substrings, including single characters.
+Since single characters were counted separately, subtract n from ans before returning.
+return ans - n;
+Time Complexity Analysis
+The outer loop runs for O(n), iterating over each possible center.
+The inner loops expand around the center, at worst O(n).
+Thus, the overall time complexity is O(n²).
+Final Summary of Approach
+Iterate through each character as a possible palindrome center.
+Expand outward to check for odd-length palindromes.
+Expand outward to check for even-length palindromes.
+Accumulate the count of palindromic substrings.
+Return the count after subtracting single-character substrings.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+
+class Solution {
+  public:
+    int countPS(string &s) {
+        // code here
+        int n=s.size();
+        int ans=0;
+        for(int mid=0;mid<n;mid++)
+        {
+            int count=1;
+            for(int i=1;i<n-mid&&mid-i>=0;i++)
+            {
+                if(s[mid-i]==s[mid+i])
+                {
+                    count+=1;
+                    
+                }
+                else
+                {
+                    break;
+                }
+            }
+            ans+=count;
+            count=0;
+            for(int i=0;i<n-mid-1&&mid-i>=0;i++)
+            {
+                if(s[mid-i]==s[mid+i+1])
+                {
+                    count+=1;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            ans+=count;
+        }
+        return ans-n;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        string s;
+        cin >> s;
+        Solution ob;
+        cout << ob.countPS(s) << endl;
+        cout << "~\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
