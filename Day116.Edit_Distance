@@ -1,0 +1,119 @@
+Stepwise Approach for Edit Distance using Recursion + Memoization
+This algorithm calculates the minimum number of operations (Insert, Delete, Replace) required to convert one string (s1) into another (s2) using Dynamic Programming (Memoization).
+
+Step 1: Define the Recursive Function
+The function func(s1, s2, i, j, dp) computes the edit distance starting from index i in s1 and index j in s2.
+int func(string s1, string s2, int i, int j, vector<vector<int>>& dp)
+Base Cases:
+If both strings are completely matched (i == s1.size() and j == s2.size()), return 0.
+if (i == s1.size() && j == s2.size()) return 0;
+If s1 is exhausted (i == s1.size()), we need to insert the remaining characters of s2.
+if (i == s1.size()) return s2.size() - j;
+If s2 is exhausted (j == s2.size()), we need to delete the remaining characters of s1.
+if (j == s2.size()) return s1.size() - i;
+Step 2: Check Memoization Table
+If dp[i][j] is already computed, return the stored value to avoid redundant calculations.
+if (dp[i][j] != -1) return dp[i][j];
+Step 3: Check if Current Characters Match
+If s1[i] == s2[j], no edit operation is needed. Move to the next characters in both strings.
+if (s1[i] == s2[j]) return dp[i][j] = func(s1, s2, i + 1, j + 1, dp);
+Step 4: Apply Edit Operations (Insert, Delete, Replace)
+If s1[i] ≠ s2[j], we have three choices:
+
+Replace s1[i] with s2[j], then move both pointers (i+1, j+1).
+Insert s2[j] into s1, then move j+1 only.
+Delete s1[i], then move i+1 only.
+The minimum cost of these three operations is stored in dp[i][j].
+return dp[i][j] = min( 
+    1 + func(s1, s2, i + 1, j + 1, dp),   // Replace
+    min(1 + func(s1, s2, i, j + 1, dp),   // Insert
+        1 + func(s1, s2, i + 1, j, dp))   // Delete
+);
+Step 5: Compute Edit Distance using Memoization
+The function editDistance(s1, s2) initializes the memoization table dp with -1 and calls the recursive function from (0,0).
+int editDistance(string& s1, string& s2) {
+    int n = s1.size(), m = s2.size();
+    if (s1 == s2) return 0;  // If both strings are already equal
+    vector<vector<int>> dp(n, vector<int>(m, -1));  
+    return func(s1, s2, 0, 0, dp);
+}
+Time & Space Complexity
+Time Complexity: 
+𝑂
+(
+𝑁
+×
+𝑀
+)
+O(N×M) (since each state (i, j) is computed only once).
+Space Complexity: 
+𝑂
+(
+𝑁
+×
+𝑀
+)
+O(N×M) (for the dp table).
+
+//{ Driver Code Starts
+// Initial Template for C++
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+     int func(string s1,string s2,int i,int j,vector<vector<int>>&dp){
+        if(i==s1.size() && j==s2.size()){
+            return 0;
+        }
+        if(i==s1.size()){
+            return s2.size()-j;
+        }
+        if(j==s2.size()){
+            return s1.size()-i;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        if(s1[i]==s2[j]){
+            return dp[i][j]=func(s1,s2,i+1,j+1,dp);
+        }
+        else{
+            return dp[i][j]=min(1+func(s1,s2,i+1,j+1,dp),min(1+func(s1,s2,i,j+1,dp),1+func(s1,s2,i+1,j,dp)));
+        }
+    }
+    // Function to compute the edit distance between two strings
+    int editDistance(string& s1, string& s2) {
+        // code here
+        int n=s1.size(),m=s2.size();
+        if(s1==s2)return 0;
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        return func(s1,s2,0,0,dp);
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+
+    int T;
+    cin >> T;
+    cin.ignore();
+    while (T--) {
+        string s1;
+        getline(cin, s1);
+        string s2;
+        getline(cin, s2);
+        Solution ob;
+        int ans = ob.editDistance(s1, s2);
+        cout << ans << "\n";
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
