@@ -1,0 +1,98 @@
+Stepwise Approach for solve(int n) Function
+The function solve(int n) computes the number of ways to climb n stairs using a bottom-up dynamic programming approach (Fibonacci-style iteration). Here's a stepwise breakdown:
+
+Base Case Handling
+
+If n is 1 or 2, the function directly returns n, since:
+solve(1) = 1 (1 way: {1})
+solve(2) = 2 (2 ways: {1,1} or {2})
+Initialize Variables
+
+prev2 = 1: Represents the number of ways to reach n-2 stairs.
+prev1 = 2: Represents the number of ways to reach n-1 stairs.
+curr = 0: To store the number of ways to reach the current step i.
+Iterate from 3 to n (Bottom-Up DP)
+
+For each i from 3 to n:
+Compute curr = prev1 + prev2 (Current step's ways = sum of the previous two).
+Shift prev2 = prev1 (Move to the next step).
+Shift prev1 = curr (Update for the next iteration).
+Return the Result
+
+After the loop ends, curr stores the final result, which is returned.
+Stepwise Approach for countWays(int n) Function
+Calls the solve(n) function to get the final result.
+Alternative Approach (Commented Out - Brute Force Recursion)
+Uses recursion:
+If n == 1, return 1.
+If n == 2, return 2.
+Otherwise, recursively compute countWays(n-1) + countWays(n-2).
+This approach is inefficient (exponential time complexity: O(2^n)) and leads to TLE (Time Limit Exceeded) for large n.
+Optimized Approach (Used in solve)
+Time Complexity: O(n)
+O(n) (Iterative DP)
+Space Complexity: O(n)
+O(1) (Constant space, no recursion stack)
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+  
+  int solve(int n)
+        {
+            if(n<=2)
+            {
+                return n;
+            }
+            int prev2=1;
+            int prev1=2;
+            int curr=0;
+            for(int i=3;i<=n;i++)
+            {
+                curr=prev1+prev2;
+                prev2=prev1;
+                prev1=curr;
+            }
+            return curr;
+            
+        }
+    int countWays(int n) {
+  return solve(n);
+
+// // brutt force approach--gives runtime error---TLE 
+// if(n==1)
+// return 1;
+// if(n==2)
+// return 2;
+// return countWays(n-1)+countWays(n-2);
+    }
+};
+
+
+
+//{ Driver Code Starts.
+int main() {
+    // taking total testcases
+    int t;
+    cin >> t;
+    while (t--) {
+        // taking stair count
+        int m;
+        cin >> m;
+        Solution ob;
+        cout << ob.countWays(m) << endl; // Print the output from our pre computed array
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
