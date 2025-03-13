@@ -1,0 +1,155 @@
+Stepwise Approach for the 0/1 Knapsack Problem (Space Optimized DP)
+This approach solves the 0/1 Knapsack problem using Dynamic Programming with space optimization (i.e., using two 1D arrays instead of a 2D DP table).
+
+Step 1: Understanding the Problem Statement
+We are given N items, each having:
+Value val[i]
+Weight wt[i]
+A knapsack with a maximum weight capacity of W.
+We need to find the maximum total value that can be obtained by selecting items such that their total weight does not exceed W.
+Each item can be included at most once (0/1 property).
+Step 2: Defining the DP State
+What will prev[j] and curr[j] represent?
+prev[j] stores the maximum value obtained when considering items 0 to i-1 with knapsack capacity j.
+curr[j] stores the maximum value obtained when considering items 0 to i with knapsack capacity j.
+Thus, at every step, we update the current row (curr) based on the previous row (prev).
+
+Step 3: Initialize the DP Table
+Base Case: When considering only the first item (i = 0), we initialize prev[j]:
+If the weight of the first item (wt[0]) is less than or equal to j, we take its value (val[0]).
+Otherwise, the value remains 0.
+for (int i = wt[0]; i <= W; i++)  
+    prev[i] = val[0];
+Step 4: Iterate Through the Items
+Start iterating from i = 1 to n-1 (remaining items).
+For each item, iterate through all capacities j = 0 to W.
+for (int i = 1; i < n; i++) {
+    for (int j = 0; j <= W; j++) {  
+Two choices for each item:
+Pick the item (if its weight is ≤ j):
+Include its value (val[i]).
+Reduce the remaining capacity (j - wt[i]).
+Add the value from prev[j - wt[i]].
+Don't pick the item:
+Take the value from the previous item (prev[j]).
+int pick = INT_MIN;
+if (wt[i] <= j)
+    pick = val[i] + prev[j - wt[i]];  // Pick the item
+
+int notpick = prev[j];  // Don't pick the item
+curr[j] = max(pick, notpick);
+Step 5: Update the prev Array
+After processing the current item, copy curr to prev, so it can be used for the next iteration.
+prev = curr;
+Step 6: Return the Maximum Value
+After processing all items, the answer is stored in prev[W], which represents the maximum value obtained for full capacity W.
+return prev[W];
+Final Algorithm Summary
+Initialize prev array with base case values (first item's value when its weight fits).
+Iterate through all items:
+Compute the curr array using previous row (prev).
+Use two choices: pick or not pick.
+Update prev after each item iteration.
+Return prev[W] as the final answer.
+Time & Space Complexity
+✅ Time Complexity: 
+𝑂
+(
+𝑁
+×
+𝑊
+)
+O(N×W)
+
+Two nested loops:
+Outer loop runs for N items.
+Inner loop runs for W capacities.
+✅ Space Complexity: 
+𝑂
+(
+𝑊
+)
+O(W)
+
+Instead of O(N × W) space (2D DP table), we use two 1D arrays (prev and curr), reducing it to O(W).
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+   int knapsack(int W, vector<int> &val, vector<int> &wt) {
+    int n = val.size();
+    vector<int> prev(W + 1, 0), curr(W + 1, 0);
+
+    // Initialize base case: if we can pick the first item, we take its value
+    for (int i = wt[0]; i <= W; i++)  
+        prev[i] = val[0];
+
+    // Loop through all items
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j <= W; j++) {  // Fixed loop condition (j <= W)
+            int pick = INT_MIN;
+            if (wt[i] <= j)
+                pick = val[i] + prev[j - wt[i]];  // Pick the item
+            
+            int notpick = prev[j];  // Don't pick the item
+            curr[j] = max(pick, notpick);
+        }
+        prev = curr;  // Update previous row for the next iteration
+    }
+    return prev[W];
+
+
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    // Taking total test cases
+    int testCases;
+    cin >> testCases;
+    cin.ignore();
+    while (testCases--) {
+        // Reading number of items and capacity
+        int numberOfItems, capacity;
+        vector<int> weights, values;
+        string input;
+        int number;
+
+        // Read capacity and number of items
+        getline(cin, input);
+        stringstream ss(input);
+        ss >> capacity;      // The first number is the capacity
+        ss >> numberOfItems; // The second number is the number of items
+
+        // Read values
+        getline(cin, input);
+        ss.clear();
+        ss.str(input);
+        while (ss >> number) {
+            values.push_back(number);
+        }
+
+        // Read weights
+        getline(cin, input);
+        ss.clear();
+        ss.str(input);
+        while (ss >> number) {
+            weights.push_back(number);
+        }
+
+        Solution solution;
+        cout << solution.knapsack(capacity, values, weights) << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
