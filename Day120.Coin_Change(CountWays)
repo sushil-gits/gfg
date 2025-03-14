@@ -1,0 +1,107 @@
+Understanding the Problem Statement
+The function aims to count the number of ways to form a given sum using the given set of coins. Each coin can be used an unlimited number of times.
+
+Stepwise Approach
+Step 1: Base Cases
+The function solve(i, n, t, sum, coins, dp) is a recursive function designed to find the number of ways to obtain the sum using the available coins.
+
+If the target sum (t) is reached:
+if(t == sum) return 1;
+If t (current sum) becomes equal to sum, it means we have found one valid way to form the sum, so we return 1.
+If all coins have been considered and the sum is not yet reached:
+if(i >= n) return 0;
+If we have iterated through all the coins and haven’t reached sum, return 0 (no valid way found).
+Step 2: Memoization Check
+if(dp[i][t] != -1) return dp[i][t];
+If this state (i, t) has already been computed and stored in dp, return its stored value to avoid redundant calculations.
+Step 3: Choice to Include or Exclude the Current Coin
+We have two choices:
+
+Include the current coin (if it doesn’t exceed the target sum)
+int take = 0;
+if(t + coins[i] <= sum) 
+    take = solve(i, n, t + coins[i], sum, coins, dp);
+If adding the current coin coins[i] does not exceed sum, we recursively call solve with the same index i (since we can use the same coin again) and an updated sum t + coins[i].
+Exclude the current coin and move to the next coin
+return dp[i][t] = take + solve(i+1, n, t, sum, coins, dp);
+Move to the next coin (i+1) and keep the sum unchanged.
+The total number of ways is the sum of both cases: taking and not taking the coin.
+Step 4: Initialization and Calling the Recursive Function
+The function count(vector<int>& coins, int sum) initializes the DP table and calls the recursive function.
+
+Get the number of coins:
+int n = coins.size();
+Initialize a dp table with -1 (to store intermediate results):
+vector<vector<int>> dp(n+1, vector<int>(sum+1, -1));
+Call the recursive function solve starting from the 0th index and an initial sum of 0:
+return solve(0, n, 0, sum, coins, dp);
+Time Complexity Analysis
+Since each state (i, t) is stored in dp, the number of unique states is at most O(n * sum).
+Each state is computed once, leading to an overall time complexity of O(n * sum).
+Final Summary
+Base case: If sum is reached, return 1. If all coins are exhausted, return 0.
+Memoization: Use a DP table to store previously computed results.
+Recursion: Either take the current coin (if possible) or move to the next.
+Final Call: Start recursion from index 0 and initial sum 0.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+ int solve(int i,int n,int t,int sum,vector<int>&coins,vector<vector<int>>&dp)
+ {
+     if(t==sum)
+     return 1;
+     if(i>=n)
+     return 0;
+     if(dp[i][t]!=-1)
+     return dp[i][t];
+     int take=0;
+     if(t+coins[i]<=sum)
+     take=solve(i,n,t+coins[i],sum,coins,dp);
+     return dp[i][t]=take+solve(i+1,n,t,sum,coins,dp);
+ }
+    int count(vector<int>& coins, int sum) {
+        // code here.
+        int n=coins.size();
+        vector<vector<int>>dp(n+1,vector<int>(sum+1,-1));
+        return solve(0,n,0,sum,coins,dp);
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        int sum;
+        cin >> sum;
+        cin.ignore();
+        Solution ob;
+        cout << ob.count(arr, sum) << endl;
+        cout << "~" << endl;
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
