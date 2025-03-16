@@ -1,0 +1,103 @@
+Problem Statement
+Given an array arr[] of size n, where each element represents the maximum number of steps that can be jumped forward from that position, find the minimum number of jumps required to reach the end of the array. If it's not possible to reach the end, return -1.
+
+Stepwise Approach
+Handle Edge Case:
+
+If the first element of the array is 0, it means we cannot make any move, so return -1.
+Initialize Variables:
+
+fuel = arr[0] → This keeps track of the remaining steps we can take before making another jump.
+jump = 1 → At least one jump is needed, as we start from the first position.
+maxi = arr[0] → This tracks the farthest index we can reach at any point.
+Traverse the Array:
+
+Iterate through the array from index 1 to n-1.
+Check if We Have Reached the Last Index:
+
+If i == n-1, return jump as we have reached the end.
+Decrease Fuel:
+
+Since we moved one step forward, decrease fuel by 1.
+Update Maximum Reach (maxi):
+
+Update maxi = max(maxi, i + arr[i]) to store the farthest position we can reach from the current index.
+Check if Fuel is Exhausted:
+
+If fuel == 0, it means we cannot move further with the current jump.
+If maxi <= i, it means we are stuck and cannot move forward, so return -1.
+Otherwise, update fuel = maxi - i and increase jump by 1 (since we are making a new jump).
+Return the Final Jump Count:
+
+If the loop completes, return jump as the minimum number of jumps required to reach the end.
+Time Complexity:
+O(n) → The loop runs at most n times, processing each index once.
+Space Complexity:
+O(1) → We use only a few extra variables, so space usage is constant.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int minJumps(vector<int>& arr) {
+        // code here
+        int n=arr.size();
+        if(arr[0]==0)
+        return -1;
+        int fuel=arr[0];
+        int jump=1;
+        int maxi=arr[0];
+        for(int i=1;i<n;i++)
+        {
+            if(i==n-1)
+            return jump;
+            fuel--;
+            maxi=max(maxi,i+arr[i]);
+            if(fuel==0)
+            {
+                if(maxi<=i)
+                return -1;
+                else
+                {
+                    fuel=maxi-i;
+                    jump++;
+                }
+            }
+        }
+        return jump;
+    }
+};
+
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        int n, i, j;
+        vector<int> arr;
+        string ip;
+        int number;
+        getline(cin, ip);
+        stringstream ss(ip);
+
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        Solution obj;
+        cout << obj.minJumps(arr) << endl << "~\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
