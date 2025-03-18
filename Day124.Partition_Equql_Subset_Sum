@@ -1,0 +1,321 @@
+Stepwise Approach to Solve the Problem Without Using DP
+The problem is to determine if the given array can be partitioned into two subsets with equal sums. The approach without using Dynamic Programming (DP) follows a recursive backtracking method.
+
+Step 1: Calculate the Sum of the Array
+Iterate over the array and compute the total sum of all elements.
+If the sum is odd, then it is impossible to divide it into two equal subsets, so return false.
+Step 2: Convert the Problem into a Subset Sum Problem
+Since we need two equal subsets, our target sum for each subset will be sum / 2.
+The problem now reduces to finding if there exists a subset in the array whose sum is exactly sum / 2.
+Step 3: Implement a Recursive Function
+We define a recursive function solve(sum, arr) that checks if we can form sum using elements from arr.
+The function follows backtracking to explore all possibilities.
+Step 4: Use Iterative Approach Instead of Recursion
+Instead of using recursion, we use two vectors (next and curr) to store previous and current states.
+These vectors help in optimizing space complexity by avoiding recursion.
+Step 5: Initialize the Base Case
+next[0] = 1: This means an empty subset can achieve a sum of 0.
+All other values in next are initialized to 0 since no subset is yet found for those sums.
+Step 6: Iterate Over the Array in Reverse Order
+We traverse the array from right to left (backward loop).
+For each element arr[index], check if we can form a sum i using this element.
+Step 7: Iterate Over Possible Sums
+For each possible sum i (from 0 to sum), determine if we can achieve i:
+If arr[index] can be included in the subset (i - arr[index] >= 0), then check if we can form (i - arr[index]) sum using the next array.
+Otherwise, inherit the previous result (next[i]).
+Step 8: Update next for the Next Iteration
+After processing the index-th element, update next to curr for the next iteration.
+Step 9: Return the Final Answer
+After processing all elements, check if next[sum] == 1. If true, return true (partition exists); otherwise, return false.
+Final Code (Corrected and Optimized)
+#include <vector>
+using namespace std;
+
+bool solve(int sum, vector<int>& arr) {
+    int n = arr.size();
+    vector<int> next(sum + 1, 0);
+    vector<int> curr(sum + 1, 0);
+    
+    next[0] = 1; // Base case: A sum of 0 is always possible with an empty subset.
+    
+    for (int index = n - 1; index >= 0; index--) {
+        for (int i = 0; i <= sum; i++) {
+            if (i >= arr[index] && next[i - arr[index]])  // Can we include arr[index]?
+                curr[i] = 1;
+            else
+                curr[i] = next[i];  // Inherit the previous result
+        }
+        next = curr;  // Update for the next iteration
+    }
+    
+    return next[sum];  // If we can form 'sum', return true.
+}
+
+bool equalPartition(vector<int>& arr) {
+    int sum = 0;
+    
+    for (int nums : arr) {
+        sum += nums;  // Compute total sum of array
+    }
+    
+    if (sum % 2 != 0) return false;  // If sum is odd, partitioning is impossible
+    
+    sum /= 2;  // Target subset sum
+    return solve(sum, arr);  // Call the function to check if we can form this sum
+}
+Complexity Analysis
+Time Complexity: 
+𝑂
+(
+𝑁
+×
+sum
+/
+2
+)
+O(N×sum/2), where 
+𝑁
+N is the size of the array.
+Space Complexity: 
+𝑂
+(
+sum
+/
+2
+)
+O(sum/2) due to the use of two vectors (next and curr).
+
+
+//another apppraoch using DP
+Stepwise Approach for equalPartition Function
+The problem is to determine if a given array can be partitioned into two subsets with equal sums. This is equivalent to checking whether a subset with sum = total sum / 2 exists.
+
+Step 1: Compute the Total Sum
+First, calculate the sum of all elements in the array.
+If the sum is odd, return false, because an odd sum cannot be divided into two equal integer parts.
+Code:
+int sum = 0;
+for(int i = 0; i < arr.size(); i++) {
+    sum += arr[i];
+}
+if (sum % 2 != 0) 
+    return false;  // Odd sum cannot be partitioned equally
+Step 2: Define the Subset Sum Target
+We now need to find a subset in the array whose sum is sum / 2.
+Let target = sum / 2.
+Code:
+int target = sum / 2;
+Step 3: Initialize the DP Array
+Create a 1D boolean DP array of size target + 1, initialized to false.
+dp[i] represents whether a subset with sum i can be formed.
+Base case: dp[0] = true (A subset sum of 0 is always possible with an empty subset).
+Code:
+vector<bool> dp(target + 1, false);
+dp[0] = true;  // A subset with sum 0 is always possible
+Step 4: Process Each Element in the Array
+Iterate through each element num in arr.
+Update the DP array in reverse (from target to num):
+If dp[i - num] was true, it means we can now form dp[i].
+Code:
+for (int num : arr) {
+    for (int i = target; i >= num; i--) {
+        dp[i] = dp[i] || dp[i - num];
+    }
+}
+Why Reverse Iteration?
+
+To avoid using the same element multiple times, we iterate backward when updating dp.
+Step 5: Return the Final Answer
+If dp[target] is true, it means we found a subset with sum target = sum/2, so return true.
+Otherwise, return false.
+Code:
+return dp[target];
+Final Code:
+#include <vector>
+using namespace std;
+
+bool equalPartition(vector<int>& arr) {
+    int sum = 0;
+    
+    // Step 1: Compute total sum
+    for (int i = 0; i < arr.size(); i++) {
+        sum += arr[i];
+    }
+
+    // Step 2: If sum is odd, partitioning is impossible
+    if (sum % 2 != 0)
+        return false;
+
+    int target = sum / 2;
+
+    // Step 3: Initialize DP array
+    vector<bool> dp(target + 1, false);
+    dp[0] = true;  // Base case
+
+    // Step 4: Update DP array based on elements
+    for (int num : arr) {
+        for (int i = target; i >= num; i--) {
+            dp[i] = dp[i] || dp[i - num];
+        }
+    }
+
+    // Step 5: Check if partitioning is possible
+    return dp[target];
+}
+Complexity Analysis
+Time Complexity: 
+𝑂
+(
+𝑁
+×
+sum
+/
+2
+)
+O(N×sum/2)
+𝑁
+N is the number of elements in the array.
+We iterate through all elements and update the dp array for sum/2 states.
+Space Complexity: 
+𝑂
+(
+sum
+/
+2
+)
+O(sum/2)
+We use a 1D dp array of size sum/2 + 1.
+Example Walkthrough
+Example 1
+Input:
+arr = {1, 5, 11, 5};
+Steps:
+
+sum = 1 + 5 + 11 + 5 = 22
+target = 22 / 2 = 11
+DP updates as follows:
+dp[0] = true
+dp[1] = true
+dp[5] = true
+dp[6] = true
+dp[11] = true
+Since dp[11] = true, return true.
+Output: true
+
+Example 2
+Input:
+arr = {1, 2, 3, 5};
+Steps:
+
+sum = 1 + 2 + 3 + 5 = 11
+target = 11 / 2 = 5.5 (not an integer)
+Return false.
+Output: false
+
+Key Takeaways
+✅ Uses Dynamic Programming efficiently.
+✅ Optimized space complexity using 1D DP array.
+✅ Backward iteration prevents using the same element multiple times.
+✅ Converts partition problem → subset sum problem effectively. 🚀
+
+
+//{ Driver Code Starts
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+  
+// //   function to solve without using dp concept
+// bool solve(int sum,vector<int>&arr)
+// {
+//     int n=arr.size();
+//     vector<int>next(sum+1,0);
+//     vector<int>curr(sum+1,0);
+//     next[0]=1;
+//     for(int index=n-1;index>=0;index--)
+//     {
+//         for(int i=0;i<=sum;i++)
+//         {
+//             if(i-arr[index]>=0&&arr[index]<=i&&next[i-arr[index]])
+//             curr[i]=1;
+//             else
+//             curr[i]=next[i];
+//         }
+//         next=curr;
+//     }
+//     return next[sum];
+    
+// }
+    bool equalPartition(vector<int>& arr) {
+        // code here
+//  using DP
+        int sum=0;
+        for(int i=0;i<arr.size();i++)
+        {
+            sum+=arr[i];
+            
+        }
+        if(sum%2!=0)
+        return false;
+        int target=sum/2;
+        vector<bool>dp(target+1,0);
+        dp[0]=true;
+        for(int nums:arr)
+        {
+            for(int i=target;i>=nums;i--)
+            {
+                dp[i]=dp[i]||dp[i-nums];
+            }
+        }
+        return dp[target];
+        
+        // // without DP
+        // int sum=0;
+        // for(nums:arr)
+        // {
+        //     sum+=nums;
+        // }
+        // if(sum%2!=0)
+        // return 0;
+        // sum/=2;
+        // return solve(sum,arr);
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+
+        Solution ob;
+        if (ob.equalPartition(arr))
+            cout << "true\n";
+        else
+            cout << "false\n";
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
+
+
+
+
+
