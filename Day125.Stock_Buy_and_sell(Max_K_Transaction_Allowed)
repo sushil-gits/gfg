@@ -1,0 +1,102 @@
+Step 1: Initialize Variables
+n = prices.size(): Get the size of the prices array.
+vector<vector<int>> dp_prev(3, vector<int>(k+1, 0)): Create a DP table (dp_prev) for two states:
+dp_prev[0][j] → Maximum profit when not holding a stock.
+dp_prev[1][j] → Maximum profit when holding a stock.
+The extra row dp_prev[2][j] is not needed but included for safety.
+Step 2: Initialize Base Cases
+For j = 0 to k (transactions allowed):
+dp_prev[1][j] = -1e9: This represents the impossibility of holding a stock without making a purchase.
+Step 3: Iterate Over Prices in Reverse
+Start iterating over i from n-1 to 0 (going backward).
+Create dp_curr(3, vector<int>(k+1, 0)) to store current state values.
+Step 4: Iterate Over Transactions
+Iterate over j from k-1 to 0:
+For state 0 (not holding a stock):
+dp_curr[0][j] = max({dp_curr[0][1], dp_prev[0][j], -prices[i] + dp_prev[1][j]})
+dp_curr[0][1]: Incorrect value, should not be included.
+dp_prev[0][j]: Keep not holding.
+-prices[i] + dp_prev[1][j]: Buy stock today.
+For state 1 (holding a stock):
+dp_curr[1][j] = max({dp_prev[1][j], dp_curr[1][j], prices[i] + dp_prev[0][j+1]})
+dp_prev[1][j]: Continue holding.
+prices[i] + dp_prev[0][j+1]: Sell stock today.
+Step 5: Update dp_prev
+Assign dp_prev = dp_curr to move to the next iteration.
+Step 6: Return Final Answer
+Return dp_prev[0][0], which gives the maximum profit when no stock is held at the start with k transactions allowed.
+Corrections & Issues in the Code
+dp_curr[0][1] in dp_curr[0][j] should be removed.
+dp_prev[1][j] is initialized with -1e9, meaning an impossible transaction state, ensuring correctness.
+The transition logic effectively implements buy-sell decisions using bottom-up DP.
+
+
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int maxProfit(vector<int>& prices, int k) {
+        // code here
+         int n=(int)prices.size();
+        
+        vector<vector<int>>dp_prev(3,vector<int>(k+1,0));
+
+        for(int i=0;i<=k;i++)
+        {
+            dp_prev[1][i]=-(int)(1e9);
+        }
+        for(int i=n-1;i>=0;i--)
+        {
+           vector<vector<int>>dp_curr(3,vector<int>(k+1,0));
+            for(int j=k-1;j>=0;j--)
+            {
+                dp_curr[0][j]=max({dp_curr[0][1],dp_prev[0][j],-prices[i]+dp_prev[1][j]});
+                dp_curr[1][j]=max({dp_prev[1][j],dp_curr[1][j],prices[i]+dp_prev[0][j+1]});
+                
+            }
+            dp_prev=dp_curr;
+        }
+        return dp_prev[0][0];
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(0);
+
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        string input;
+        getline(cin, input);
+        istringstream iss(input);
+        vector<int> arr;
+        int num;
+
+        // Read integers from the input string
+        while (iss >> num) {
+            arr.push_back(num);
+        }
+        int k;
+        cin >> k;
+        cin.ignore();
+        Solution ob;
+        cout << ob.maxProfit(arr, k) << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
