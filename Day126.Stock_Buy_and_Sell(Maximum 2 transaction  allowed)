@@ -1,0 +1,103 @@
+Stepwise Approach:
+Initialize variables:
+
+buy1 = INT_MAX: Tracks the minimum price to buy the first stock.
+buy2 = INT_MAX: Tracks the effective cost to buy the second stock after gaining profit from the first transaction.
+profit1 = 0: Stores the maximum profit from the first transaction.
+profit2 = 0: Stores the maximum profit from both transactions.
+Iterate through the stock prices:
+
+For each price prices[i], update the variables based on minimizing cost and maximizing profit.
+Update first transaction:
+
+buy1 = min(buy1, prices[i])
+This keeps track of the lowest price encountered to buy the first stock.
+profit1 = max(profit1, prices[i] - buy1)
+This calculates the maximum profit possible from the first transaction.
+Update second transaction:
+
+buy2 = min(buy2, prices[i] - profit1)
+This effectively tracks the cost of buying the second stock after gaining profit from the first transaction.
+profit2 = max(profit2, prices[i] - buy2)
+This calculates the maximum total profit from both transactions.
+Return the final profit:
+
+profit2 stores the maximum profit from at most two transactions.
+Dry Run Example:
+Consider an example:
+prices = {3,3,5,0,0,3,1,4};
+Step-by-step execution:
+i	prices[i]	buy1	profit1	buy2	profit2
+0	3	3	0	3	0
+1	3	3	0	3	0
+2	5	3	2	3	2
+3	0	0	2	-2	2
+4	0	0	2	-2	2
+5	3	0	3	-2	5
+6	1	0	3	-2	5
+7	4	0	4	-2	6
+Final maximum profit = 6.
+
+Time Complexity Analysis:
+The function iterates through the prices array once, performing constant-time operations.
+Time Complexity: O(N)
+Space Complexity: O(1) (only a few integer variables are used)
+Conclusion:
+This approach efficiently tracks two transactions by:
+
+Finding the best opportunity to buy and sell the first stock.
+Using the profit from the first transaction to find the best opportunity to buy and sell the second stock.
+Finally, it returns the maximum total profit possible. 🚀
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int maxProfit(vector<int> &prices) {
+        // code here
+        int buy1=INT_MAX,buy2=INT_MAX;
+        int profit1=0,profit2=0;
+        for(int i=0;i<prices.size();i++)
+        {
+            buy1=min(buy1,prices[i]);
+            profit1=max(profit1,prices[i]-buy1);
+            buy2=min(buy2,prices[i]-profit1);
+            profit2=max(profit2,prices[i]-buy2);
+        }
+        return profit2;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+
+        // Read first array
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+
+        Solution ob;
+        int res = ob.maxProfit(arr);
+
+        cout << res << endl << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
