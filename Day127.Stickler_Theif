@@ -1,0 +1,118 @@
+Stepwise Approach for findMaxSum Function
+This function follows the Dynamic Programming (DP) approach to solve the House Robber Problem (Maximum Sum of Non-Adjacent Elements). The goal is to find the maximum sum of non-adjacent elements from an array.
+
+Stepwise Explanation
+Step 1: Handle Edge Cases
+If the array is empty (n == 0), return 0 because there's no element to sum.
+If the array has only one element (n == 1), return arr[0] since there's only one choice.
+int n = arr.size();
+if (n == 0) return 0; // No elements → max sum = 0
+if (n == 1) return arr[0]; // Only one element → max sum = arr[0]
+Step 2: Initialize Base Cases
+We define two variables:
+
+prev2 → Stores the maximum sum excluding the previous element (i-2 index).
+prev → Stores the maximum sum including the previous element (i-1 index).
+Initially:
+
+prev2 = 0 (since no elements are included)
+prev = arr[0] (if we include only the first element
+int prev2 = 0;
+int prev = arr[0];
+Step 3: Iterate Through the Array
+For each element i, decide whether to take or skip it.
+Two choices for curr (current max sum at i):
+Take arr[i]: Add the current element to prev2 (sum excluding i-1).
+Do not take arr[i]: Keep prev (sum including i-1 but not i).
+for (int i = 1; i < n; i++) { // Start from index 1
+    int take = arr[i];  // Option 1: Take current element
+    if (i > 1) take += prev2; // Add sum excluding the previous element
+    int nottake = prev; // Option 2: Do not take current element
+    
+    int curr = max(take, nottake); // Maximum of the two choices
+    
+    prev2 = prev; // Update prev2 to the previous 'prev'
+    prev = curr;  // Update prev to current max sum
+}
+Step 4: Return the Maximum Sum
+After iterating, prev stores the maximum sum of non-adjacent elements.
+return prev;
+Final Dry Run Example
+Input:
+arr = {3, 2, 7, 10}
+Step-by-Step Execution:
+Index (i)	arr[i]	Take (arr[i] + prev2)	Not Take (prev)	Max (curr)	prev2	prev
+0 (Base)	3	3	-	3	0	3
+1	2	2	3	3	3	3
+2	7	7 + 3 = 10	3	10	3	10
+3	10	10 + 3 = 13	10	13	10	13
+Output:
+13
+Time & Space Complexity
+✅ Time Complexity: O(N) → We iterate through the array once.
+✅ Space Complexity: O(1) → Uses only constant extra space (prev2 and prev).
+
+Key Takeaways
+Uses Dynamic Programming (Tabulation with Space Optimization).
+Avoids Recursion to prevent exponential complexity.
+Efficiently finds the max sum of non-adjacent elements.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int ll;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int findMaxSum(vector<int>& arr) {
+        // code here
+        int n=arr.size();
+        if(n==0)
+        return 0;
+        if(n==1)
+        return arr[0];
+        int prev2=0;
+        int prev=arr[0];
+        for(int i=0;i<n;i++)
+        {
+            int take=arr[i];
+            if(i>1)
+            take+=prev2;
+            int nottake=prev;
+            int curr=max(take,nottake);
+            prev2=prev;
+            prev=curr;
+        }
+        return prev;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+
+        Solution ob;
+        cout << ob.findMaxSum(arr) << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
