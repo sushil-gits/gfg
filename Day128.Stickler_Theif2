@@ -1,0 +1,124 @@
+Stepwise Approach for maxValue Function (House Robber II Problem)
+This function solves the House Robber II problem using dynamic programming (DP). The constraint is that the first and last houses are connected in a circular manner, meaning we cannot rob both at the same time.
+
+Step 1: Define the Helper Function roblinear
+The function roblinear(arr, start, end) implements the House Robber I solution (linear DP) for a given range [start, end] in arr.
+
+Key Idea: Use two variables (prev1 and prev2) to store the previous maximum loot:
+int prev1 = 0, prev2 = 0;
+Iterate through the given range:
+for (int i = start; i <= end; i++) {
+Compute the maximum loot if we rob the current house:
+int curr = max(prev1, prev2 + arr[i]);
+Update prev2 and prev1:
+prev2 = prev1;
+prev1 = curr;
+This ensures that we always track the best robbery amount without robbing two adjacent houses.
+
+Return the maximum possible loot:
+return prev1;
+Step 2: Define the Main Function maxValue
+Handle the base case: If there is only one house, return its value:
+if (n == 1) return arr[0];
+Call roblinear twice, excluding either the first or last house:
+return max(roblinear(arr, 0, n-2), roblinear(arr, 1, n-1));
+roblinear(arr, 0, n-2): Rob houses excluding the last one.
+
+roblinear(arr, 1, n-1): Rob houses excluding the first one.
+
+The maximum of both is the final answer.
+
+Step 3: Why This Works?
+Since the first and last houses are adjacent, robbing both together is not allowed.
+
+By computing two separate cases, we ensure no conflict while maximizing the total amount.
+
+Time and Space Complexity
+Time Complexity: 
+𝑂
+(
+𝑁
+)
+O(N) (since roblinear runs in linear time).
+
+Space Complexity: 
+𝑂
+(
+1
+)
+O(1) (only a few variables are used, no extra arrays).
+
+Summary of Steps
+Define roblinear to compute the maximum loot for a linear range.
+
+Handle base case where n == 1.
+
+Compute two cases:
+
+Rob excluding the last house.
+
+Rob excluding the first house.
+
+Return the maximum of both cases.
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+  int roblinear(vector<int>arr,int start,int end)
+  {
+      int prev1=0,prev2=0;
+      for(int i=start;i<=end;i++)
+      {
+          int curr=max(prev1,prev2+arr[i]);
+          prev2=prev1;
+          prev1=curr;
+      }
+      return prev1;
+  }
+    int maxValue(vector<int>& arr) {
+        // your code here
+        
+        int n=arr.size();
+        if(n==1)
+        return arr[0];
+        return max(roblinear(arr,0,n-2),roblinear(arr,1,n-1));
+    }
+};
+
+
+
+//{ Driver Code Starts.
+
+int main() {
+
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        string input;
+        int num;
+        vector<int> arr;
+
+        getline(cin, input);
+        stringstream s2(input);
+        while (s2 >> num) {
+            arr.push_back(num);
+        }
+
+        Solution ob;
+        int res;
+        res = ob.maxValue(arr);
+        cout << res << "\n"
+             << "~" << endl;
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
