@@ -1,0 +1,132 @@
+Problem Understanding:
+Given a string digits containing only characters '0' to '9', count the number of ways to decode it into letters, where:
+
+'1' → 'A', '2' → 'B', ..., '26' → 'Z'
+
+"12" can be decoded as "AB" (1,2) or "L" (12)
+
+"226" can be decoded as "BZ", "VF", or "BBF"
+
+Stepwise Solution Breakdown:
+Step 1: Base Case Handling
+if (digits.size() < 2) return digits.size();
+If the string has only one character, there is only one way to decode it (unless it's '0', but it's not handled here).
+
+If it's empty (""), return 0.
+
+Step 2: Initialize DP Variables
+int prev2 = 1, prev1 = 1, ans;
+prev2 represents ways to decode (i-2)th position.
+
+prev1 represents ways to decode (i-1)th position.
+
+ans stores the number of ways to decode up to index i.
+
+Step 3: Iterate Through the String
+for (int i = 1; i < digits.size(); i++) {
+    ans = 0;
+Start iterating from the second character (i = 1).
+
+Reset ans to 0 at each step.
+
+Step 4: Single Digit Validity Check
+if (digits[i] != '0') ans = prev1;
+If the current digit is not '0', it can be decoded separately.
+
+Example:
+
+"1" → "A" ✅
+
+"2" → "B" ✅
+
+"0" → ❌ (invalid)
+
+Step 5: Two-Digit Validity Check
+if (digits[i - 1] == '1' || (digits[i - 1] == '2' && digits[i] <= '6')) ans += prev2;
+If the previous digit is '1' (e.g., "12", "14"), the two digits together form a valid letter.
+
+If the previous digit is '2' AND the current digit is ≤6 (e.g., "22", "26"), it also forms a valid letter.
+
+So, add prev2 to ans.
+
+Step 6: Update Previous Values
+prev2 = prev1;
+prev1 = ans;
+Move prev2 forward (prev1 becomes prev2).
+
+Move prev1 forward (ans becomes prev1).
+
+Continue looping.
+
+Step 7: Return Answer
+return ans;
+The final ans stores the total number of ways to decode the string.
+
+Example Walkthrough
+Example 1
+Input: "12"
+Processing
+i	digits[i-1]	digits[i]	Single Valid?	Two-Digit Valid?	ans
+0	'1'	'2'	✅ (A,B)	✅ (L)	2
+Output: 2
+Example 2
+Input: "226"
+Processing
+i	digits[i-1]	digits[i]	Single Valid?	Two-Digit Valid?	ans
+1	'2'	'2'	✅ (B)	✅ (V)	2
+2	'2'	'6'	✅ (F)	✅ (Z)	3
+Output: 3
+Final Complexity Analysis
+Time Complexity: O(n) → We iterate through the string once.
+
+Space Complexity: O(1) → We use only a few variables (prev1, prev2, ans).
+
+Final Thoughts
+This approach uses Dynamic Programming (Bottom-Up Approach with Constant Space).
+
+It is efficient and works for large inputs.
+
+Edge cases like "0", "10", "100" should be handled separately.
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int countWays(string &digits) {
+        // Code here
+         if(digits.size()<2) return digits.size();
+       int prev2=1,prev1=1,ans;
+       for(int i=1;i<digits.size();i++){
+           ans=0;
+           if(digits[i]!='0') ans=prev1;
+           if(digits[i-1]=='1' || (digits[i-1]=='2' && digits[i]<='6')) ans+=prev2;
+           prev2=prev1;prev1=ans;
+       }
+        return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int tc;
+    cin >> tc;
+    cin.ignore();
+    while (tc--) {
+        string digits;
+        getline(cin, digits);
+        Solution obj;
+        int ans = obj.countWays(digits);
+        cout << ans << "\n";
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
