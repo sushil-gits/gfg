@@ -1,0 +1,130 @@
+Stepwise Approach:
+Understanding the Problem Statement:
+
+Given an array arr of size n, where arr[i] represents the dimensions of matrices.
+
+The goal is to find the minimum cost of multiplying matrices by choosing the optimal order of multiplication.
+
+Breaking Down the Recursive Function f(arr, i, j, dp)
+Step 1: Base Case
+If i == j, this means there is only one matrix (no multiplication needed), so return 0.
+
+Step 2: Check for Memoization
+If dp[i][j] is already computed (not -1), return the stored value to avoid redundant calculations.
+
+Step 3: Initialize the Minimum Cost
+Set mini = INT_MAX to store the minimum cost encountered.
+
+Step 4: Try Different Partitioning Points
+Iterate k from i to j - 1 to try all possible partitions:
+
+Compute cost recursively for the left partition f(arr, i, k, dp).
+
+Compute cost recursively for the right partition f(arr, k + 1, j, dp).
+
+Compute the cost of multiplying the two partitions:
+arr[i-1] * arr[k] * arr[j]
+
+Update mini with the minimum cost encountered.
+
+Step 5: Store the Result in dp[i][j] and Return
+Store the computed minimum cost in dp[i][j] for memoization.
+
+Return the stored result.
+
+Breaking Down the matrixMultiplication Function
+Step 1: Initialize Variables
+Get the size of arr, n.
+
+Define i = 1 (starting index of the first matrix).
+
+Define j = n - 1 (ending index of the last matrix).
+
+Step 2: Create the DP Table
+Create a 2D DP table dp(n, vector<int>(n, -1)) to store already computed values.
+
+Step 3: Call the Recursive Function
+Call f(arr, i, j, dp) to compute the minimum multiplication cost.
+
+Time Complexity Analysis
+Since there are O(n²) subproblems and each subproblem takes O(n) time due to the loop, the overall complexity is O(n³).
+
+Example Walkthrough
+Input:
+vector<int> arr = {40, 20, 30, 10, 30};
+cout << matrixMultiplication(arr);
+Stepwise Execution:
+arr = {40, 20, 30, 10, 30} represents matrices (40x20), (20x30), (30x10), (10x30)
+
+Function will try all possible partitions and choose the one with the least multiplication cost.
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+int f(vector<int>& arr, int i, int j, vector<vector<int>>& dp) {
+    
+    if (i == j) {
+        return 0;
+    }
+
+    
+    if (dp[i][j] != -1) {
+        return dp[i][j];
+    }
+
+    int mini = INT_MAX;
+
+    
+    for (int k = i; k <= j - 1; k++) {
+        int ans = f(arr, i, k, dp) + f(arr, k + 1, j, dp) + arr[i - 1] * arr[k] * arr[j];
+        mini = min(mini, ans);
+    }
+
+
+    return dp[i][j] = mini;
+}
+
+    int matrixMultiplication(vector<int> &arr) {
+        int n = arr.size();
+        int i = 1;
+        int j = n - 1;
+
+        
+        vector<vector<int>> dp(n, vector<int>(n, -1));
+        return f(arr, i, j, dp);
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore(); // to ignore the newline after the integer input
+    while (t--) {
+        int n;
+        vector<int> a;
+        string input;
+
+        // Input format: first number n followed by the array elements
+        getline(cin, input);
+        stringstream ss(input);
+        int num;
+        while (ss >> num)
+            a.push_back(num);
+
+        Solution obj;
+        cout << obj.matrixMultiplication(a) << endl << "~\n";
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
