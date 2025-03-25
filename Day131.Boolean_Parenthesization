@@ -1,0 +1,245 @@
+Stepwise Approach for countWays Function
+The function countWays determines the number of ways to parenthesize a given boolean expression (in the form of a string) so that it evaluates to True ('T'). The expression contains operands ('T' for True, 'F' for False) and operators ('&', '|', '^').
+
+Step 1: Extract Key Information
+The given string s contains operands (T/F) and operators (&, |, ^).
+
+The number of operands n can be derived as:
+
+𝑛
+=
+length of string
++
+1
+2
+n= 
+2
+length of string+1
+​
+ 
+since operands appear at even indices (0, 2, 4, ...) and operators at odd indices (1, 3, 5, ...).
+
+Step 2: Initialize Dynamic Programming (DP) Table
+Use a 3D DP table dp[l][r][val]:
+
+dp[l][r][0]: Number of ways to parenthesize substring [l, r] to get False (0).
+
+dp[l][r][1]: Number of ways to parenthesize substring [l, r] to get True (1).
+
+Base Case:
+
+If l == r (single operand), it can only be either True or False, so:
+
+𝑑
+𝑝
+[
+𝑖
+]
+[
+𝑖
+]
+[
+1
+]
+=
+1
+if operand is ’T’
+dp[i][i][1]=1if operand is ’T’
+𝑑
+𝑝
+[
+𝑖
+]
+[
+𝑖
+]
+[
+0
+]
+=
+1
+if operand is ’F’
+dp[i][i][0]=1if operand is ’F’
+Step 3: Compute DP Table Using Bottom-Up Approach
+Iterate over substring lengths from 1 to n-1.
+
+For each substring [l, r], iterate over possible partition points k (operator positions).
+
+Compute dp[l][r] using:
+
+Left part: dp[l][k]
+
+Right part: dp[k+1][r]
+
+Operator at position k * 2 + 1
+
+Step 4: Apply Boolean Operator Logic
+For each partition at k, combine results from left and right partitions using the operator at s[k * 2 + 1]:
+
+AND (&):
+
+True & True → True
+
+True & False → False
+
+False & True → False
+
+False & False → False
+
+OR (|):
+
+True | True → True
+
+True | False → True
+
+False | True → True
+
+False | False → False
+
+XOR (^):
+
+True ^ True → False
+
+True ^ False → True
+
+False ^ True → True
+
+False ^ False → False
+
+For each case, update:
+
+𝑑
+𝑝
+[
+𝑙
+]
+[
+𝑟
+]
+[
+𝑖
+𝑑
+𝑥
+]
++
+=
+𝑑
+𝑝
+[
+𝑙
+]
+[
+𝑘
+]
+[
+𝑖
+]
+×
+𝑑
+𝑝
+[
+𝑘
++
+1
+]
+[
+𝑟
+]
+[
+𝑗
+]
+dp[l][r][idx]+=dp[l][k][i]×dp[k+1][r][j]
+where idx represents the result of applying the operator.
+
+Step 5: Return the Answer
+The final result is stored in dp[0][n-1][1], which represents the number of ways to parenthesize the entire expression to get True.
+
+Time Complexity Analysis
+Filling DP Table: 
+𝑂
+(
+𝑛
+3
+)
+O(n 
+3
+ ) as there are three nested loops (len, r, k).
+
+Space Complexity: 
+𝑂
+(
+𝑛
+2
+)
+O(n 
+2
+ ) due to storing dp table.
+
+Final Output
+Returns the number of ways to parenthesize the boolean expression to evaluate to True.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function Template for C++
+class Solution {
+  public:
+    int countWays(string &s) {
+        // code here
+              const int n = (s.size() + 1) / 2;
+        
+        std::vector<std::vector<std::array<int, 2>>> dp(n, std::vector<std::array<int, 2>>(n));
+        for (int i = 0; i < n; ++i) {
+            dp[i][i][s[i * 2] == 'T'] = 1;
+        }
+        
+        for (int len = 1; len < n; ++len) {
+            for (int r = len; r < n; ++r) {
+                const int l = r - len;
+
+                for (int k = l; k < r; ++k) {
+                    for (int i = 0; i < 2; ++i) {
+                        for (int j = 0; j < 2; ++j) {
+                            bool idx;
+                            if (s[k * 2 + 1] == '&') {
+                                idx = i & j;
+                            }
+                            else if (s[k * 2 + 1] == '|') {
+                                idx = i | j;
+                            }
+                            else {
+                                idx = i ^ j;
+                            }
+                            
+                            dp[l][r][idx] += dp[l][k][i] * dp[k + 1][r][j];
+                        }
+                    }
+                }
+            }
+        }
+        
+        return dp[0][n - 1][1];
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        string s;
+        cin >> s;
+        Solution ob;
+        int ans = ob.countWays(s);
+        cout << ans << endl;
+        cout << "~" << endl;
+    }
+}
+// } Driver Code Ends
