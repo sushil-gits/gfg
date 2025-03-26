@@ -1,0 +1,127 @@
+Stepwise Approach for wordBreak Function
+The function wordBreak determines whether a given string s can be segmented into words found in a given dictionary. The approach used is Dynamic Programming (DP). Below is the step-by-step breakdown:
+
+Step 1: Initialize Variables
+Extract the size of the input string s and store it in n.
+
+Create a DP array dp of size n+1 where:
+
+dp[i] = 1 means the substring s[0...i-1] can be broken into dictionary words.
+
+dp[i] = 0 means it cannot be broken into valid dictionary words.
+
+Set dp[0] = 1, meaning an empty string can always be broken.
+
+Step 2: Iterate Over the String
+Traverse the string s using an index i from 0 to n-1.
+
+If dp[i] is 0, skip further processing for that index.
+
+Step 3: Check Dictionary Words
+For each valid index i, iterate through all words in the dictionary.
+
+Check if the substring s.substr(i, len) (of length len = word.size()) matches the dictionary word.
+
+Ensure i + len does not exceed n (bounds check).
+
+If there is a match, update dp[i+len] = 1, meaning that a valid segmentation exists up to index i+len-1.
+
+Step 4: Return the Result
+The final answer is stored in dp[n]:
+
+If dp[n] == 1, return 1 (meaning the entire string can be segmented).
+
+Otherwise, return 0 (no valid segmentation found).
+
+Time Complexity Analysis
+Outer loop runs O(n).
+
+Inner loop iterates over all words in the dictionary, checking substrings.
+
+If the dictionary has m words, the worst case runs O(n * m).
+
+Overall complexity: O(n * m).
+
+Example Walkthrough
+Input:
+s = "applepenapple"
+dictionary = ["apple", "pen"]
+Processing:
+dp[0] = 1 (empty string is valid).
+
+At i = 0, match "apple" → Set dp[5] = 1.
+
+At i = 5, match "pen" → Set dp[8] = 1.
+
+At i = 8, match "apple" → Set dp[13] = 1.
+
+Final DP Array:
+[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1]
+dp[13] = 1, so return 1 (valid segmentation exists).
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int wordBreak(string &s, vector<string> &dictionary) {
+        // code here
+        int n=s.size();
+        vector<bool>dp(n+1,0);
+        dp[0]=1;
+        for(int i=0;i<n;i++)
+        {
+            if(!dp[i])
+            continue;
+            for(const string &word:dictionary)
+            {
+                int len=word.size();
+                if(i+len<=n&&s.substr(i,len)==word)
+                {
+                    dp[i+len]=1;
+                }
+            }
+        }
+        return dp[n]?1:0;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+vector<string> inputLine() {
+    string str;
+    getline(cin, str);
+    stringstream ss(str);
+    vector<string> res;
+    while (ss >> str) {
+        res.push_back(str);
+    }
+    return res;
+}
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        string s;
+        cin >> s;
+        cin.ignore();
+        vector<string> dictionary = inputLine();
+
+        Solution ob;
+        if (ob.wordBreak(s, dictionary)) {
+            cout << "true\n";
+        } else
+            cout << "false\n";
+        cout << "~"
+             << "\n";
+    }
+}
+
+// } Driver Code Ends
