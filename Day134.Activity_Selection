@@ -1,0 +1,156 @@
+Stepwise Approach for Activity Selection Problem:
+The Activity Selection problem is solved using a greedy algorithm to maximize the number of non-overlapping activities that can be scheduled.
+
+Step 1: Store Start and Finish Times as Pairs
+Given two arrays:
+
+start[] → Start times of activities
+
+finish[] → Finish times of activities
+
+Create a vector of pairs where each pair consists of (finish[i], start[i]). This helps in sorting based on finishing times.
+
+Step 2: Sort Activities by Finish Time
+Sort the vector of pairs in ascending order based on the finish time.
+
+Sorting ensures that we always select the earliest finishing activity first, leaving maximum room for upcoming activities.
+
+Step 3: Initialize Variables
+ans = 0 → This variable keeps track of the count of selected activities.
+
+last = -1 → Keeps track of the last selected activity's finish time.
+
+last = temp[0].first → Assign the finish time of the first activity as it is always selected.
+
+Step 4: Iterate Through Activities and Select Non-Overlapping Ones
+Start iterating from the second activity (i = 1) to the last one.
+
+For each activity:
+
+If its start time is greater than the last selected activity’s finish time, select it:
+
+Increment ans (activity count).
+
+Update last to the newly selected activity’s finish time.
+
+Step 5: Return the Total Count of Selected Activities
+Since we always select the first activity (temp[0]), the final count is ans + 1.
+
+Final Optimized Code
+int activitySelection(vector<int> &start, vector<int> &finish) {
+    int n = start.size();
+    vector<pair<int,int>> temp;
+    
+    // Step 1: Store finish and start times as pairs
+    for (int i = 0; i < n; i++) {
+        temp.push_back({finish[i], start[i]});
+    }
+    
+    // Step 2: Sort activities based on finish time
+    sort(temp.begin(), temp.end());
+    
+    // Step 3: Select first activity
+    int ans = 0;
+    int last = temp[0].first; // Store the finish time of the first selected activity
+    
+    // Step 4: Iterate and select non-overlapping activities
+    for (int i = 1; i < n; i++) {
+        if (temp[i].second > last) { // If start time is greater than last selected activity’s finish time
+            ans++;
+            last = temp[i].first; // Update last selected activity's finish time
+        }
+    }
+    
+    // Step 5: Return total count of selected activities
+    return ans + 1;
+}
+Time Complexity Analysis
+Sorting Step: 
+𝑂
+(
+𝑛
+log
+⁡
+𝑛
+)
+O(nlogn)
+
+Selection Step (Loop): 
+𝑂
+(
+𝑛
+)
+O(n)
+
+Overall Time Complexity: 
+𝑂
+(
+𝑛
+log
+⁡
+𝑛
+)
+O(nlogn) due to sorting.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int activitySelection(vector<int> &start, vector<int> &finish) {
+        // code here
+       int n = start.size();
+        vector<pair<int,int>> temp;
+        for (int i=0;i<n;i++){
+            temp.push_back({finish[i],start[i]});
+        }
+        sort(temp.begin(),temp.end());
+        
+        int ans = 0;
+        vector<bool> vis(n,0);
+        int last = -1;
+        last = temp[0].first;
+        for (int i=1;i<n;i++){
+            if (temp[i].second>last){
+                ans++;
+                last = temp[i].first;
+            }
+        }
+        return ans+1;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        vector<int> start;
+        int num;
+        while (ss >> num)
+            start.push_back(num);
+        getline(cin, input);
+        ss.clear();
+        vector<int> finish;
+        ss.str(input);
+        while (ss >> num)
+            finish.push_back(num);
+
+        Solution obj;
+        cout << obj.activitySelection(start, finish) << endl;
+        cout << "~\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
