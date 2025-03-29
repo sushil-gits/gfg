@@ -1,0 +1,241 @@
+Understanding the Problem
+We are given two arrays:
+
+deadline[]: Contains the deadline for each job.
+
+profit[]: Contains the profit associated with each job.
+
+Each job takes one unit of time and can be scheduled before or on its deadline. The goal is to maximize the total profit by selecting the best sequence of jobs.
+
+Stepwise Explanation of the Code
+Step 1: Define Custom Comparator
+The function cmp() is a custom comparator used in sort():
+static bool cmp(pair<int, int> &a, pair<int, int> &b){
+    if(a.second > b.second)
+        return true;
+    return false;
+}
+This sorts the jobs in descending order of profit to ensure that we pick high-profit jobs first.
+
+Step 2: Create a List of Jobs with Deadline & Profit
+We store jobs as pairs {deadline, profit} in a vector:
+vector<pair<int, int>> v;
+int n = deadline.size();
+int maxD = -1;
+for(int i=0;i<n;i++){
+    v.push_back({deadline[i], profit[i]});
+    maxD = max(maxD, deadline[i]);
+}
+v stores {deadline[i], profit[i]} for each job.
+
+maxD keeps track of the maximum deadline among all jobs.
+
+Step 3: Sort Jobs in Descending Order of Profit
+sort(v.begin(), v.end(), cmp);
+Jobs with higher profit come first, ensuring we prioritize them.
+
+Step 4: Create a Set to Track Available Slots
+set<int> slot;
+for(int i=0;i<=maxD;i++)
+    slot.insert(i);
+The set stores available time slots from 0 to maxD.
+
+Set ensures quick retrieval of available time slots.
+
+Step 5: Assign Jobs to the Latest Possible Slot
+int sum = 0;
+int count = 0;
+for(int i=0;i<n;i++){
+    int c = v[i].first; // Get job's deadline
+    auto it = slot.lower_bound(c);
+    
+    if(it == slot.end()) it--;
+    if((*it) > c) it--;
+    
+    if(it != slot.begin()){
+        sum += v[i].second;
+        count++;
+        slot.erase(it);
+    }
+}
+For each job (in decreasing order of profit):
+
+Find the latest available slot ≤ job's deadline (c) using lower_bound(c).
+
+Check if it's valid:
+
+If it is beyond c, move it back.
+
+If it's slot.begin(), there's no slot available.
+
+If slot found:
+
+Add the job’s profit to sum.
+
+Increase the job count count.
+
+Remove the assigned slot from slot.
+
+Step 6: Return the Result
+return {count, sum};
+count = Number of jobs scheduled.
+
+sum = Maximum profit achieved.
+
+Time Complexity Analysis
+Sorting the jobs → 
+𝑂
+(
+𝑁
+log
+⁡
+𝑁
+)
+O(NlogN)
+
+Using set for finding slots → 
+𝑂
+(
+𝑁
+log
+⁡
+𝐷
+)
+O(NlogD)
+
+Overall Complexity → 
+𝑂
+(
+𝑁
+log
+⁡
+𝑁
+)
+O(NlogN) (dominant sorting step)
+
+Example Walkthrough
+Input:
+deadline = {2, 1, 2, 1, 3};
+profit = {100, 19, 27, 25, 15};
+Processing:
+Sorted Jobs (Descending Profit):
+{(2, 100), (2, 27), (1, 25), (1, 19), (3, 15)}
+
+Slot Assignment:
+
+(2,100) → Slot 2
+
+(2,27) → Slot 1
+
+(1,25) → Not available (slot 1 taken) ❌
+
+(1,19) → Slot 0
+
+(3,15) → Slot 3
+
+Final Jobs Scheduled: {(2,100), (2,27), (3,15)}
+
+Total Jobs = 3, Total Profit = 142
+
+Output:
+{3, 142}
+Final Thoughts
+Greedy approach ensures max profit by selecting highest profit jobs first.
+
+Set helps in efficient slot allocation using lower_bound().
+
+Optimized approach compared to brute force O(N²).
+
+
+
+
+//{ Driver Code Starts
+// Driver code
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+   static bool cmp(pair<int, int> &a, pair<int, int> &b){
+        if(a.second > b.second)
+            return true;
+        return false;
+        
+    }
+    
+    vector<int> jobSequencing(vector<int> &deadline, vector<int> &profit) {
+        // code here
+        vector<pair<int, int>> v;
+        int n = deadline.size();
+        int maxD = -1;
+        for(int i=0;i<n;i++){
+            v.push_back({deadline[i], profit[i]});
+            maxD = max(maxD, deadline[i]);
+            
+        }
+        
+        set<int> slot;
+        sort(v.begin(), v.end(), cmp);
+        
+        for(int i=0;i<=maxD;i++)
+            slot.insert(i);
+        
+        int sum = 0;
+        int count=0;
+        
+        for(int i=0;i<n;i++){
+            int c = v[i].first;
+            auto it = slot.lower_bound(c);
+            
+            if(it==slot.end())
+                it--;
+            if((*it)>c)
+                it--;
+            
+            if(it!=slot.begin()){
+                sum+=(v[i].second);
+                count++;
+                slot.erase(it);
+            }
+                
+        }
+        
+        return {count, sum};    
+        
+        return {count, sum};
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> deadlines, profits;
+        string temp;
+        getline(cin, temp);
+        int x;
+        istringstream ss1(temp);
+        while (ss1 >> x)
+            deadlines.push_back(x);
+
+        getline(cin, temp);
+        istringstream ss2(temp);
+        while (ss2 >> x)
+            profits.push_back(x);
+
+        Solution obj;
+        vector<int> ans = obj.jobSequencing(deadlines, profits);
+        cout << ans[0] << " " << ans[1] << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
