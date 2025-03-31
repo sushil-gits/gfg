@@ -1,0 +1,115 @@
+Stepwise Approach for maxPartitions Function
+The goal of this function is to find the maximum number of partitions where each character appears in at most one partition.
+
+Step 1: Initialize Variables
+n = s.size(); → Get the length of the string s.
+
+Declare an unordered_map mp to store the last occurrence of each character.
+
+Step 2: Store the Last Occurrence of Each Character
+Loop through the string (0 to n-1) and store each character's last index in mp:
+for(int i = 0; i < n; i++) {
+    mp[s[i]] = i;  // Store the last index of each character
+}
+Example:
+s = "abac"
+mp = { 'a' → 2, 'b' → 1, 'c' → 3 }
+'a' last appears at index 2.
+
+'b' last appears at index 1.
+
+'c' last appears at index 3.
+
+Step 3: Traverse the String Again to Count Partitions
+Initialize Variables:
+
+end = 0; → To track the farthest last occurrence of a character in the current partition.
+
+count = 0; → To count the number of partitions.
+
+Loop through the string (0 to n-1):
+for(int i = 0; i < n; i++) {
+    end = max(mp[s[i]], end);  // Update `end` to the farthest last occurrence
+    if(i == end) {             // If we reach `end`, we can create a partition
+        count++;
+    }
+}
+Example:
+
+'a' (0): end = max(2, 0) = 2
+
+'b' (1): end = max(2, 1) = 2
+
+'a' (2): end = max(2, 2) = 2 → Partition 1
+
+'c' (3): end = max(3, 3) = 3 → Partition 2
+
+Partitions:
+"aba" | "c"
+Step 4: Return the Count
+return count;  // Return total number of partitions
+For "abac", the function returns 2.
+
+Time Complexity Analysis
+First loop: O(N) → Stores last occurrences.
+
+Second loop: O(N) → Counts partitions.
+
+Overall Complexity: O(N), since each character is processed twice.
+
+Final Thoughts
+This approach efficiently finds the maximum partitions where each letter appears in at most one partition.
+
+Using an unordered_map allows quick lookup (O(1)) for last occurrences.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int maxPartitions(string &s) {
+        // code here
+        int n=s.size();
+       unordered_map<char,int>mp;
+       for(int i=0;i<n;i++)
+       {
+           mp[s[i]]=i;
+           
+       }
+       int end=0,count=0;
+       for(int i=0;i<n;i++)
+       {
+           end=max(mp[s[i]],end);
+           if(i==end)
+           {
+               count++;
+           }
+       }
+       return count;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int tc;
+    cin >> tc;
+
+    for (int i = 0; i < tc; ++i) {
+        string s;
+        cin >> s;
+        Solution obj;
+        cout << obj.maxPartitions(s) << endl;
+        cout << "~" << endl;
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
