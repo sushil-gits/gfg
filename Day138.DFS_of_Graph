@@ -1,0 +1,176 @@
+Stepwise Approach for the Given DFS Code
+The given code implements Depth-First Search (DFS) for a graph using recursion. Let's break down the approach step by step.
+
+Step 1: Understanding the Function solve
+The function solve is a recursive function used to perform DFS traversal.
+
+Function Signature:
+void solve(int node, vector<vector<int>>& adj, vector<int>& visited, vector<int>& ans)
+Parameters:
+node → The current node being visited.
+
+adj → Adjacency list representation of the graph.
+
+visited → A vector to keep track of visited nodes (1 if visited, 0 if not).
+
+ans → Stores the DFS traversal result.
+
+Execution Flow of solve Function:
+Mark the current node as visited:
+visited[node] = 1;
+This prevents revisiting the same node.
+
+Add the current node to the result vector:
+ans.push_back(node);
+This stores the traversal order.
+
+Iterate through all neighbors of the current node:
+for (auto i : adj[node])
+adj[node] gives the list of all directly connected nodes.
+
+Perform DFS on unvisited neighbors:
+if (visited[i] == 0)
+{
+    solve(i, adj, visited, ans);
+}
+If the neighbor is not visited, recursively call solve(i, adj, visited, ans).
+
+This explores the graph deeper before backtracking.
+
+Step 2: Understanding the dfs Function
+The dfs function initializes the DFS traversal and calls solve.
+
+Execution Flow of dfs Function:
+Get the number of nodes in the graph:
+int n = adj.size();
+adj.size() gives the number of nodes.
+
+Initialize a visited vector to track visited nodes:
+vector<int> visited(n, 0);
+Initially, all nodes are unvisited (0).
+
+Initialize an ans vector to store the DFS traversal order:
+vector<int> ans;
+Start DFS from node 0:
+int start = 0;
+solve(start, adj, visited, ans);
+Calls the recursive DFS function starting from node 0.
+
+Return the result after DFS traversal is complete:
+return ans;
+Step 3: Execution on Example Graph
+Consider the adjacency list representation of a graph:
+adj = {
+    {1, 2},   // Node 0 is connected to Nodes 1 and 2
+    {0, 3},   // Node 1 is connected to Nodes 0 and 3
+    {0, 4},   // Node 2 is connected to Nodes 0 and 4
+    {1},      // Node 3 is connected to Node 1
+    {2}       // Node 4 is connected to Node 2
+};
+DFS Execution:
+Start at Node 0 → Mark visited → Store in ans
+
+Move to Node 1 (unvisited) → Mark visited → Store in ans
+
+Move to Node 3 (unvisited) → Mark visited → Store in ans
+
+Backtrack to Node 1, then back to Node 0
+
+Move to Node 2 (unvisited) → Mark visited → Store in ans
+
+Move to Node 4 (unvisited) → Mark visited → Store in ans
+
+Backtrack to Node 2, then back to Node 0
+
+Final DFS Order (Output):
+0 → 1 → 3 → 2 → 4
+Step 4: Time Complexity Analysis
+Each node is visited once.
+
+Each edge is traversed once.
+
+Time complexity: O(V + E), where V is the number of vertices and E is the number of edges.
+
+Final Summary
+Initialize visited and result vectors.
+
+Start DFS traversal from node 0.
+
+Recursively explore unvisited neighbors.
+
+Store traversal order in ans.
+
+Return the final DFS traversal result.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+  void solve(int node,vector<vector<int>>&adj,vector<int>&visited,vector<int>&ans)
+  {
+      visited[node]=1;
+      ans.push_back(node);
+      for(auto i:adj[node])
+      {
+          if(visited[i]==0)
+          {
+              solve(i,adj,visited,ans);
+          }
+      }
+      
+  }
+    vector<int> dfs(vector<vector<int>>& adj) {
+        // Code here
+        int n=adj.size();
+        vector<int>visited(n,0);
+        vector<int>ans;
+        int start=0;
+        solve(start,adj,visited,ans);
+        return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int tc;
+    cin >> tc;
+    cin.ignore();
+    while (tc--) {
+        int V;
+        cin >> V;
+        cin.ignore();
+        vector<vector<int>> adj(
+            V); // Use vector of vectors instead of array of vectors.
+
+        for (int i = 0; i < V; i++) {
+            string input;
+            getline(cin, input);
+            int num;
+            vector<int> node;
+            stringstream ss(input);
+            while (ss >> num) {
+                node.push_back(num);
+            }
+            adj[i] = node;
+        }
+
+        Solution obj;
+        vector<int> ans = obj.dfs(adj);
+        for (int i = 0; i < ans.size(); i++) {
+            cout << ans[i] << " ";
+        }
+        cout << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
