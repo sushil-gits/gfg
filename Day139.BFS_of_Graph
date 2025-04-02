@@ -1,0 +1,136 @@
+Stepwise Approach:
+Initialize Variables:
+
+Determine the number of vertices 
+𝑉
+V in the adjacency list using adj.size().
+
+Create a vector ans to store the BFS traversal result.
+
+Create a vis (visited) array of size 
+𝑉
+V initialized to 0 (to mark unvisited nodes).
+
+Create a queue q to facilitate BFS traversal.
+
+Start BFS from Node 0:
+
+Push the first node (0) into the queue.
+
+Mark node 0 as visited (vis[0] = 1).
+
+Process the Queue (BFS Traversal):
+
+While the queue is not empty, do the following:
+
+Get the front element of the queue and store it in front.
+
+Remove this element from the queue.
+
+Append front to the ans list.
+
+Visit Adjacent Nodes:
+
+Iterate through all adjacent nodes of front using for (auto i : adj[front]).
+
+If a node i is not visited:
+
+Push i into the queue.
+
+Mark i as visited (vis[i] = 1).
+
+Return the BFS Traversal Order:
+
+After visiting all reachable nodes, return the ans vector.
+
+Time Complexity:
+𝑂
+(
+𝑉
++
+𝐸
+)
+O(V+E), where 
+𝑉
+V is the number of vertices and 
+𝐸
+E is the number of edges, as each node and edge is processed once.
+
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    // Function to return Breadth First Traversal of given graph.
+    vector<int> bfs(vector<vector<int>> &adj) {
+        // Code here
+        int V=adj.size();
+        vector<int>ans,vis(V,0);
+        queue<int>q;
+        q.push(0);
+        vis[0]=1;
+        while(!q.empty())
+        {
+            int front=q.front();
+            q.pop();
+            ans.push_back(front);
+            for(auto i:adj[front])
+            {
+                if(!vis[i])
+                {
+                    q.push(i);
+                    vis[i]=1;
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int tc;
+    cin >> tc;
+    cin.ignore();
+    while (tc--) {
+        int V;
+        cin >> V;
+        cin.ignore();
+        // Use vector of vectors instead of array of vectors.
+        vector<vector<int>> adj(V);
+
+        for (int i = 0; i < V; i++) {
+            string input;
+            getline(cin, input);
+            int num;
+            vector<int> node;
+            stringstream ss(input);
+            while (ss >> num) {
+                node.push_back(num);
+            }
+
+            adj[i] = node;
+        }
+
+        Solution obj;
+        vector<int> ans = obj.bfs(adj);
+        for (int i = 0; i < ans.size(); i++) {
+            cout << ans[i] << " ";
+        }
+        cout << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
