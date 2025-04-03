@@ -1,0 +1,160 @@
+Stepwise Solution for orangesRotting function
+This function finds the minimum time required to rot all fresh oranges in a grid, using Breadth-First Search (BFS).
+
+Step 1: Initialize Variables
+Extract rows (n) and columns (m) from the input matrix mat.
+
+Declare a queue q to store the positions of initially rotten oranges.
+
+Initialize fresh = 0 to count fresh oranges.
+
+Step 2: Populate the Queue and Count Fresh Oranges
+Loop through the grid:
+
+If an orange is rotten (2), push its position (i, j) into the queue.
+
+If an orange is fresh (1), increase the fresh count.
+
+Step 3: Set up BFS Traversal
+Declare time = 0 to keep track of time required for rotting.
+
+Create a visited matrix vis of size n × m (initialized with 0).
+
+Define direction vectors (edge) for up, down, left, and right movements.
+
+Step 4: BFS for Spreading Rot
+Run BFS while the queue is not empty:
+
+Increase time by 1.
+
+Process all elements in the queue (this represents one time unit).
+
+For each rotten orange:
+
+Try all four directions.
+
+If the adjacent cell is fresh (1), mark it as visited, decrement fresh, and push it into the queue.
+
+Step 5: Check for Remaining Fresh Oranges
+If all fresh oranges have rotted (fresh == 0), return time - 1 (since time was increased in the last iteration).
+
+Otherwise, return -1 (impossible to rot all fresh oranges).
+
+Time Complexity Analysis
+O(N × M): Each cell is processed once.
+
+O(N × M) Space Complexity: Used for the queue and visited matrix.
+
+Example Walkthrough
+Input:
+mat = [ [2,1,1], 
+        [1,1,0], 
+        [0,1,1] ]
+Steps:
+Initial State
+Rotten oranges: [(0,0)]
+Fresh count: 5
+
+Time = 1
+
+Rot (0,1), (1,0)
+
+New queue: [(0,1), (1,0)]
+
+Fresh count: 3
+
+Time = 2
+
+Rot (0,2), (1,1)
+
+New queue: [(0,2), (1,1)]
+
+Fresh count: 1
+
+Time = 3
+
+Rot (2,1)
+
+New queue: [(2,1)]
+
+Fresh count: 0
+
+Final Output:
+Time taken = 4 - 1 = 3.
+
+Final Return Values
+Case	Condition	Return
+All fresh oranges rot	fresh == 0	time - 1
+Some oranges remain fresh	fresh > 0	-1
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int orangesRotting(vector<vector<int>>& mat) {
+        // Code here
+         int n=mat.size(),m=mat[0].size();
+        queue<pair<int,int>>q;
+        int fresh=0;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(mat[i][j]==2) q.push({i,j});
+                else if(mat[i][j]) fresh++;
+            }
+        }
+        int time=0;
+        vector<vector<int>>vis(n,vector<int>(m));
+        vector<pair<int,int>>edge={{-1,0},{1,0},{0,-1},{0,1}};
+        while(!q.empty()){
+            int x=q.size();
+            time++;
+            while(x--){
+                auto r=q.front();
+                q.pop();
+                for(auto ch:edge){
+                    int a=r.first+ch.first,b=r.second+ch.second;
+                    if(a>=0 && a<n && b>=0 && b<m
+                        && vis[a][b]==0 && mat[a][b]==1){
+                            fresh--;
+                            q.push({a,b});
+                            vis[a][b]=1;
+                    }
+                }
+            }
+        }
+        if(fresh==0) return max(0,time-1);
+        return -1;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int tc;
+    cin >> tc;
+    while (tc--) {
+        int n, m;
+        cin >> n >> m;
+        vector<vector<int>> mat(n, vector<int>(m, -1));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                cin >> mat[i][j];
+            }
+        }
+        Solution obj;
+        int ans = obj.orangesRotting(mat);
+        cout << ans << "\n";
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
