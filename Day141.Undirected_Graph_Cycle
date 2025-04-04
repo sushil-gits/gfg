@@ -1,0 +1,146 @@
+✅ Problem Goal:
+Determine whether an undirected graph contains a cycle.
+
+✅ Function Signature:
+bool isCycle(int V, vector<vector<int>>& edges)
+V: Number of vertices.
+
+edges: List of edges where each edge is a vector of size 2: {u, v}.
+
+✅ Step-by-step Explanation:
+🔹 Step 1: Create Adjacency List
+vector<vector<int>> adj(V);
+for(auto &i : edges) {
+    int u = i[0], v = i[1];
+    adj[u].push_back(v);
+    adj[v].push_back(u); // since it's an undirected graph
+}
+We initialize the adjacency list adj for the V vertices.
+
+For each edge {u, v}, we add v to u’s list and vice versa.
+
+🔹 Step 2: Initialize Visited Array
+vector<bool> visited(V, false);
+visited[0] = true;
+This array keeps track of visited nodes during DFS traversal.
+
+We start from node 0 and mark it as visited.
+
+🔹 Step 3: Define the DFS Function (Using Lambda)
+function<bool(int, int)> dfs = [&](int curr, int prev) -> bool {
+    ...
+};
+curr: Current node being visited.
+
+prev: The parent node from which we came to curr.
+
+🔹 Step 4: Explore Neighbors in DFS
+for(auto i : adj[curr]) {
+    if(i != prev && visited[i] == true) return true;
+    else if(i != prev) {
+        visited[i] = true;
+        res |= dfs(i, curr);
+        if(res) return res;
+    }
+}
+For each neighbor i of the current node:
+
+If i is already visited and i is not the previous node (i != prev), then a cycle exists.
+
+If i is not visited and not the parent, recursively do DFS on it after marking it visited.
+
+🔹 Step 5: Start DFS from Node 0
+return dfs(0, -1);
+We call the DFS from node 0 with -1 as the parent (since 0 is the starting point and has no parent).
+
+If DFS returns true, a cycle exists.
+
+⚠️ Limitation:
+This code assumes the graph is connected and starts DFS only from node 0.
+
+But in a disconnected graph, cycles can exist in other components too.
+
+🔧 To fix that, you should loop over all nodes:
+for(int i = 0; i < V; ++i) {
+    if(!visited[i]) {
+        visited[i] = true;
+        if(dfs(i, -1)) return true;
+    }
+}
+return false;
+✅ Final Verdict:
+This is a DFS-based cycle detection algorithm for an undirected graph.
+
+It checks whether visiting a previously visited node (excluding the parent) happens — which confirms a cycle.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+      bool isCycle(int V, vector<vector<int>>& edges) {
+        vector<vector<int>> adj(V);
+        vector<bool> visited(V, false);        
+        visited[0] = true;
+        
+        for(auto &i : edges) {
+            int u = i[0], v = i[1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+         function<bool(int, int)> dfs = [&](int curr, int prev) -> bool {
+            bool res = false;
+            for(auto i : adj[curr]) {
+                if(i != prev && visited[i] == true) return true;
+                else if(i != prev) {
+                    visited[i] = true;
+                    res |= dfs(i, curr);
+                    if(res) return res;
+                }
+            }
+            return res;
+        };
+        
+        return dfs(0, -1);
+    }
+
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int tc;
+    cin >> tc;
+    cin.ignore();
+    while (tc--) {
+        int V, E;
+        cin >> V >> E;
+        cin.ignore();
+        vector<vector<int>> edges;
+        for (int i = 1; i <= E; i++) {
+            int u, v;
+            cin >> u >> v;
+            edges.push_back({u, v});
+        }
+
+        Solution obj;
+        bool ans = obj.isCycle(V, edges);
+        if (ans)
+            cout << "true\n";
+        else
+            cout << "false\n";
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
