@@ -1,0 +1,167 @@
+🧠 Problem Understanding
+You are given a 2D grid where:
+
+'L' represents land
+
+'W' represents water
+
+Your task is to count the number of islands.
+An island is a group of connected 'L' cells (connected in 8 directions — up, down, left, right, and all diagonals).
+
+🪜 Step-by-Step Approach
+✅ Step 1: Setup Directions for 8-Way Movement
+int dx[8] = {0, 0, 1, -1, 1, 1, -1, -1};
+int dy[8] = {1, -1, 0, 0, -1, 1, -1, 1};
+These arrays help move in 8 directions from any cell:
+
+Horizontal: (0,1), (0,-1)
+
+Vertical: (1,0), (-1,0)
+
+Diagonals: (1,-1), (1,1), (-1,-1), (-1,1)
+
+✅ Step 2: Get Dimensions of the Grid
+int n = grid.size();        // number of rows
+int m = grid[0].size();     // number of columns
+✅ Step 3: Initialize Island Counter
+int ans = 0;
+This will count the number of separate islands found.
+
+✅ Step 4: Traverse the Grid
+for(int i = 0; i < n; i++){
+    for(int j = 0; j < m; j++){
+Go through every cell in the grid using nested loops.
+
+✅ Step 5: Start BFS When You Find a Land Cell 'L'
+if(grid[i][j] == 'L'){
+    queue<pair<int,int>> q;
+    q.push({i, j});
+    grid[i][j] = 'W';  // Mark as visited
+    ans += 1;          // Found a new island
+When you find an unvisited land cell:
+
+Start a Breadth-First Search (BFS)
+
+Push the cell into the queue
+
+Mark it as visited by changing 'L' to 'W'
+
+Increment the island count
+
+✅ Step 6: Process All Connected Land Cells using BFS
+while(!q.empty()){
+    auto f = q.front(); q.pop();
+
+    for(int k = 0; k < 8; k++){
+        int nx = f.first + dx[k];
+        int ny = f.second + dy[k];
+
+        if(nx >= 0 && nx < n && ny >= 0 && ny < m && grid[nx][ny] == 'L'){
+            q.push({nx, ny});
+            grid[nx][ny] = 'W';
+        }
+    }
+}
+While the queue is not empty:
+
+Pop a cell
+
+Check all 8 directions
+
+If neighboring cell is valid and is 'L', push it into the queue and mark it as 'W'
+
+✅ Step 7: Return the Final Count
+return ans;
+Once the entire grid is traversed, return the count of islands.
+
+🧪 Example:
+Input grid:
+L W L
+L L W
+W W L
+Steps:
+
+Start BFS at (0,0) → mark all connected L's → island count = 1
+
+Skip visited or water cells
+
+Start BFS at (0,2) → island count = 2
+
+Start BFS at (2,2) → island count = 3
+
+Done
+
+Output: 3 islands
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int countIslands(vector<vector<char>>& grid) {
+        // Code here
+        int dx[8] = {0, 0, 1, -1, 1, 1, -1, -1};
+        int dy[8] = {1, -1, 0, 0, -1, 1, -1, 1};
+        int n = grid.size();
+        int m = grid[0].size();
+        int ans = 0;
+        for(int i= 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                
+                if(grid[i][j] == 'L'){
+                    queue<pair<int,int>>q; 
+                    q.push({i, j});
+                
+                    grid[i][j] = 'W';
+                    ans += 1;
+                
+                    while(!q.empty()){
+                        auto f = q.front();
+                        q.pop();
+                    
+                        for(int k = 0; k < 8; k++){
+                            int nx = f.first + dx[k];
+                            int ny = f.second + dy[k];
+                        
+                            if(nx >= 0 && nx < n && ny >= 0 && ny < m && grid[nx][ny] == 'L'){
+                                q.push({nx, ny});
+                                grid[nx][ny] = 'W';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int tc;
+    cin >> tc;
+    while (tc--) {
+        int n, m;
+        cin >> n >> m;
+        vector<vector<char>> grid(n, vector<char>(m, '#'));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                cin >> grid[i][j];
+            }
+        }
+        Solution obj;
+        int ans = obj.countIslands(grid);
+        cout << ans << '\n';
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
