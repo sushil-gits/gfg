@@ -1,0 +1,164 @@
+🔁 Goal:
+Perform Topological Sort of a Directed Acyclic Graph (DAG) using DFS.
+
+📦 Global Variables:
+vector<vector<int>> adj;
+vector<int> ans;
+vector<bool> vis;
+adj: Adjacency list to store the graph.
+
+ans: Stores the topologically sorted result.
+
+vis: Keeps track of visited nodes during DFS.
+
+🧠 Function: void solve(int u)
+Purpose:
+Performs DFS traversal starting from node u.
+
+Steps:
+Mark node u as visited: vis[u] = 1.
+
+Iterate over all adjacent nodes v of u:
+
+If v is not visited, call solve(v) recursively.
+
+After exploring all adjacent nodes, add u to ans (post-order logic).
+
+🚀 Function: vector<int> topoSort(int V, vector<vector<int>>& edges)
+Purpose:
+Builds the graph and initiates DFS from unvisited nodes to perform topological sort.
+
+Steps:
+Resize the adjacency list and visited array:
+adj.resize(V);
+vis.resize(V, 0);
+Build the graph using the given edges:
+for(auto&a : edges){
+    adj[a[0]].push_back(a[1]);
+}
+For each directed edge from a[0] to a[1], store a[1] in the adjacency list of a[0].
+
+Run DFS from each unvisited node:
+
+
+for(int i = 0; i < V; i++){
+    if(!vis[i]){
+        solve(i);
+    }
+}
+Reverse the ans list to get the correct topological ordering (because nodes are added in post-order).
+reverse(ans.begin(), ans.end());
+Return the result.
+
+✅ Example Dry Run:
+For V = 4, and edges = {{0,1}, {1,2}, {2,3}}, the steps would be:
+
+Build: adj = [[1], [2], [3], []]
+
+Start DFS from 0 → visit 1 → visit 2 → visit 3 → backtrack and push into ans.
+
+ans = [3,2,1,0] (after reverse → [0,1,2,3])
+
+🧩 Key Concepts:
+DFS Post-order traversal is used for topological sort.
+
+Reverse at the end is necessary because we insert nodes after visiting their dependencies.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+ vector<vector<int>> adj; 
+    vector<int> ans;
+    vector<bool> vis;
+
+    void solve(int u){
+        vis[u] = 1;
+        for(auto&v:adj[u]){
+          if(!vis[v]){
+              solve(v);
+          }
+      }
+      ans.push_back(u);
+
+    }
+    vector<int> topoSort(int V, vector<vector<int>>& edges) {
+        adj.resize(V);
+        vis.resize(V, 0);
+
+        for(auto&a:edges){
+            adj[a[0]].push_back(a[1]);
+        }
+
+        for(int i = 0; i < V; i++){
+            if(!vis[i]){
+                solve(i);
+            }
+        }
+
+        reverse(ans.begin(), ans.end());
+        return ans;
+        
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int check(int V, vector<int> &res, vector<vector<int>> adj) {
+
+    if (V != res.size())
+        return 0;
+
+    vector<int> map(V, -1);
+    for (int i = 0; i < V; i++) {
+        map[res[i]] = i;
+    }
+    for (int i = 0; i < V; i++) {
+        for (int v : adj[i]) {
+            if (map[i] > map[v])
+                return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int T;
+    cin >> T;
+    while (T--) {
+        int V, E;
+        cin >> V >> E;
+
+        int x = V;
+        vector<vector<int>> adj(V);
+        vector<vector<int>> edges;
+
+        for (int i = 0; i < E; i++) {
+            int u, v;
+            cin >> u >> v;
+            adj[u].push_back(v);
+            edges.push_back({u, v});
+        }
+
+        Solution obj;
+        vector<int> res = obj.topoSort(V, edges);
+        bool ans = check(x, res, adj);
+        if (ans)
+            cout << "true\n";
+        else
+            cout << "false\n";
+        cout << "~"
+             << "\n";
+    }
+
+    return 0;
+}
+// } Driver Code Ends
