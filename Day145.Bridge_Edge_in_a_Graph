@@ -1,0 +1,136 @@
+🧠 Definition Reminder
+An edge is called a bridge if removing it increases the number of connected components (i.e., disconnects the graph).
+
+🧩 Function Explanation
+🔹 Function: DFS
+void DFS(int node, vector<int> adj[], int c, int d, vector<int>& vis)
+This function performs a Depth-First Search (DFS) while skipping the edge (c, d).
+
+🔹 Function: isBridge
+bool isBridge(int V, vector<vector<int>> &edges, int c, int d)
+This function checks if the edge (c, d) is a bridge using the DFS function.
+
+✅ Step-by-Step Approach
+✅ Step 1: Build the Adjacency List
+vector<int> adj[V];
+for (int i = 0; i < edges.size(); i++) {
+    int u = edges[i][0];
+    int v = edges[i][1];
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+}
+Create an adjacency list from the edges input.
+
+Since the graph is undirected, add v to u's list and u to v's list.
+
+✅ Step 2: Create a Visited Array
+vector<int> vis(V, 0);
+Initialize a visited array of size V with all 0s (meaning unvisited).
+
+✅ Step 3: Perform DFS from Node c, Skipping the Edge (c, d)
+DFS(c, adj, c, d, vis);
+Start DFS traversal from node c.
+
+In the DFS function, skip the edge (c, d) by adding a condition:
+if (!vis[i] && !(node == c && i == d))
+This ensures the DFS won't go through (c → d).
+
+✅ Step 4: Check if Node d Was Visited
+if (vis[d])
+    return 0;
+return 1;
+If after DFS traversal node d was still reachable, that means removing the edge (c, d) did not disconnect the graph → it's not a bridge, return 0.
+
+If node d is not reachable, then (c, d) was essential to maintain connectivity → it's a bridge, return 1.
+
+✅ Example to Help Visualize
+Graph:
+0 --- 1 --- 2
+Check if edge (1, 2) is a bridge.
+
+Remove edge (1, 2) in DFS.
+
+Start DFS from 1. Can we reach 2?
+
+No → it’s a bridge.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+  void DFS(int node,vector<int>adj[],int c,int d,vector<int>&vis)
+  {
+      vis[node]=1;
+      for(auto i:adj[node])
+      {
+          if(!vis[i]&&!(node==c&&i==d))
+          {
+              DFS(i,adj,c,d,vis);
+          }
+      }
+  }
+    bool isBridge(int V, vector<vector<int>> &edges, int c, int d) {
+        // Code here
+        vector<int>adj[V];
+        for(int i=0;i<edges.size();i++)
+        {
+            int u=edges[i][0];
+            int v=edges[i][1];
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+            
+        }
+        vector<int>vis(V,0);
+        DFS(c,adj,c,d,vis);
+        if(vis[d])
+        return 0;
+        return 1;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int V, E;
+        cin >> V >> E;
+        vector<int> adj[V];
+        vector<vector<int>> edges(E);
+        int i = 0;
+        while (i++ < E) {
+            int u, v;
+            cin >> u >> v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+            edges[i - 1].push_back(u);
+            edges[i - 1].push_back(v);
+        }
+
+        int c, d;
+        cin >> c >> d;
+
+        Solution obj;
+        bool l = obj.isBridge(V, edges, c, d);
+        if (l)
+            cout << "true\n";
+        else
+            cout << "false\n";
+
+        cout << "~"
+             << "\n";
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
