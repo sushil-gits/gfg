@@ -1,0 +1,135 @@
+💡 Problem Overview
+You're given a list of houses, where each house is represented by its 2D coordinates. The goal is to connect all houses with minimum total cost, where the cost of connecting two houses is the Manhattan distance between them.
+
+This is essentially finding the cost of the Minimum Spanning Tree (MST) using Prim’s Algorithm.
+
+✅ Stepwise Approach
+Step 1: Initialize Variables
+int n = houses.size();  // Total number of houses (nodes)
+Store the number of houses in variable n.
+vector<int> minDist(n, INT_MAX);  // Distance from MST to each node
+vector<bool> inMST(n, false);     // Track which nodes are included in MST
+minDist[i] will store the minimum cost to connect house i to the MST built so far.
+
+inMST[i] keeps track of whether a house is already included in the MST.
+
+Step 2: Start from the First Node
+minDist[0] = 0;  // Start MST from house 0
+int cost = 0;    // Initialize total cost
+Begin with house 0.
+
+Cost to include the first node is 0.
+
+Step 3: Build the MST
+for (int i = 0; i < n; ++i)
+Repeat this process n times (to include all nodes in MST).
+
+Step 4: Pick the Minimum Cost Node Not in MST
+int u = -1;
+for (int j = 0; j < n; ++j) {
+    if (!inMST[j] && (u == -1 || minDist[j] < minDist[u]))
+        u = j;
+}
+Among all nodes not in MST, pick the one with the minimum distance to MST.
+
+Store its index in u.
+
+Step 5: Add Node to MST and Update Cost
+inMST[u] = true;         // Mark as included in MST
+cost += minDist[u];      // Add cost of connecting this node
+Include the chosen node in MST and update the total cost.
+
+Step 6: Update Distances of Adjacent Nodes
+for (int v = 0; v < n; ++v) {
+    if (!inMST[v]) {
+        int d = abs(houses[u][0] - houses[v][0]) + abs(houses[u][1] - houses[v][1]);
+        minDist[v] = min(minDist[v], d);
+    }
+}
+For all other houses not yet in MST:
+
+Calculate the Manhattan distance d from current house u to house v.
+
+If d is smaller than the current minDist[v], update it.
+
+Step 7: Return Total Cost
+return cost;
+After connecting all houses, return the total cost of the MST.
+
+📌 Key Concepts Used
+Prim’s Algorithm (for MST)
+
+Manhattan Distance: |x1 - x2| + |y1 - y2|
+Greedy Strategy
+//{ Driver Code Starts
+// Initial Template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int minCost(vector<vector<int>>& houses) {
+        // code here
+        int n = houses.size();
+    vector<int> minDist(n, INT_MAX);
+    vector<bool> inMST(n, false);
+    
+    minDist[0] = 0; // start from node 0
+    int cost = 0;
+    
+    for (int i = 0; i < n; ++i) {
+        int u = -1;
+        for (int j = 0; j < n; ++j) {
+            if (!inMST[j] && (u == -1 || minDist[j] < minDist[u]))
+                u = j;
+        }
+
+        inMST[u] = true;
+        cost += minDist[u];
+
+        for (int v = 0; v < n; ++v) {
+            if (!inMST[v]) {
+                int d = abs(houses[u][0] - houses[v][0]) + abs(houses[u][1] - houses[v][1]);
+                minDist[v] = min(minDist[v], d);
+            }
+        }
+    }
+    
+    return cost;
+}
+    
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vector<vector<int>> edges;
+
+        for (int i = 0; i < n; ++i) {
+            vector<int> temp;
+            for (int j = 0; j < 2; ++j) {
+                int x;
+                cin >> x;
+                temp.push_back(x);
+            }
+            edges.push_back(temp);
+        }
+
+        Solution obj;
+
+        cout << obj.minCost(edges);
+        cout << "\n";
+        cout << "~" << endl;
+    }
+}
+
+// } Driver Code Ends
