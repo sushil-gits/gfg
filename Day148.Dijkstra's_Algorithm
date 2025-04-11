@@ -1,0 +1,170 @@
+🧠 Problem Understanding
+You are given:
+
+V: number of vertices
+
+edges: list of edges in the form {u, v, w} (an edge between u and v with weight w)
+
+src: source node to find shortest paths from
+
+Your task is to return a vector dist[], where dist[i] is the shortest distance from src to i.
+
+🔢 Step-by-Step Explanation
+Step 1: Create the Adjacency List
+vector<pair<int,int>> adj[V];
+You're converting the edge list to an adjacency list.
+
+Each entry in adj[u] contains pairs {weight, node}.
+for(int i=0;i<edges.size();i++){
+    adj[edges[i][0]].push_back({edges[i][2],edges[i][1]});
+    adj[edges[i][1]].push_back({edges[i][2],edges[i][0]});
+}
+📌 This ensures the graph is treated as undirected, i.e., if there is an edge u-v, you also store v-u.
+
+Step 2: Initialize Distance and Visited Arrays
+vector<int> dist(V,1e9), vis(V,0);
+dist[src] = 0;
+dist[i]: stores the minimum distance from src to node i, initialized to infinity (1e9) except src = 0.
+
+vis[i]: used to mark if node i has already been processed.
+
+Step 3: Use a Min-Heap Priority Queue
+priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+pq.push({0,src});
+This min-heap ensures you always process the node with the current smallest distance.
+
+Each element in the priority queue is {current_distance, node}.
+
+Step 4: Process the Priority Queue
+while(!pq.empty()){
+    auto it = pq.top();
+    pq.pop();
+    int wt = it.first;
+    int node = it.second;
+You extract the node with the smallest distance (wt) from the queue.
+
+Step 5: Skip If Already Visited
+if(vis[node]) continue;
+vis[node] = 1;
+Skip this node if already processed.
+
+Otherwise, mark it as visited.
+
+Step 6: Traverse All Adjacent Nodes
+for(auto t : adj[node]){
+    int d = t.first;
+    int adjNode = t.second;
+    
+    if(!vis[adjNode] && wt + d < dist[adjNode]){
+        dist[adjNode] = wt + d;
+        pq.push({wt+d, adjNode});
+    }
+}
+For each neighbor adjNode of the current node:
+
+If not visited and if a shorter distance is found (wt + d < dist[adjNode]):
+
+Update the distance.
+
+Push the updated pair into the priority queue.
+
+Step 7: Return the Distance Array
+return dist;
+After the queue is exhausted, dist[] will contain the shortest distances from src to every node.
+
+✅ Time Complexity
+Using a min-heap, the time complexity is:
+O((V + E) * log V)
+where V is number of vertices, E is number of edges.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User Function Template
+class Solution {
+  public:
+    vector<int> dijkstra(int V, vector<vector<int>> &edges, int src) {
+        // Code here
+         vector<pair<int,int>> adj[V];
+       
+       for(int i=0;i<edges.size();i++){
+           adj[edges[i][0]].push_back({edges[i][2],edges[i][1]});
+           adj[edges[i][1]].push_back({edges[i][2],edges[i][0]});
+       }
+       
+       
+       vector<int> dist(V,1e9),vis(V,0);
+       dist[src] = 0;
+      
+       
+       priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;
+    
+       pq.push({0,src});
+       
+       while(!pq.empty()){
+           auto it = pq.top();
+           pq.pop();
+           int wt = it.first;
+           int node = it.second;
+           
+           if(vis[node]) continue;
+           
+           vis[node] = 1;
+           
+           for(auto t : adj[node]){
+               int d = t.first;
+               int adjNode = t.second;
+               
+               if(!vis[adjNode] && wt + d < dist[adjNode]){
+                   dist[adjNode] = wt + d;
+                   pq.push({wt+d,adjNode});
+               }
+           }
+       }
+       
+       return dist;
+        
+    }
+};
+
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int V, E;
+        cin >> V >> E;
+        vector<vector<int>> edges;
+        int i = 0;
+        while (i++ < E) {
+            int u, v, w;
+            cin >> u >> v >> w;
+            edges.push_back({u, v, w});
+            edges.push_back({v, u, w});
+        }
+        int src;
+        cin >> src;
+        cin.ignore();
+
+        Solution obj;
+        vector<int> res = obj.dijkstra(V, edges, src);
+
+        for (int i = 0; i < V; i++)
+            cout << res[i] << " ";
+        cout << endl;
+
+        cout << "~"
+             << "\n";
+    }
+
+    return 0;
+}
+// } Driver Code Ends
