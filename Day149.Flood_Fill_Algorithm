@@ -1,0 +1,172 @@
+
+✅ Problem Summary:
+You're given:
+
+A 2D grid image[][] where each cell represents the color of a pixel.
+
+A starting pixel (sr, sc) and a newColor.
+
+Goal: Change the color of the starting pixel and all connected pixels with the same original color using flood fill (up, down, left, right connections only).
+
+🔍 Approach: Depth-First Search (DFS)
+We will use DFS to recursively explore all the pixels connected to the starting pixel and change their color if they match the original color.
+
+🧠 Stepwise Solution:
+🔸 Step 1: Store image dimensions
+int m = image.size();         // Number of rows
+int n = image[0].size();      // Number of columns
+We store m and n globally to avoid passing them repeatedly in the recursive DFS function.
+
+🔸 Step 2: Store the original color of the starting pixel
+int currcolor = image[sr][sc];
+This is the color we will be replacing in the flood fill.
+
+🔸 Step 3: Check for early return
+if(currcolor == newcolor)
+    return image;
+If the starting pixel is already newColor, we don't need to do anything — this avoids infinite recursion.
+
+🔸 Step 4: Define directions for movement
+vector<vector<int>> direction{{0,1}, {0,-1}, {1,0}, {-1,0}};
+These represent:
+
+{0, 1} → right
+
+{0, -1} → left
+
+{1, 0} → down
+
+{-1, 0} → up
+
+Used to move in all 4 directions from a cell.
+
+🔸 Step 5: DFS Function (Recursive)
+void DFS(vector<vector<int>>& image, int i, int j, int newcolor, int currcolor)
+{
+    // Base condition: Out of bounds or not the target color
+    if(i < 0 || i >= m || j < 0 || j >= n || image[i][j] != currcolor)
+        return;
+
+    // Change color
+    image[i][j] = newcolor;
+
+    // Recur in 4 directions
+    for(auto &dir : direction)
+    {
+        int x = i + dir[0];
+        int y = j + dir[1];
+        DFS(image, x, y, newcolor, currcolor);
+    }
+}
+🔸 Step 6: Start DFS from the given starting point
+DFS(image, sr, sc, newcolor, currcolor);
+This begins the flood fill process.
+
+🔸 Step 7: Return the updated image
+return image;
+🧾 Complete Code:
+int m, n;
+vector<vector<int>> direction{{0,1}, {0,-1}, {1,0}, {-1,0}};
+
+void DFS(vector<vector<int>>& image, int i, int j, int newcolor, int currcolor)
+{
+    if(i < 0 || i >= m || j < 0 || j >= n || image[i][j] != currcolor)
+        return;
+
+    image[i][j] = newcolor;
+
+    for(auto &dir : direction)
+    {
+        int x = i + dir[0];
+        int y = j + dir[1];
+        DFS(image, x, y, newcolor, currcolor);
+    }
+}
+
+vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newcolor)
+{
+    m = image.size();
+    n = image[0].size();
+    
+    int currcolor = image[sr][sc];
+
+    if(currcolor != newcolor)
+        DFS(image, sr, sc, newcolor, currcolor);
+
+    return image;
+}
+🧪 Time & Space Complexity:
+Time Complexity: O(m × n)
+Every cell is visited at most once.
+
+Space Complexity: O(m × n) in the worst case due to recursion stack (if all pixels are the same).
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+  int m,n;
+  vector<vector<int>>direction{{0,1},{0,-1},{1,0},{-1,0}};
+  void DFS(vector<vector<int>>&image,int i,int j,int newcolor,int currcolor)
+  {
+      if(i<0||i>=m||j<0||j>=n||image[i][j]!=currcolor)
+      {
+          return;
+      }
+      image[i][j]=newcolor;
+      for(auto &dir:direction)
+      {
+          int x=i+dir[0];
+          int y=j+dir[1];
+          DFS(image,x,y,newcolor,currcolor);
+      }
+  }
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc,int newcolor) 
+    {
+        // Code here
+         m=image.size();
+         n=image[0].size();
+        int currcolor=image[sr][sc];
+        if(currcolor!=newcolor)
+        {
+            
+            DFS(image,sr,sc,newcolor,currcolor);
+        }
+        return image;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int tc;
+    cin >> tc;
+    while (tc--) {
+        int n, m;
+        cin >> n >> m;
+        vector<vector<int>> image(n, vector<int>(m, 0));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++)
+                cin >> image[i][j];
+        }
+        int sr, sc, newColor;
+        cin >> sr >> sc >> newColor;
+        Solution obj;
+        vector<vector<int>> ans = obj.floodFill(image, sr, sc, newColor);
+        for (auto i : ans) {
+            for (auto j : i)
+                cout << j << " ";
+            cout << "\n";
+        }
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
