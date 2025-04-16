@@ -1,0 +1,97 @@
+🔁 Purpose of Floyd-Warshall Algorithm:
+To find the shortest paths between all pairs of nodes in a weighted graph.
+The input is an adjacency matrix grid, where:
+
+grid[i][j] is the weight of the edge from node i to node j.
+
+If there is no edge, grid[i][j] is a large number (in this case, 1e8) representing infinity.
+
+✅ Stepwise Breakdown:
+Step 1: Initialize
+int n = grid.size();
+Get the number of vertices n in the graph.
+
+Step 2: Run Triple Nested Loops
+for (int i = 0; i < n; i++) {          // i is the intermediate node
+    for (int j = 0; j < n; j++) {      // j is the source node
+        for (int k = 0; k < n; k++) {  // k is the destination node
+We try to update the path from j to k via i.
+
+So basically, check if:
+
+Going from j to i + i to k is better than directly j to k.
+
+Step 3: Valid Path Check
+if (grid[j][i] != 1e8 && grid[i][k] != 1e8)
+Ensure both j → i and i → k paths exist (not infinite).
+
+If either path doesn’t exist, skip to avoid overflow.
+
+Step 4: Update the Shortest Path
+grid[j][k] = min(grid[j][k], grid[j][i] + grid[i][k]);
+Update grid[j][k] if a shorter path is found via i.
+
+📌 Summary:
+You're iteratively checking for every pair (j, k) if you can reach from j to k through an intermediate node i and updating the minimum cost accordingly.
+
+This is a classic implementation of Floyd-Warshall Algorithm with O(n³) time complexity.
+
+//{ Driver Code Starts
+// Initial template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function template for C++
+
+class Solution {
+  public:
+    void floydWarshall(vector<vector<int>> &grid) {
+        // Code here
+        int n=grid.size();
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                for(int k=0;k<n;k++)
+                {
+                    if(grid[j][i]!=1e8 &&grid[i][k]!=1e8)
+                    grid[j][k]=min(grid[j][k],grid[j][i]+grid[i][k]);
+                }
+            }
+        }
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int tc;
+    cin >> tc;
+    while (tc--) {
+        int n;
+        cin >> n;
+        vector<vector<int>> matrix(n, vector<int>(n, -1));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cin >> matrix[i][j];
+            }
+        }
+        Solution obj;
+        obj.floydWarshall(matrix);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cout << matrix[i][j] << " ";
+            }
+            cout << "\n";
+        }
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
