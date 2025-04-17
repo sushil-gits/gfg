@@ -1,0 +1,178 @@
+🔧 Core Idea:
+To find the minimum cycle, the algorithm uses a variation of Dijkstra’s Algorithm for each edge in the graph by temporarily removing that edge, finding the shortest path between its two vertices, and then adding the edge back to form a cycle.
+
+✅ Step-by-Step Approach:
+Step 1: Graph Representation
+Input: Number of vertices V and a list of edges where each edge is in the form {u, v, w}.
+
+Create an adjacency list adj[V] where each adj[u] contains {v, w} pairs.
+for(auto &it: edges){
+    int u = it[0];
+    int v = it[1];
+    int w = it[2];
+    adj[u].push_back({v, w});
+    adj[v].push_back({u, w});
+}
+Step 2: Dijkstra Function with a Twist
+The dijkstra function finds the shortest distance from src to dest, ignoring the direct edge between them.
+
+Key steps inside dijkstra:
+Initialize distance array dist[] with a large value 1e9.
+
+Use a min-heap (priority queue) to always pick the node with the current shortest distance.
+
+Skip the direct edge between src and dest during relaxation.
+
+Relax other edges normally and update dist[].
+if ((node == src && adjN == dest) || (node == dest && adjN == src)) continue;
+Step 3: Try Removing Each Edge Once
+To find cycles:
+
+For each edge {u, v, w}:
+
+Remove the edge between u and v conceptually (by skipping it in Dijkstra).
+
+Run dijkstra(u, v) to find the shortest alternative path.
+
+If a path exists (not 1e9), the cycle is dist(u, v) + w.
+int dist = dijkstra(edges[i][0], edges[i][1], V, adj);
+if (dist != 1e9){
+    mini = min(mini, dist + edges[i][2]);
+}
+Step 4: Return the Shortest Cycle Length
+After trying all edges, return the minimum cycle length found.
+
+🧠 Why Does This Work?
+A cycle must contain at least 3 vertices.
+
+By removing one edge, we can check if a different path exists between those two vertices, thus forming a cycle if we add the edge back.
+
+🚀 Time Complexity:
+Outer loop: O(E) (for each edge)
+
+Each Dijkstra call: O(E log V)
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+ //{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+  int dijkstra(int src, int dest, int V, vector<vector<int>>adj[]){
+        vector<int>dist(V, 1e9);
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>>pq;
+        pq.push({0, src});
+        dist[src]=0;
+        while(!pq.empty()){
+            auto &it=pq.top();
+            int node=it.second;
+            int d=it.first;
+            pq.pop();
+            
+            for(auto& it:adj[node]){
+                int adjN=it[0];
+                int adjW=it[1];
+                if((node==src && adjN==dest) || (node==dest && adjN==src)) continue;
+                if(d+adjW<dist[adjN]){
+                    dist[adjN]=d+adjW;
+                    pq.push({dist[adjN], adjN});
+                }
+            }
+        }
+        
+        return dist[dest];
+    }
+    int findMinCycle(int V, vector<vector<int>>& edges) {
+        // code here
+        vector<vector<int>>adj[V];
+        for(auto &it:edges){
+            int u=it[0];
+            int v=it[1];
+            int w=it[2];
+            adj[u].push_back({v, w});
+            adj[v].push_back({u, w});
+        }
+        
+        int mini=1e9;
+        
+        for(int i=0; i<edges.size(); i++){
+            int dist=(dijkstra(edges[i][0], edges[i][1], V, adj));
+            if(dist!=1e9){
+                mini=min(mini, dist+edges[i][2]);
+            }
+        }
+        
+        return mini;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int V, E;
+        cin >> V >> E;
+        vector<vector<int>> edges;
+        int i = 0;
+        while (i++ < E) {
+            int u, v, w;
+            cin >> u >> v >> w;
+            edges.push_back({u, v, w});
+            edges.push_back({v, u, w});
+        }
+
+        Solution obj;
+        int res = obj.findMinCycle(V, edges);
+
+        cout << res << endl;
+    }
+
+    return 0;
+}
+// } Driver Code Ends
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int V, E;
+        cin >> V >> E;
+        vector<vector<int>> edges;
+        int i = 0;
+        while (i++ < E) {
+            int u, v, w;
+            cin >> u >> v >> w;
+            edges.push_back({u, v, w});
+            edges.push_back({v, u, w});
+        }
+
+        Solution obj;
+        int res = obj.findMinCycle(V, edges);
+
+        cout << res << endl;
+    }
+
+    return 0;
+}
+// } Driver Code Ends
