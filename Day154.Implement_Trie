@@ -1,0 +1,207 @@
+🧱 struct Node
+struct Node {
+    Node *children[26];       // Each node has 26 children for each lowercase letter
+    bool isEndofWord;         // Marks if this node is the end of a valid word
+
+    Node() {
+        isEndofWord = false;
+        for(int i = 0; i < 26; i++)
+            children[i] = NULL;   // Initialize all child pointers to NULL
+    }
+};
+Each Node represents a character.
+
+It has an array of 26 pointers (for 'a' to 'z').
+
+isEndofWord indicates if a word ends at this node.
+
+🏗️ Trie Class and Its Functions
+1. Constructor
+Trie() {
+    root = new Node();
+}
+Initializes the root node of the Trie when the object is created.
+
+2. insert(string &word)
+cpp
+Copy code
+void insert(string &word) {
+    Node *node = root;
+    for(char ch : word) {
+        int index = ch - 'a';  // map 'a'-'z' to 0-25
+        if(!node->children[index])     // If the child node doesn't exist
+            node->children[index] = new Node();  // create a new node
+        node = node->children[index];   // move to the child
+    }
+    node->isEndofWord = true;  // Mark the end of word
+}
+📌 Steps:
+
+Start from the root.
+
+For each character, calculate its index (ch - 'a').
+
+If no child at that index → create a new node.
+
+Move to the child node.
+
+After the loop, mark the last node as the end of a word.
+
+3. search(string &word)
+bool search(string &word) {
+    Node *node = root;
+    for(char ch : word) {
+        int index = ch - 'a';
+        if(!node->children[index])
+            return false;
+        node = node->children[index];
+    }
+    return node->isEndofWord;
+}
+📌 Steps:
+
+Start from the root.
+
+For each character in the word:
+
+If the corresponding child node doesn't exist → return false.
+
+Move to that child node.
+
+After the loop, check if the current node is the end of a word.
+
+4. isPrefix(string &word)
+bool isPrefix(string &word) {
+    Node* node = root;
+    for(char ch : word) {
+        int index = ch - 'a';
+        if(!node->children[index])
+            return false;
+        node = node->children[index];
+    }
+    return true;
+}
+📌 Steps:
+
+Start from the root.
+
+For each character in the prefix:
+
+If the child at the index doesn’t exist → return false.
+
+Else, move to the next node.
+
+If the loop finishes successfully, return true (prefix exists).
+
+💡 Summary Table:
+Function	Purpose	Returns
+insert	Add a word to the Trie	void
+search	Check if a complete word exists	true/false//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function template for C++
+struct Node
+{
+    Node *children[26];
+    bool isEndofWord;
+    Node()
+    {
+        isEndofWord=false;
+        for(int i=0;i<26;i++)
+        children[i]=NULL;
+    }
+};
+class Trie {
+    Node *root;
+  public:
+
+    Trie() {
+        // implement Trie
+        root=new Node();
+    }
+
+    void insert(string &word) {
+        // insert word into Trie
+        Node *node=root;
+        for(char ch:word)
+        {
+            int index=ch-'a';
+            if(!node->children[index])
+            node->children[index]=new Node();
+            node=node->children[index];
+        }
+        node->isEndofWord=true;
+    }
+
+    bool search(string &word) {
+        // search word in the Trie
+        Node *node=root;
+        for(char ch:word)
+        {
+            int index=ch-'a';
+            if(!node->children[index])
+            return false;
+            node=node->children[index];
+        }
+        return node->isEndofWord;
+    }
+
+    bool isPrefix(string &word) {
+        // search prefix word in the Trie
+        Node* node = root;
+        for(char ch : word) {
+            int index = ch - 'a';
+            if(!node->children[index])
+                return false;
+            node = node->children[index];
+        }
+        return true;
+        
+    }
+};
+
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        int q;
+        cin >> q;
+        cin.ignore();
+        vector<bool> ans;
+        Trie ob;
+        for (int i = 0; i < q; i++) {
+            int x;
+            cin >> x;
+            string s;
+            cin >> s;
+            cin.ignore();
+            if (x == 1) {
+                ob.insert(s);
+            } else if (x == 2) {
+                ans.push_back(ob.search(s));
+            } else if (x == 3) {
+                ans.push_back(ob.isPrefix(s));
+            }
+        }
+        cout << boolalpha;
+        for (auto it : ans) {
+            cout << it << " ";
+        }
+        cout << endl;
+        cout << "~\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
+isPrefix	Check if any word starts with prefix	true/false
+
