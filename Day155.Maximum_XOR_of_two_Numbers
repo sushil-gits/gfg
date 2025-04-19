@@ -1,0 +1,167 @@
+✅ Part 1: Brute Force Approach (TLE)
+🔁 Code:
+int maxXor(vector<int> &arr) {
+    int maxi = 0;
+    for (int i = 0; i < arr.size(); i++) {
+        for (int j = i; j < arr.size(); j++) {
+            maxi = max(maxi, arr[i] ^ arr[j]);
+        }
+    }
+    return maxi;
+}
+🔍 Stepwise Approach:
+Initialize maxi = 0 to store the maximum XOR result.
+
+Loop through every pair of elements in the array using two nested loops:
+
+Outer loop: index i from 0 to n-1.
+
+Inner loop: index j from i to n-1.
+
+For every pair (arr[i], arr[j]), calculate arr[i] ^ arr[j].
+
+Update maxi if this XOR result is greater than current maxi.
+
+Return maxi.
+
+❌ Time Complexity:
+O(n²) — because of the nested loops.
+
+Leads to TLE (Time Limit Exceeded) for large arrays (e.g., n > 10^4).
+
+✅ Part 2: Optimized Approach (Bitmask + HashSet)
+🔁 Code:
+int maxXor(vector<int> &arr) {
+    int maxi = 0, l = 0;
+    for (int i = 31; i >= 0; i--) {
+        l |= (1 << i);
+        unordered_set<int> pre;
+
+        for (int num : arr) {
+            pre.insert(num & l);
+        }
+
+        int c = maxi | (1 << i);
+
+        for (int j : pre) {
+            if (pre.count(j ^ c)) {
+                maxi = c;
+                break;
+            }
+        }
+    }
+    return maxi;
+}
+🧠 Stepwise Approach (Optimized):
+Goal: Build the maximum XOR bit by bit from most significant bit (MSB) to least significant bit (LSB).
+🔄 For each bit i from 31 to 0:
+Step 1:
+Build a bitmask l to keep only the top i bits.
+l |= (1 << i);
+Step 2:
+Create a set of all prefixes (the leftmost bits) of all numbers in arr:
+for (int num : arr) {
+    pre.insert(num & l);
+}
+Step 3:
+Assume we can set the current bit in the final answer:
+int c = maxi | (1 << i);
+Step 4:
+Check if there are two prefixes a and b such that:
+a ^ b == c  ⟺  a == c ^ b
+If such a pair exists in the set, we can safely set the current bit in the final answer:
+maxi = c;
+Repeat for all 32 bits (from 31 to 0).
+✅ Time Complexity:
+Outer loop runs 32 times (for each bit).
+
+Inner set operations are O(n) for each bit.
+
+So total complexity is O(32n) = O(n) — fast enough for large inputs.
+
+📌 Final Thought:
+The brute-force approach is intuitive but slow.
+
+This bitmask + set trick uses mathematical properties of XOR to prune out unnecessary checks and greedily build the max XOR.
+
+
+//{ Driver Code Starts
+// Initial Template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function Template for C++
+
+class Solution {
+  public:
+
+
+//   brutt fofrce approach which gives-------------------------- TLE
+    // int maxXor(vector<int> &arr) {
+    //     // code here
+    //     int maxi=0;
+    //     for(int i=0;i<arr.size();i++)
+    //     {
+    //         for(int j=i;j<arr.size();j++)
+    //         {
+    //       maxi=max(maxi,arr[i]^arr[j]);  
+    //         }
+    //     }
+    //     return maxi;
+    // }
+    
+    // optimize code to ovevrcome the TLE
+    int maxXor(vector<int> &arr) {
+        int maxi=0,l=0;
+        for(int i=31;i>=0;i--)
+        {
+            l|=(1<<i);
+            unordered_set<int>pre;
+            // store prefix of all number with current mask
+            for(int num:arr)
+            {
+                pre.insert(num&l);
+            }
+            int c=maxi|(1<<i);  //try to set the current bit
+            for(int j:pre)
+            {
+                if(pre.count(j^c))
+                {
+                    maxi=c;
+                    break;
+                }
+            }
+        }
+        return maxi;
+    }
+    
+};
+
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+
+    while (t--) {
+        int n;
+        cin >> n;
+
+        vector<int> arr(n);
+        for (int i = 0; i < n; i++)
+            cin >> arr[i];
+
+        Solution ob;
+        cout << ob.maxXor(arr) << endl;
+
+        cout << "~"
+             << "\n";
+    }
+}
+
+// } Driver Code Ends
