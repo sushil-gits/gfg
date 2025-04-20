@@ -1,0 +1,141 @@
+✅ Stepwise Approach:
+Step 1: Calculate the size of the array
+int n = arr.size();
+Let the size of the input array be n.
+
+This means there should be n + 1 elements (including the missing number).
+
+Step 2: Calculate the expected total sum
+long long fullsum = (long long)(n + 1) * (n + 2) / 2;
+The formula to calculate the sum of first k natural numbers is:
+
+Sum
+=
+𝑘
+(
+𝑘
++
+1
+)
+2
+Sum= 
+2
+k(k+1)
+​
+ 
+Since the array should contain numbers from 1 to n+1, the expected total sum is:
+
+fullsum
+=
+(
+𝑛
++
+1
+)
+(
+𝑛
++
+2
+)
+2
+fullsum= 
+2
+(n+1)(n+2)
+​
+ 
+Typecast to long long to prevent integer overflow.
+
+Step 3: Calculate the actual sum of array elements
+long long sum = 0;
+for (int i = 0; i < n; i++) {
+    sum += arr[i];
+}
+Loop through the entire array and add each element to sum.
+
+Step 4: Find the missing number
+long long mis = fullsum - sum;
+Subtract the actual sum from the expected total sum to find the missing number.
+
+Step 5: Return the missing number
+return mis;
+Return the final result as an integer.
+
+📌 Example for better understanding:
+Input:
+arr = {1, 2, 4, 5, 6}
+n = 5
+
+Expected numbers: 1 to 6
+
+Expected sum = 
+6
+×
+7
+2
+=
+21
+2
+6×7
+​
+ =21
+
+Actual sum = 1 + 2 + 4 + 5 + 6 = 18
+
+Missing number = 21 - 18 = 3
+
+Output:
+3
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int missingNum(vector<int>& arr) {
+        // code here
+        int n=arr.size();
+    long long sum=0,mis=0;
+    long long fullsum=(long long)(n+1)*(n+2)/2;
+    for(int i=0;i<n;i++)
+    {
+        sum+=arr[i];
+    }
+    mis=fullsum-sum;
+    return mis;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore(); // to ignore the newline after the integer input
+    while (t--) {
+        int n;
+        vector<int> a;
+        string input;
+
+        // Input format: first number n followed by the array elements
+        getline(cin, input);
+        stringstream ss(input);
+        int num;
+        while (ss >> num)
+            a.push_back(num);
+
+        Solution obj;
+        cout << obj.missingNum(a) << endl;
+        cout << "~\n";
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
