@@ -1,0 +1,103 @@
+🔍 Goal:
+Find and return the element that appears only once in the given array (i.e., its frequency is 1).
+
+✅ Stepwise Approach:
+Step 1: Initialize Data Structures
+unordered_map<int, int> f;
+Use an unordered map f to store the frequency of each element in the array.
+
+Keys = elements from the array
+
+Values = their respective frequencies (number of times they appear)
+
+Step 2: Count Frequencies
+for (int num : arr) {
+    f[num]++;
+}
+Traverse through each element of the array using a range-based for loop.
+
+For each number num, increment its count in the map.
+
+📌 After this loop, the map f will store:
+f[element] = frequency
+Example:
+If arr = {2, 3, 5, 3, 2},
+Then the map will be: {2:2, 3:2, 5:1}
+
+Step 3: Find the Unique Element
+for (auto pair : f) {
+    if (pair.second == 1)
+        return pair.first;
+}
+Loop through each key-value pair in the frequency map.
+
+If you find a pair where the frequency (pair.second) is 1, that means the element is unique.
+
+Return that element immediately.
+
+🔚 Step 4: End of Function
+If all elements have frequency > 1, the function doesn’t return anything.
+You can optionally add a default return to handle that:
+return -1; // or any invalid/sentinel value
+🧠 Example Run:
+For input arr = {4, 1, 2, 1, 2}
+
+Step 1: Frequency map → {4:1, 1:2, 2:2}
+
+Step 2: Only 4 has frequency 1.
+
+Output: 4
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int findUnique(vector<int> &arr) {
+        // code here
+        int n=arr.size();
+        unordered_map<int,int>f;
+        for(int num:arr)
+        {
+            f[num]++;
+            
+        }
+       
+        for(auto pair:f)
+        {
+            if(pair.second==1)
+            return pair.first;
+        }
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        Solution ob;
+        int ans = ob.findUnique(arr);
+        cout << ans << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
