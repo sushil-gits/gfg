@@ -1,0 +1,119 @@
+✅ Function Goal:
+Given an array arr, return all the elements that appear exactly once, sorted in ascending order.
+
+🔍 Function Signature:
+vector<int> singleNum(vector<int>& arr)
+✅ Stepwise Approach:
+Step 1: Initialize Variables
+int n = arr.size();
+vector<int> ans;
+unordered_map<int, int> s;
+n: size of the array.
+
+ans: a vector to store elements that occur only once.
+
+s: an unordered map (hash table) to store the frequency of each element.
+
+Step 2: Count Frequencies
+for (int i : arr) {
+    s[i]++;
+}
+Loop through the input array arr.
+
+For each element i, increment its count in the map s.
+
+📌 After this loop:
+s[element] = frequency of that element
+
+Example:
+For arr = {1, 2, 2, 3, 4, 4},
+the map s will be {1:1, 2:2, 3:1, 4:2}
+
+Step 3: Extract Elements with Frequency 1
+for (auto pair : s) {
+    if (pair.second == 1)
+        ans.push_back(pair.first);
+}
+Loop through each key-value pair in the map.
+
+If the frequency (pair.second) is 1, it means the element is unique, so you store it in ans.
+
+Continuing the previous example:
+Only 1 and 3 have frequency 1 → ans = {1, 3}
+
+Step 4: Sort the Result
+sort(ans.begin(), ans.end());
+Sort the list of unique elements in ascending order.
+
+Step 5: Return the Answer
+return ans;
+Return the sorted list of unique elements.
+
+✅ Final Example:
+For input:
+arr = {4, 3, 2, 7, 8, 2, 3, 1}
+Frequencies: {1:1, 2:2, 3:2, 4:1, 7:1, 8:1}
+
+Unique elements: {1, 4, 7, 8}
+
+After sorting: {1, 4, 7, 8}
+
+Output:
+[1, 4, 7, 8]
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    vector<int> singleNum(vector<int>& arr) {
+        // Code here.
+        int n=arr.size();
+        vector<int>ans;
+        unordered_map<int,int>s;
+        for(int i:arr)
+        {
+           s[i]++;
+        }
+        for (auto pair : s) {
+    if (pair.second == 1)
+        ans.push_back(pair.first);
+}
+sort(ans.begin(),ans.end());
+return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    string ts;
+    getline(cin, ts);
+    int t = stoi(ts);
+    while (t--) {
+
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+
+        Solution ob;
+        vector<int> ans = ob.singleNum(arr);
+        for (auto it : ans) {
+            cout << it << " ";
+        }
+        cout << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
