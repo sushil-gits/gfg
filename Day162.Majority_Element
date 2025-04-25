@@ -1,0 +1,106 @@
+🔍 Function Purpose:
+Find the majority element in an array, i.e., the element that appears more than n/2 times. If no such element exists, return -1.
+
+🧠 Stepwise Explanation:
+🟢 Step 1: Get the Size of the Array
+int n = arr.size();
+Store the size of the input array in variable n.
+
+🟢 Step 2: Create a Frequency Map
+unordered_map<int, int> m;
+Create a hashmap m to store the frequency (count) of each unique element in the array.
+
+🟢 Step 3: Count Frequencies of Each Element
+for (int i = 0; i < n; i++) {
+    m[arr[i]]++;
+}
+Traverse the array using a loop.
+
+For each element arr[i], increase its count in the hashmap.
+
+🟢 Step 4: Find the Majority Element
+for (auto pair : m) {
+    if (pair.second > n / 2)
+        return pair.first;
+}
+Traverse the hashmap.
+
+For each key-value pair:
+
+pair.first is the element.
+
+pair.second is the count.
+
+If the count is greater than n/2, return the element — it’s the majority element.
+
+🟢 Step 5: If No Majority Element Exists
+return -1;
+If no element satisfies the count > n/2 condition, return -1.
+
+✅ Example:
+For arr = {3, 3, 4, 2, 3}:
+
+Frequencies: {3: 3, 4: 1, 2: 1}
+
+n = 5, so n/2 = 2.5
+
+3 occurs 3 times > 2.5 → return 3
+
+
+
+//{ Driver Code Starts
+// Initial template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function template for C++
+
+class Solution {
+  public:
+    int majorityElement(vector<int>& arr) {
+     int n=arr.size();
+     unordered_map<int,int>m;
+     for(int i=0;i<n;i++)
+     {
+         m[arr[i]]++;
+     }
+     for(auto pair:m)
+     {
+         if(pair.second>n/2)
+         return pair.first;
+     }
+     return -1;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        int n;
+        vector<int> a, b;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int num;
+        while (ss >> num)
+            a.push_back(num);
+
+        Solution obj;
+        cout << obj.majorityElement(a) << endl;
+        cout << "~" << endl;
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
