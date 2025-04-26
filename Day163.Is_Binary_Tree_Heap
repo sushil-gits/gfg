@@ -1,0 +1,236 @@
+✅ Objective:
+To determine whether the given binary tree is a Max-Heap.
+
+A binary tree is a Max-Heap if:
+
+It is a Complete Binary Tree (CBT).
+
+The value of each node is greater than or equal to its children.
+
+🧠 Stepwise Explanation:
+Step 1: Handle Base Case
+if (!root) return true;
+If the tree is empty, it is trivially a heap, so return true.
+
+Step 2: Initialize Level Order Traversal
+queue<Node*> q;
+q.push(root);
+bool NC = false;
+Start a level order traversal using a queue.
+
+NC (Null Child flag) will be used to track if we have encountered a node missing a child.
+
+Step 3: Traverse Level by Level
+while (!q.empty()) {
+    Node* current = q.front();
+    q.pop();
+Process nodes in level order (BFS).
+
+Step 4: Check Left Child
+if (current->left) {
+    if (NC || current->data < current->left->data)
+        return false;
+    q.push(current->left);
+} else {
+    NC = true;
+}
+If left child exists:
+
+Heap property: Check if the current node's value is greater than or equal to its left child's value.
+
+CBT property: If we've already seen a node with a missing child (NC == true), then having a child again means the tree is not complete, so return false.
+
+If left child doesn't exist:
+
+Set NC = true, indicating future nodes must not have any children.
+
+Step 5: Check Right Child
+if (current->right) {
+    if (NC || current->data < current->right->data)
+        return false;
+    q.push(current->right);
+} else {
+    NC = true;
+}
+Apply the same logic for the right child.
+
+If any child violates the heap property or completeness property, return false.
+
+Step 6: Final Return
+return true;
+If the entire tree passes both checks (heap property + CBT), return true.
+
+✅ Conclusion:
+This approach ensures that:
+
+The binary tree is complete (no node has a right child before a left, and no children after a missing child).
+
+The heap property (parent ≥ children) is satisfied for all nodes.
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+// Tree Node
+class Node {
+  public:
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int val) {
+        data = val;
+        left = right = NULL;
+    }
+};
+
+// Function to Build Tree
+Node *buildTree(string str) {
+    // Corner Case
+    if (str.length() == 0 || str[0] == 'N')
+        return NULL;
+
+    // Creating vector of strings from input
+    // string after spliting by space
+    vector<string> ip;
+
+    istringstream iss(str);
+    for (string str; iss >> str;)
+        ip.push_back(str);
+
+    // Create the root of the tree
+    Node *root = new Node(stoi(ip[0]));
+
+    // Push the root to the queue
+    queue<Node *> queue;
+    queue.push(root);
+
+    // Starting from the second element
+    int i = 1;
+    while (!queue.empty() && i < ip.size()) {
+
+        // Get and remove the front of the queue
+        Node *currNode = queue.front();
+        queue.pop();
+
+        // Get the current Node's value from the string
+        string currVal = ip[i];
+
+        // If the left child is not null
+        if (currVal != "N") {
+
+            // Create the left child for the current Node
+            currNode->left = new Node(stoi(currVal));
+
+            // Push it to the queue
+            queue.push(currNode->left);
+        }
+
+        // For the right child
+        i++;
+        if (i >= ip.size())
+            break;
+        currVal = ip[i];
+
+        // If the right child is not null
+        if (currVal != "N") {
+
+            // Create the right child for the current Node
+            currNode->right = new Node(stoi(currVal));
+
+            // Push it to the queue
+            queue.push(currNode->right);
+        }
+        i++;
+    }
+
+    return root;
+}
+
+
+// } Driver Code Ends
+
+// User Function template for C++
+
+// Structure of node
+/*class Node {
+   public:
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int val) {
+        data = val;
+        left = right = NULL;
+    }
+};*/
+
+class Solution {
+  public:
+    bool isHeap(Node* root) {
+        // code here
+        if(!root)
+        return true;
+        queue<Node*>q;
+        q.push(root);
+        bool NC=false;
+        while(!q.empty())
+        {
+            Node*current=q.front();
+            q.pop();
+            // left child
+            if(current->left)
+            {
+                if(NC||current->data<current->left->data)
+                {
+                    return false;
+                }
+                q.push(current->left);
+            }
+            else
+            {
+                NC=true;
+            }
+            // right child
+            if(current->right)
+            {
+                if(NC||current->data<current->right->data)
+                {
+                    return false;
+                }
+                q.push(current->right);
+            }
+            else
+            {
+                NC=true;
+            }
+        }
+        return true;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int tc;
+    scanf("%d ", &tc);
+    while (tc--) {
+        string treeString;
+        getline(cin, treeString);
+        Solution ob;
+        Node *root = buildTree(treeString);
+        if (ob.isHeap(root))
+            cout << "true" << endl;
+        else
+            cout << "false" << endl;
+
+        cout << "~"
+             << "\n";
+    }
+
+    return 0;
+}
+// } Driver Code Ends
