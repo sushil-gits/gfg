@@ -1,0 +1,153 @@
+🔁 Goal:
+Detect if a loop exists in a linked list, and if it does, return the number of nodes in that loop. If no loop is found, return 0.
+
+✅ Stepwise Breakdown:
+Initialize two pointers:
+
+slow and fast are both set to the head of the linked list.
+These will help in Floyd’s Cycle Detection Algorithm (Tortoise and Hare approach).
+
+Traverse the list using two pointers:
+
+slow moves one node at a time: slow = slow->next
+
+fast moves two nodes at a time: fast = fast->next->next
+
+Detect a loop:
+
+While traversing, if slow and fast meet (slow == fast), a loop exists.
+
+Count the number of nodes in the loop:
+
+Start a new pointer temp = slow->next
+
+Initialize len = 1 (we’ve already counted the meeting node)
+
+Keep moving temp one step at a time (temp = temp->next) and increment len
+
+Stop when temp == slow again. This completes one full cycle around the loop.
+
+Return the count:
+
+Return len as the number of nodes in the loop.
+
+If no loop is detected:
+
+The loop (while(fast && fast->next)) ends without slow == fast
+
+Return 0, meaning no cycle exists.
+
+🧠 Time & Space Complexity:
+Time Complexity: O(N) (where N is the number of nodes, since we visit each node at most twice)
+
+Space Complexity: O(1) (constant space, no extra data structures used)
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node {
+    int data;
+    struct Node *next;
+
+    Node(int x) {
+        data = x;
+        next = NULL;
+    }
+};
+
+void printList(Node *node) {
+    while (node != NULL) {
+        cout << node->data << " ";
+        node = node->next;
+    }
+    cout << "\n";
+}
+
+void loopHere(Node *head, Node *tail, int position) {
+    if (position == 0)
+        return;
+
+    Node *walk = head;
+    for (int i = 1; i < position; i++)
+        walk = walk->next;
+    tail->next = walk;
+}
+
+
+// } Driver Code Ends
+
+/*
+
+struct Node {
+    int data;
+    struct Node *next;
+    Node(int x) {
+        data = x;
+        next = NULL;
+    }
+};
+
+*/
+class Solution {
+  public:
+    // Function to find the length of a loop in the linked list.
+    int countNodesinLoop(Node *head) {
+        // Code here
+        Node *fast=head;
+        Node *slow=head;
+        int len=0;
+        while(fast && fast->next)
+        {
+            slow=slow->next;
+            fast=fast->next->next;
+            if(slow==fast)
+            {
+                len++;
+                Node *temp=slow->next;
+                while(temp!=slow)
+                {
+                    len++;
+                    temp=temp->next;
+                }
+                return len;
+            }
+        }
+        return 0;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        int k;
+        cin >> k;
+        cin.ignore();
+        struct Node *head = new Node(arr[0]);
+        struct Node *tail = head;
+        for (int i = 1; i < arr.size(); ++i) {
+            tail->next = new Node(arr[i]);
+            tail = tail->next;
+        }
+        loopHere(head, tail, k);
+
+        Solution ob;
+        cout << ob.countNodesinLoop(head) << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
