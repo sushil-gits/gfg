@@ -1,0 +1,122 @@
+✅ Problem Statement:
+You are given a positive integer n. Your task is to return the n-th row of Pascal's Triangle (0-indexed or 1-indexed depending on interpretation).
+
+For example:
+
+n = 1 → [1]
+
+n = 2 → [1, 1]
+
+n = 3 → [1, 2, 1]
+
+n = 5 → [1, 4, 6, 4, 1] (if 1-based indexing)
+
+🎯 Objective:
+Return a vector of integers containing the binomial coefficients for the n-th row.
+
+🧠 Key Concept – Binomial Coefficient:
+Each element in the nth row is given by:
+C(n−1,k)= (n−1)!/k!(n−1−k)!
+​
+ 
+Instead of computing full factorials (which is slow and causes overflow), we use:
+C(n,k)=C(n,k−1)× n−k/k
+​
+ 
+This builds the row efficiently using previous results.
+
+🔍 Step-by-Step Explanation of Code:
+✅ Code:
+vector<int> nthRowOfPascalTriangle(int n) {
+    vector<int> ans;
+    long long res = 1;          // C(n-1, 0) = 1
+    ans.push_back(1);           // First element of the row is always 1
+
+    for (int k = 1; k < n; k++) {
+        res = res * (n - k) / k;  // Calculate C(n-1, k) using C(n-1, k-1)
+        ans.push_back(res);       // Store it in the answer vector
+    }
+
+    return ans;
+}
+🔢 Example: n = 5
+You want the 5th row → index 0 to 4 (1-based: C(4, 0) to C(4, 4))
+Pascal row: [1, 4, 6, 4, 1]
+
+Loop steps:
+k = 1:
+res = 1 * (5 - 1) / 1 = 4
+Push 4 → [1, 4]
+
+k = 2:
+res = 4 * (5 - 2) / 2 = 6
+Push 6 → [1, 4, 6]
+
+k = 3:
+res = 6 * (5 - 3) / 3 = 4
+Push 4 → [1, 4, 6, 4]
+
+k = 4:
+res = 4 * (5 - 4) / 4 = 1
+Push 1 → [1, 4, 6, 4, 1]
+
+📦 Final Output:
+[1, 4, 6, 4, 1]
+✅ Time & Space Complexity:
+Time Complexity: O(n)
+
+Space Complexity: O(n)
+
+Efficient and safe from overflow if long long is used.
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+
+class Solution {
+  public:
+    vector<int> nthRowOfPascalTriangle(int n) {
+        // code here
+        vector<int>ans;
+        long long res=1;
+        ans.push_back(1);
+    for(int k=1;k<n;k++)
+    {
+        res = res * (n - k) / k; 
+        ans.push_back(res);
+    }
+    return ans;
+    }
+};
+
+
+
+//{ Driver Code Starts.
+
+void printAns(vector<int> &ans) {
+    for (auto &x : ans) {
+        cout << x << " ";
+    }
+    cout << "\n";
+}
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        Solution ob;
+        auto ans = ob.nthRowOfPascalTriangle(n);
+        printAns(ans);
+
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
