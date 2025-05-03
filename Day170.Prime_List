@@ -1,0 +1,221 @@
+✅ Problem Statement: "Replace Every Node’s Value With Nearest Prime"
+You're given a singly linked list where each node contains a positive integer.
+Your task is to replace each node's value with the nearest prime number.
+
+If there are two primes equally distant (one smaller and one larger), choose the smaller prime.
+
+🧠 Example:
+Input: 10 → 15 → 1 → 20
+Output: 11 → 13 → 2 → 19
+Explanation:
+
+Nearest prime to 10 is 11
+
+Nearest prime to 15 is 13
+
+Nearest prime to 1 is 2
+
+Nearest prime to 20 is 19
+
+✅ Step-by-Step Approach:
+🔹 Step 1: Prime Number Check Function
+bool isPrime(int n)
+{
+    if(n <= 1) return false;
+    if(n == 2 || n == 3) return true;
+    for(int i = 2; i*i <= n; i++)
+        if(n % i == 0)
+            return false;
+    return true;
+}
+🔍 Explanation:
+Returns true if n is a prime number.
+
+Efficiently checks up to √n for factors.
+
+🔹 Step 2: Traverse the Linked List
+Node *temp = head;
+while(temp)
+Use a pointer temp to traverse the linked list node by node.
+
+🔹 Step 3: For each node, find the nearest prime
+int curr = temp->val;
+int prime1 = curr, prime2 = curr;
+prime1: will move upward to find next prime ≥ curr
+
+prime2: will move downward to find previous prime ≤ curr
+
+🔹 Step 4: Increment prime1 until you find a prime
+while(!isPrime(prime1)) {
+    prime1++;
+}
+Keeps going up until it finds a prime number.
+
+🔹 Step 5: Decrement prime2 until you find a prime
+while(!isPrime(prime2) && prime2 > 0) {
+    prime2--;
+}
+Keeps going down until it finds a prime (or hits 0).
+
+🔹 Step 6: Choose the closer prime
+if(prime2) {
+    if(prime1 - curr >= curr - prime2)
+        temp->val = prime2;
+    else
+        temp->val = prime1;
+} else {
+    temp->val = prime1;
+}
+If both prime1 and prime2 are found:
+
+Choose the one with lesser distance
+
+If both are equidistant, choose the smaller (i.e., prime2)
+
+If no smaller prime found (e.g., value was 1), just assign prime1
+
+🔹 Step 7: Move to next node
+temp = temp->next;
+🔹 Step 8: Return the updated head
+return head;
+✅ Time and Space Complexity:
+Time Complexity:
+For each node, it might check several numbers for primality.
+In the worst case (e.g., value = 9999), it checks O(√n) per check × number of checks × list size.
+Hence, time is roughly O(N * P) where P is prime-check iterations.
+
+Space Complexity:
+O(1) — no extra space used (except a few integers).
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+class Node {
+  public:
+    int val;
+    Node* next;
+
+    Node(int x) {
+        val = x;
+        next = NULL;
+    }
+};
+
+void printList(Node* node) {
+    while (node != NULL) {
+        cout << node->val << " ";
+        node = node->next;
+    }
+    cout << "\n";
+}
+
+
+// } Driver Code Ends
+
+// User function Template for C++
+
+/*
+class Node{
+public:
+    int val;
+    Node *next;
+    Node(int num){
+        val=num;
+        next=NULL;
+    }
+};
+*/
+
+class Solution {
+  public:
+  bool isPrime(int n)
+  {
+      if(n<=1)
+      {
+          return false;
+      }
+      if(n==2 || n==3)
+      {
+          return true;
+      }
+      for(int i=2;i*i<=n;i++)
+      {
+          if(n%i==0)
+          return false;
+      }
+      return true;
+  }
+    Node *primeList(Node *head) {
+        // code here
+        Node *temp=head;
+        while(temp)
+        {
+            int prime1=temp->val;
+            int prime2=temp->val;
+            int curr=temp->val;
+            while(isPrime(prime1)==false)
+            {
+                prime1++;
+            }
+            while(isPrime(prime2)==false && prime2>0)
+            {
+                prime2--;
+            }
+            if(prime2)
+            {
+                if(prime1-curr>=curr-prime2)
+                temp->val=prime2;
+                else 
+                temp->val=prime1;
+                
+            }
+            else
+            temp->val=prime1;
+            temp=temp->next;
+            }
+            return head;
+        }
+    };
+
+
+//{ Driver Code Starts.
+
+int main() {
+
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+
+        if (arr.empty()) {
+            cout << -1 << endl;
+            continue;
+        }
+
+        int data = arr[0];
+        struct Node* head = new Node(data);
+        struct Node* tail = head;
+        for (int i = 1; i < arr.size(); ++i) {
+            data = arr[i];
+            tail->next = new Node(data);
+            tail = tail->next;
+        }
+
+        Solution ob;
+        head = ob.primeList(head);
+        printList(head);
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
