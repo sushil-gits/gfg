@@ -1,0 +1,148 @@
+✅ Problem Statement:
+You are given a string str. Your task is to find the length of the smallest substring of str that contains all the distinct characters present in str.
+
+📌 Example:
+Input: "aabcbcdbca"
+Output: 4
+
+Explanation:
+All distinct characters are {a, b, c, d}.
+One of the smallest substrings containing all these characters is "dbca" of length 4.
+
+✅ Code:
+int findSubString(string& str) {
+    int n = str.size();
+    map<char, int> mp;
+
+    // Step 1: Count total unique characters in the string
+    for(char c : str)
+        mp[c]++;
+    int m = mp.size(); // Total distinct characters
+
+    // Step 2: Sliding window initialization
+    mp.clear();
+    int i = 0, j = 0;
+    int ans = INT_MAX;
+
+    // Step 3: Expand window using 'j'
+    while(j < n) {
+        mp[str[j]]++;
+
+        // Step 4: Try shrinking the window from left using 'i'
+        while(i < n && mp.size() >= m) {
+            ans = min(ans, j - i + 1);
+            mp[str[i]]--;
+            if(mp[str[i]] == 0) {
+                mp.erase(str[i]);
+            }
+            i++;
+        }
+        j++;
+    }
+    return ans;
+}
+✅ Stepwise Approach:
+Count Total Unique Characters:
+for(char c : str)
+    mp[c]++;
+int m = mp.size();
+Use a map to count all unique characters in str.
+
+m stores the number of distinct characters.
+
+Reset Map and Initialize Window:
+mp.clear();
+int i = 0, j = 0, ans = INT_MAX;
+We'll use two pointers i and j to maintain a sliding window.
+
+ans will track the length of the smallest valid window.
+
+Expand Window Using j:
+while(j < n)
+Keep expanding the right boundary of the window to include more characters.
+
+Update the count of characters in mp.
+
+Shrink Window From the Left (i):
+while(i < n && mp.size() >= m)
+When the current window contains all distinct characters (mp.size() == m), try shrinking it from the left to minimize its length.
+
+Each time a smaller valid window is found, update ans.
+
+Update Minimum Length and Maintain Map:
+ans = min(ans, j - i + 1);
+mp[str[i]]--;
+if(mp[str[i]] == 0)
+    mp.erase(str[i]);
+Reduce the frequency of the leftmost character.
+
+If its frequency becomes zero, remove it from the map to keep track of only the characters currently in the window.
+
+Return Final Answer:
+return ans;
+After the loop ends, ans will contain the length of the smallest substring containing all unique characters.
+
+✅ Time and Space Complexity:
+Time Complexity: O(n), where n is the length of the string — because each character is added and removed at most once in the sliding window.
+
+Space Complexity: O(1), since the number of distinct lowercase/uppercase characters is bounded (at most 256 ASCII characters).
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int findSubString(string& str) {
+        // code here
+        int n=str.size();
+        map<char,int>mp;
+        for(char c:str)
+        mp[c]++;
+        int m=mp.size();
+        mp.clear();
+        int j=0;
+        int i=0;
+        int ans=INT_MAX;
+        while(j<n)
+        {
+            mp[str[j]]++;
+            while(i<n && mp.size()>=m)
+            {
+                ans=min(j-i+1,ans);
+                mp[str[i]]--;
+                if(mp[str[i]]==0)
+                {
+                    mp.erase(str[i]);
+                }
+                i++;
+            }
+            j++;
+        }
+        return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+//      Driver code
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+
+        string str;
+        cin >> str;
+        Solution ob;
+        cout << ob.findSubString(str) << endl;
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
