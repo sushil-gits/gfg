@@ -1,0 +1,151 @@
+✅ Problem Statement
+You are given a nearly sorted array arr[] of distinct integers where each element may be displaced by at most one position from its correct sorted position. This means, for any index i, the element that should be at index i may be at i-1, i, or i+1.
+
+Given an integer target, return its index in the array if present. If not, return -1.
+
+🔍 Example
+Input:
+arr = [10, 3, 40, 20, 50, 80, 70]
+target = 40
+
+Output:
+2
+
+Explanation: 40 is at index 2 in the nearly sorted array.
+🧠 Stepwise Approach
+1. Initialize Pointers
+Set two pointers low = 0 and high = arr.size() - 1.
+
+2. Loop Until low ≤ high
+Use a standard binary search loop: while (low <= high).
+
+3. Calculate Mid
+Use the formula mid = low + (high - low) / 2 to avoid overflow.
+
+4. Check if Mid is Target
+If arr[mid] == target, return mid.
+
+5. Check Neighbors
+Since the array is nearly sorted, check:
+
+If arr[mid - 1] == target (ensure mid - 1 >= low)
+
+If arr[mid + 1] == target (ensure mid + 1 <= high)
+
+If found, return the respective index.
+
+6. Adjust Search Window
+If arr[mid] < target, discard mid, mid - 1, and move search space to the right: low = mid + 2
+
+Else, discard mid, mid + 1, and move search space to the left: high = mid - 2
+
+7. Target Not Found
+If loop ends and nothing is returned, return -1.
+
+✅ Final Code with Comments
+int findTarget(vector<int>& arr, int target) {
+    int low = 0;
+    int high = arr.size() - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+
+        // Check mid
+        if (arr[mid] == target)
+            return mid;
+
+        // Check neighbors
+        if (mid - 1 >= low && arr[mid - 1] == target)
+            return mid - 1;
+
+        if (mid + 1 <= high && arr[mid + 1] == target)
+            return mid + 1;
+
+        // Adjust search space
+        if (arr[mid] < target)
+            low = mid + 2;  // skip mid and mid+1
+        else
+            high = mid - 2; // skip mid and mid-1
+    }
+
+    return -1; // Not found
+}
+
+
+
+
+
+
+
+
+
+#########################################################################
+//{ Driver Code Starts
+#include <iostream>
+#include <sstream>
+#include <vector>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function Template for C++
+class Solution {
+  public:
+    int findTarget(vector<int>& arr, int target) {
+        // code here
+        int low=0;
+        int high=arr.size()-1;
+        while(low<=high)
+        {
+            int mid=low+(high-low)/2;
+            if(arr[mid]==target)
+            return mid;
+            if(mid-1>=low && arr[mid-1]==target)
+            return mid-1;
+            if(mid+1<=high && arr[mid+1]==target)
+            return mid+1;
+            else if(arr[mid]<target)
+            {
+               low=mid+2;
+            }
+            else
+            {
+                high=mid-2;
+            }
+        }
+        return -1;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+
+    while (t-- > 0) {
+        string str;
+        getline(cin, str);
+
+        stringstream ss(str);
+        vector<int> arr;
+        int num;
+        while (ss >> num) {
+            arr.push_back(num);
+        }
+
+        int target;
+        cin >> target;
+        cin.ignore();
+        Solution sln;
+        int ans = sln.findTarget(arr, target);
+        cout << ans << endl;
+        cout << "~" << endl;
+    }
+
+    return 0;
+}
+// } Driver Code Ends
