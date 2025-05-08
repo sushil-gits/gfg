@@ -1,0 +1,90 @@
+✅ Problem Statement
+You are given an array arr[] representing elements of an Arithmetic Progression (AP) in order. One element is missing in the progression (except the first or last one), and you need to find the missing number.
+
+🧠 Constraints:
+The array has at least 3 elements.
+
+The difference d between the AP terms is consistent, and only one number is missing.
+
+The array is strictly increasing or decreasing.
+
+🔍 Stepwise Approach
+Get the size of the array:
+int n = arr.size();
+Get the first term a and the common difference d:
+int a = arr[0];
+int d = arr[1] - arr[0];
+Traverse the array from index 1 to n-1:
+for(int i = 1; i < n; i++)
+In each iteration, check if the next element is equal to the current element + d:
+If it is, continue checking the next pair.
+if (arr[i + 1] == arr[i] + d)
+    continue;
+If the next element is not equal to the expected value (i.e., current + d), that means the missing element is between arr[i] and arr[i + 1]:
+So return arr[i] + d as the missing number.
+else
+    return arr[i] + d;
+Edge Case (if all elements are in correct order):
+If no anomaly is found during the loop, return the next expected number at the end of the sequence:
+return arr[n - 1] + d;
+✅ Example
+Input: arr = {2, 4, 6, 10}
+Output: 8
+Explanation: The common difference is 2. The number 8 is missing between 6 and 10.
+
+
+//{ Driver Code Starts
+// Initial template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function template for C++
+
+class Solution {
+  public:
+    int findMissing(vector<int> &arr) {
+        // code here
+        int n=arr.size();
+        int a=arr[0];
+        int d=arr[1]-arr[0];
+        for(int i=1;i<n;i++)
+        {
+            if(arr[i+1]==arr[i]+d)
+            continue;
+            else 
+            return arr[i]+d;
+        }
+        return arr[n-1]+d;
+        
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+
+        getline(cin, input);
+
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        Solution ob;
+        cout << ob.findMissing(arr) << "\n";
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
