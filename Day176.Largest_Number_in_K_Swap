@@ -1,0 +1,140 @@
+✅ Problem Statement
+Given: A numeric string str and an integer k,
+Task: Find the largest possible number that can be formed by performing at most k swaps of digits in the string.
+
+🧠 Example
+Input:
+str = "129814999", k = 4
+Output:
+999984211
+
+Explanation:
+We can swap to maximize digits in order (largest digit in front) with at most 4 swaps.
+
+🪜 Stepwise Approach (for the given recursive solution)
+Step 1: Understand the Goal
+We want to maximize the number by swapping digits. At every position in the string, we try to place the maximum possible digit available from the remaining part of the string.
+
+Step 2: Initialize
+In findMaximumNum():
+
+Start by storing the original string in maxStr.
+
+Call the recursive function findMaximum() with idx = 0.
+
+Step 3: Base Condition in Recursion
+if (k == 0) return;
+If no swaps are left, stop recursion.
+
+Step 4: Find the Maximum Digit from the Current Index Onward
+char maxChar = str[idx];
+for (int i = idx + 1; i < n; i++) {
+    if (str[i] > maxChar)
+        maxChar = str[i];
+}
+Scan the string from the current index idx to the end.
+
+Find the largest digit (i.e., maximum character).
+
+Step 5: Check If a Swap Is Needed
+if (maxChar != str[idx])
+    k--;
+If the current digit is not already the maximum, we will need to use one swap.
+
+Step 6: Try All Positions Where Max Digit Exists
+for (int i = n - 1; i >= idx; i--) {
+    if (str[i] == maxChar) {
+        swap(str[idx], str[i]);
+To explore all optimal paths, we try every occurrence of the maxChar from right to left.
+
+Swap it with the current index.
+
+Step 7: Update the Result if Better
+if (str.compare(maxStr) > 0)
+    maxStr = str;
+If the new string is greater than the current maximum string, update it.
+
+Step 8: Recur to Next Index
+findMaximum(str, k, maxStr, idx + 1);
+Move to the next index and repeat the process.
+
+Step 9: Backtrack
+swap(str[idx], str[i]);
+Restore the original string to try other possibilities (backtracking).
+
+🔁 Recursion and Backtracking Summary
+This solution uses recursion to explore all swap possibilities and backtracking to restore the original state after trying each path.
+
+⏱️ Time Complexity (Worst Case)
+In the worst case, for each digit, we may explore swapping with all digits after it → exponential in nature:
+O(N^K) in worst-case recursive depth, though often pruned by conditions.
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+
+
+class Solution {
+  public:
+  void findMaximum(string str, int k, string& maxStr, int idx) {
+        if (k == 0) return;
+
+        int n = str.length();
+        char maxChar = str[idx];
+
+        // Find max digit from idx to end
+        for (int i = idx + 1; i < n; i++) {
+            if (str[i] > maxChar)
+                maxChar = str[i];
+        }
+
+        // If the max digit is not greater, skip swap
+        if (maxChar != str[idx])
+            k--;
+
+        for (int i = n - 1; i >= idx; i--) {
+            if (str[i] == maxChar) {
+                swap(str[idx], str[i]);
+                if (str.compare(maxStr) > 0)
+                    maxStr = str;
+
+                findMaximum(str, k, maxStr, idx + 1);
+                // backtrack
+                swap(str[idx], str[i]);
+            }
+        }
+    }
+
+    string findMaximumNum(string str, int k) {
+        string maxStr = str;
+        findMaximum(str, k, maxStr, 0);
+        return maxStr;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+    int t, k;
+    string str;
+
+    cin >> t;
+    while (t--) {
+        cin >> k >> str;
+        Solution ob;
+        cout << ob.findMaximumNum(str, k) << endl;
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+
+// } Driver Code Ends
