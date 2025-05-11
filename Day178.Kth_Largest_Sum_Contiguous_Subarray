@@ -1,0 +1,124 @@
+✅ Problem Statement:
+Find the K-th Largest Sum of Contiguous Subarrays
+
+Given an array arr[] of integers and an integer k, your task is to find the k-th largest sum among all possible contiguous subarrays of the array.
+
+🔍 Example:
+Input: arr = {1, 2, 3}, k = 3
+All possible contiguous subarrays:
+[1], [1,2], [1,2,3], [2], [2,3], [3]
+
+Their sums: 1, 3, 6, 2, 5, 3
+
+Sorted in descending order: 6, 5, 3, 3, 2, 1
+
+Output: 3 (3rd largest sum)
+🧠 Stepwise Approach (Using Min-Heap of Size K):
+Step 1: Initialize Variables
+n = arr.size() → length of the array
+
+A min-heap (priority_queue with greater<int>) to keep the top k largest sums.
+priority_queue<int, vector<int>, greater<int>> q;
+Step 2: Generate All Contiguous Subarrays
+Use two nested loops:
+
+Outer loop i for starting index of subarray
+
+Inner loop j for ending index
+
+Compute the subarray sum dynamically using a running variable sum
+for (int i = 0; i < n; i++) {
+    int sum = 0;
+    for (int j = i; j < n; j++) {
+        sum += arr[j];
+Step 3: Maintain a Heap of Size K
+If heap has less than k elements, push current sum
+
+Else, compare sum with the smallest element (heap top):
+
+If current sum > top, remove top and insert new sum
+
+Else, discard it
+        if (q.size() < k) {
+            q.push(sum);
+        } else if (sum > q.top()) {
+            q.pop();
+            q.push(sum);
+        }
+Step 4: Return K-th Largest
+After all subarrays are processed, the top of the heap is the K-th largest sum.
+return q.top();
+✅ Time and Space Complexity
+Time Complexity:
+Generating all subarrays: O(n²)
+
+Each heap operation (push/pop): O(log k)
+
+Total: O(n² * log k)
+
+Space Complexity:
+Heap size is at most k: O(k)
+
+🧪 Edge Case to Consider
+k > total subarrays = n*(n+1)/2 → should be validated in a real-world scenario.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function Template for C++
+
+class Solution {
+  public:
+    int kthLargest(vector<int> &arr, int k) {
+    int n = arr.size();
+    priority_queue<int, vector<int>, greater<int>> q;
+
+    for (int i = 0; i < n; i++) {
+        int sum = 0;
+        for (int j = i; j < n; j++) {
+            sum += arr[j];
+            if (q.size() < k) {
+                q.push(sum);
+            } else if (sum > q.top()) {
+                q.pop();
+                q.push(sum);
+            }
+        }
+    }
+    return q.top();
+}
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    string ts;
+    getline(cin, ts);
+    int t = stoi(ts);
+    while (t--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+        string ks;
+        getline(cin, ks);
+        int k = stoi(ks);
+        Solution obj;
+        int res = obj.kthLargest(arr, k);
+        cout << res << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
