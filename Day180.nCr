@@ -1,0 +1,116 @@
+Problem Analysis:
+The problem requires computing the binomial coefficient 
+Solution Code:
+cpp
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int nCr(int n, int r) {
+    if (r > n)
+        return 0;
+    
+    vector<int> dp(r + 1, 0);
+    dp[0] = 1; // Base case: C(n, 0) = 1
+
+    for (int i = 1; i <= n; i++) {
+        // Iterate backwards to prevent overwriting values we still need
+        for (int j = min(i, r); j > 0; j--) {
+            dp[j] = dp[j] + dp[j - 1];
+        }
+    }
+    return dp[r];
+}
+Explanation:
+Initialization:
+
+A 1D DP array dp of size r + 1 is initialized to 0.
+
+Filling the DP Array:
+
+For each i from 1 to n, update the DP array in reverse order (from min(i, r) down to 1).
+
+The update rule dp[j] = dp[j] + dp[j - 1] applies Pascal's identity:
+
+Result:
+
+After processing all i up to n, dp[r] contains the value of 
+
+Complexity Analysis:
+Time Complexity: 
+O(n⋅r)
+
+The outer loop runs n times, and the inner loop runs up to r times per outer iteration.
+
+Space Complexity: 
+O(r)
+
+The DP array uses r + 1 space, which is efficient compared to a 2D DP approach.
+
+Edge Cases:
+If r > n, return 0 since it's impossible to choose more elements than available.
+
+If r = 0 or r = n, return 1 as there's exactly one way to choose none or all elements.
+
+This approach efficiently computes the binomial coefficient while avoiding factorial calculations and integer overflow.
+
+//{ Driver Code Starts
+// Initial Template for C++
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function Template for C++
+
+class Solution {
+  public:
+//   int solve(int n,int r)
+//   {
+//       if(r==0 || r==n)
+//       return 1;
+//       return solve(n-1,r-1)+solve(n-1,r);
+//   }
+ int solve(int n,int r)
+ {
+             int dp[r + 1] = {0};
+             dp[0] = 1;
+
+             for (int i = 1; i <= n; i++)
+             {
+               for (int j = min(i, r); j > 0; j--)
+              {
+               dp[j] = dp[j] + dp[j - 1];
+              }
+             }
+             return dp[r];
+ }
+    int nCr(int n, int r) {
+        // code here
+        if(r>n)
+        return 0;
+         return solve(n,r);
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int n, r;
+        cin >> n >> r;
+
+        Solution ob;
+        cout << ob.nCr(n, r) << endl;
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
+}
+// } Driver Code Ends
