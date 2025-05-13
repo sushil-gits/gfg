@@ -1,0 +1,170 @@
+Problem Statement:
+Given n meeting rooms and a list of meetings represented by their start and end times (meetings[i] = [start_i, end_i]), determine which room is booked the most number of times. If there is a tie, return the room with the smallest index.
+
+Stepwise Approach:
+Step 1: Sort the Meetings
+First, sort the meetings based on their start times to process them in chronological order.
+
+Step 2: Initialize Data Structures
+Use a count array to keep track of the number of bookings for each room.
+
+Use a min-heap (free) to keep track of available rooms (sorted by room index).
+
+Use another min-heap (busy) to keep track of rooms that are currently in use, along with their availability times (sorted by end time).
+
+Step 3: Process Each Meeting
+For each meeting:
+
+Free up rooms: Check if any rooms in the busy heap have finished their meetings by the current meeting's start time. Move those rooms to the free heap.
+
+Assign a room:
+
+If there are free rooms, assign the smallest-indexed room to the current meeting, update its count, and push it into the busy heap with its end time.
+
+If no rooms are free, find the earliest available room from the busy heap, extend its booking time to accommodate the current meeting, update its count, and push it back into the busy heap.
+
+Step 4: Determine the Most Booked Room
+After processing all meetings, iterate through the count array to find the room with the highest booking count. In case of a tie, return the smallest room index.
+
+Solution Code:
+cpp
+#include <vector>
+#include <queue>
+#include <algorithm>
+using namespace std;
+
+int mostBooked(int n, vector<vector<int>>& meetings) {
+    int m = meetings.size();
+    sort(meetings.begin(), meetings.end());
+    vector<int> count(n, 0);
+    priority_queue<int, vector<int>, greater<int>> free;
+    priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> busy;
+
+    for (int i = 0; i < n; i++) {
+        free.push(i);
+    }
+
+    for (auto& meeting : meetings) {
+        int start = meeting[0];
+        int duration = meeting[1] - meeting[0];
+
+        while (!busy.empty() && busy.top().first <= start) {
+            int room = busy.top().second;
+            busy.pop();
+            free.push(room);
+        }
+
+        if (!free.empty()) {
+            int room = free.top();
+            free.pop();
+            count[room]++;
+            busy.push({meeting[1], room});
+        } else {
+            auto [end, room] = busy.top();
+            busy.pop();
+            count[room]++;
+            busy.push({end + duration, room});
+        }
+    }
+
+    int max_used = 0;
+    for (int i = 1; i < n; i++) {
+        if (count[i] > count[max_used]) {
+            max_used = i;
+        }
+    }
+
+    return max_used;
+}
+Explanation:
+Sorting Meetings: The meetings are sorted by their start times to ensure we process them in the correct order.
+
+Initialization: The free heap is initialized with all room indices, and the busy heap is empty.
+
+Processing Meetings:
+
+For each meeting, we first check if any rooms in the busy heap have finished their meetings by the current meeting's start time. These rooms are moved back to the free heap.
+
+If there are free rooms, the smallest-indexed room is assigned to the current meeting, and its count is incremented. The room is then added to the busy heap with its end time.
+
+If no rooms are free, the earliest available room from the busy heap is chosen. The meeting duration is added to its end time, and the room is pushed back into the busy heap.
+
+Finding the Most Booked Room: After all meetings are processed, the count array is scanned to find the room with the highest booking count, with ties resolved by selecting the smallest room index.
+
+This approach efficiently manages room bookings using heaps to keep track of available and busy rooms, ensuring optimal performance even for large input sizes.
+
+
+
+//{ Driver Code Starts
+// Initial Template for C++
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+// User function Template for C++
+class Solution {
+  public:
+    int mostBooked(int n, vector<vector<int>> &meetings) {
+        int m=meetings.size();
+        sort(meetings.begin(),meetings.end());
+        vector<int>count(n,0);
+        priority_queue<int,vector<int>,greater<int>>free;
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>busy;
+        for(int i=0;i<n;i++){
+            free.push(i);
+        }
+        for(auto u:meetings){
+            int start=u[0];
+            int end=u[1];
+            while(!busy.empty() && busy.top().first<=start){
+                free.push(busy.top().second);
+                busy.pop();
+            }
+            if(!free.empty()){
+                int room=free.top();
+                free.pop();
+                count[room]++;
+                busy.push({end,room});
+            }
+            else{
+                int t=busy.top().first;
+                int room_idx=busy.top().second;
+                t+=(end-start);
+                busy.pop();
+                busy.push({t,room_idx});
+                count[room_idx]++;
+            }
+        }
+        int max_used=0;
+        for(int i=0;i<n;i++){
+            if(count[i]>count[max_used]){
+                max_used=i;
+            }
+        }
+        return max_used;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t, n, m;
+    cin >> t;
+    while (t--) {
+        cin >> n;
+        cin >> m;
+        vector<vector<int>> meetings(m, vector<int>(2));
+        for (int i = 0; i < m; i++) {
+            cin >> meetings[i][0] >> meetings[i][1];
+        }
+        Solution ob;
+        cout << ob.mostBooked(n, meetings) << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
