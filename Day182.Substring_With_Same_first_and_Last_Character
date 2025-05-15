@@ -1,0 +1,164 @@
+Problem Statement:
+Given a string s, count the number of substrings where the first and last characters are the same. A substring is a contiguous sequence of characters within the string.
+
+Example:
+
+Input: s = "abcab"
+
+Output: 7
+
+Explanation: The valid substrings are:
+
+Single characters: "a", "b", "c", "a", "b" (5 substrings)
+
+Longer substrings with same first and last character: "aba", "bcab" (2 substrings)
+
+Total = 5 + 2 = 7
+
+Stepwise Approach:
+Brute Force Approach (Commented Code):
+Initialization:
+
+Get the length of the string n = s.size().
+
+Initialize count = 0 to store the result.
+
+Nested Loop:
+
+Outer loop runs from i = 0 to i = n-1 (start of substring).
+
+Inner loop runs from j = i to j = n-1 (end of substring).
+
+For each substring s[i...j], check if s[i] == s[j].
+
+If true, increment count.
+
+Return Result:
+
+After all iterations, return count.
+
+Time Complexity: O(n²)
+Space Complexity: O(1)
+
+Optimized Approach (Using Hashing):
+Initialization:
+
+Create an unordered map f to store the frequency of each character in the string.
+
+Count Frequencies:
+
+Traverse the string and populate f with the count of each character.
+
+Calculate Valid Substrings:
+
+For each character in the map:
+
+Single-character substrings: Add d (frequency of the character) to count.
+
+Multi-character substrings: Add (d * (d - 1)) / 2 to count (this counts all possible substrings where the first and last characters are the same).
+
+Return Result:
+
+Return count.
+
+Time Complexity: O(n) (for traversing the string and map)
+Space Complexity: O(1) (since the map size is bounded by the number of unique characters, which is constant for practical purposes)
+
+Final Optimized Code:
+cpp
+#include <unordered_map>
+#include <string>
+
+using namespace std;
+
+int countSubstring(string &s) {
+    unordered_map<char, int> f;
+    for (char ch : s) {
+        f[ch]++;
+    }
+    
+    int count = 0;
+    for (auto t : f) {
+        int d = t.second;
+        count += d; // Single-character substrings
+        count += (d * (d - 1)) / 2; // Multi-character substrings with same first and last character
+    }
+    
+    return count;
+}
+Explanation of Optimized Approach:
+Single-character substrings: Every individual character is a valid substring (e.g., "a", "b" in "abcab").
+
+Multi-character substrings: For a character that appears d times, there are C(d, 2) = (d * (d - 1)) / 2 ways to choose two occurrences of the same character as the start and end of a substring (e.g., "a...a" or "b...b" in "abcab").
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    int countSubstring(string &s) {
+        // // code here
+        // int n=s.size();
+        // int count=0;
+        // for(int i=0;i<n;i++)
+        // {
+        //     for(int j=i;j<n;j++)
+        //     {
+        //         if(s[i]==s[j])
+        //         {
+        //             count++;
+        //         }
+        //     }
+        // }
+        // return count;
+        
+        // using hashing 
+        unordered_map<char,int>f;
+        for(char ch:s)
+        {
+            f[ch]++;
+        }
+        int count=0;
+        for(auto t:f)
+        {
+            int d=t.second;
+            count+=d; //count single character substring
+            count+=(d*(d-1))/2; //count substring with first and last character same
+        }
+        return count;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+
+    ios_base::sync_with_stdio(0);
+    cin.tie(NULL);
+    cout.tie(NULL);
+
+    int t;
+    cin >> t;
+    while (t--) {
+        string str;
+        cin >> str;
+
+        Solution ob;
+
+        cout << ob.countSubstring(str) << "\n";
+
+        cout << "~"
+             << "\n";
+    }
+
+    return 0;
+}
+// } Driver Code Ends
