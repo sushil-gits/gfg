@@ -1,0 +1,248 @@
+Problem Statement: Find Smallest Range Covering Elements from K Lists
+You are given K sorted lists of integers. Your task is to find the smallest range that includes at least one number from each of the K lists.
+
+The range is defined as [a, b] where:
+
+a is the minimum value in the range,
+
+b is the maximum value in the range,
+
+The range must contain at least one element from each list.
+
+If there are multiple possible ranges of the same smallest size, return any one of them.
+
+Example:
+Input:
+
+arr = [
+  [4, 10, 15, 24, 26],
+  [0, 9, 12, 20],
+  [5, 18, 22, 30]
+]
+Output:
+
+[20, 24]
+Explanation:
+The range [20, 24] contains:
+
+24 from the first list,
+
+20 from the second list,
+
+22 from the third list.
+
+Stepwise Approach
+Intuition:
+We need to find the smallest window (range) in a merged and sorted list of all elements (along with their original list indices) such that the window contains at least one element from each of the K lists.
+
+Steps:
+Flatten and Annotate Elements:
+
+Combine all elements from all lists into a single list, where each element is paired with its original list index.
+
+Example:
+For arr = [[4,10,15], [0,9], [5,18]], the flattened list would be:
+[(4,0), (10,0), (15,0), (0,1), (9,1), (5,2), (18,2)].
+
+Sort the Flattened List:
+
+Sort the list based on the element values to facilitate a sliding window approach.
+
+Example:
+After sorting:
+[(0,1), (4,0), (5,2), (9,1), (10,0), (15,0), (18,2)].
+
+Sliding Window Technique:
+
+Use two pointers (left and right) to represent the current window.
+
+Maintain a frequency map (mp) to track how many elements from each list are present in the current window.
+
+Expand the window by moving right until the window contains at least one element from every list.
+
+Once all lists are included, try to shrink the window from the left to find a smaller valid range.
+
+Keep track of the smallest valid range encountered.
+
+Algorithm Breakdown:
+
+Initialize left = 0, right = 0, and an empty frequency map mp.
+
+Iterate over the sorted list with right:
+
+Include nums[right] in the window by incrementing its frequency in mp.
+
+If mp.size() == K (all lists are represented in the window):
+
+Try to minimize the window by moving left forward while ensuring the window still contains all lists.
+
+Update the smallest range if the current window is smaller.
+
+Return the smallest range found.
+
+Complexity Analysis:
+Time Complexity:
+
+Flattening and sorting take O(N log N), where N is the total number of elements across all lists.
+
+The sliding window step takes O(N) time.
+
+Overall: O(N log N).
+
+Space Complexity:
+
+O(N) for storing the flattened and sorted list.
+
+O(K) for the frequency map (where K is the number of lists).
+
+Solution Code:
+cpp
+#include <vector>
+#include <map>
+#include <algorithm>
+using namespace std;
+
+vector<int> findSmallestRange(vector<vector<int>>& arr) {
+    vector<int> ans;
+    vector<pair<int, int>> nums; // {value, list index}
+    
+    // Step 1: Flatten and annotate elements with their list indices
+    for (int i = 0; i < arr.size(); i++) {
+        for (int j = 0; j < arr[i].size(); j++) {
+            nums.push_back({arr[i][j], i});
+        }
+    }
+    
+    // Step 2: Sort the flattened list based on values
+    sort(nums.begin(), nums.end());
+    
+    // Extract values and list indices separately for clarity
+    vector<int> val, idx;
+    for (auto& p : nums) {
+        val.push_back(p.first);
+        idx.push_back(p.second);
+    }
+    
+    map<int, int> mp; // Frequency map of list indices in the current window
+    int l = 0;        // Left pointer of the window
+    int n = arr.size(); // Number of lists (K)
+    
+    // Step 3: Sliding window to find the smallest range
+    for (int r = 0; r < idx.size(); r++) {
+        mp[idx[r]]++; // Include current element's list in the window
+        
+        // When all lists are included in the window
+        while (mp.size() >= n) {
+            // Try to shrink the window from the left
+            if (mp[idx[l]] > 1) {
+                mp[idx[l]]--;
+                l++;
+            } else {
+                break;
+            }
+        }
+        
+        // Update the smallest range if a valid window is found
+        if (mp.size() >= n) {
+            if (ans.empty() || (val[r] - val[l] < ans[1] - ans[0])) {
+                ans = {val[l], val[r]};
+            }
+        }
+    }
+    
+    return ans;
+}
+Explanation:
+Flattening & Sorting:
+
+All elements are collected into a list of pairs (value, list index) and sorted by value.
+
+Sliding Window:
+
+The window [l, r] is expanded until it includes at least one element from each list.
+
+The window is then shrunk from the left to find the smallest valid range.
+
+Tracking Smallest Range:
+
+Whenever a valid window is found, it is compared with the current smallest range, and updated if smaller.
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    vector<int> findSmallestRange(vector<vector<int>>& arr) {
+        // code here
+        vector<int>ans;
+        vector<pair<int,int>>nums;
+        for(int i=0;i<arr.size();i++)
+        {
+            for(int j=0;j<arr[i].size();j++)
+            {
+                nums.push_back({arr[i][j],i});
+            }
+        }
+        sort(nums.begin(),nums.end());
+        vector<int>val,idx;
+        for(auto i:nums)
+        {
+            val.push_back(i.first);
+            idx.push_back(i.second);
+        }
+        map<int,int>mp;
+        int l=0;
+        int r=0;
+        int n=arr.size();
+        while(r<idx.size())
+        {
+            mp[idx[r]]++;
+            if(mp.size()>=n)
+            {
+                while(mp[idx[l]]>1)
+                {
+                    mp[idx[l++]]--;
+                }
+            }
+            if(ans.size()==0 and mp.size()>=n)
+            {
+                ans={val[l],val[r]};
+            }
+            else if(val[r]-val[l]<ans[1]-ans[0] and mp.size()>=n)
+            {
+                ans={val[l],val[r]};
+            }
+            r++;
+        }
+        return ans;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int n, k;
+        cin >> n >> k;
+        vector<vector<int>> arr(k, vector<int>(n));
+
+        for (int i = 0; i < k; i++)
+            for (int j = 0; j < n; j++)
+                cin >> arr[i][j];
+
+        Solution obj;
+        vector<int> range = obj.findSmallestRange(arr);
+        cout << range[0] << " " << range[1] << "\n";
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
