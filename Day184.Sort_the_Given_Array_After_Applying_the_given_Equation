@@ -1,0 +1,146 @@
+Problem Statement:
+Given an array of integers arr and three integers A, B, and C, transform each element of the array using the quadratic function:
+f(x) = A * x² + B * x + C
+After transforming all elements, sort the resulting array in non-decreasing order and return it.
+
+Stepwise Approach:
+Step 1: Understand the Problem
+We need to apply a quadratic transformation to each element of the input array.
+
+The transformed array should then be sorted in ascending order.
+
+Step 2: Apply the Quadratic Transformation
+Loop through each element in the array.
+
+For each element arr[i], compute the new value using the formula:
+new_value = A * arr[i] * arr[i] + B * arr[i] + C
+
+Replace the original element with the computed value.
+
+Step 3: Sort the Transformed Array
+After modifying all elements, sort the array in non-decreasing order.
+
+We can use an efficient sorting algorithm (like QuickSort, MergeSort, or the built-in sort function in C++).
+
+Step 4: Return the Sorted Array
+The sorted array is the final result.
+
+Solution Code:
+cpp
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+vector<int> sortArray(vector<int> &arr, int A, int B, int C) {
+    int n = arr.size();
+    
+    // Step 2: Apply quadratic transformation to each element
+    for (int i = 0; i < n; i++) {
+        arr[i] = (A * arr[i] * arr[i]) + (B * arr[i]) + C;
+    }
+    
+    // Step 3: Sort the transformed array
+    sort(arr.begin(), arr.end());
+    
+    // Step 4: Return the sorted array
+    return arr;
+}
+Explanation:
+Transformation Step:
+
+Each element x in the array is replaced by f(x) = A * x² + B * x + C.
+
+This modifies the array in-place.
+
+Sorting Step:
+
+The transformed array is sorted in ascending order using the sort function from the C++ Standard Library (which typically uses Introsort, a hybrid of QuickSort, HeapSort, and InsertionSort).
+
+Return Result:
+
+The sorted array is returned.
+
+Example:
+Input:
+arr = [3, -1, 2, 5], A = 1, B = -2, C = 2
+
+Transformation:
+
+f(3) = 1*(3²) + (-2)*3 + 2 = 9 - 6 + 2 = 5
+
+f(-1) = 1*(-1²) + (-2)*(-1) + 2 = 1 + 2 + 2 = 5
+
+f(2) = 1*(2²) + (-2)*2 + 2 = 4 - 4 + 2 = 2
+
+f(5) = 1*(5²) + (-2)*5 + 2 = 25 - 10 + 2 = 17
+
+Transformed Array: [5, 5, 2, 17]
+After Sorting: [2, 5, 5, 17]
+
+Output: [2, 5, 5, 17]
+
+Time Complexity:
+Transformation: O(N) (since we process each element once).
+
+Sorting: O(N log N) (due to comparison-based sorting).
+
+Overall: O(N log N) (dominated by sorting).
+
+Space Complexity:
+O(1) (in-place transformation and sorting, no extra space used apart from a few variables).
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+
+// } Driver Code Ends
+
+class Solution {
+  public:
+    vector<int> sortArray(vector<int> &arr, int A, int B, int C) {
+        // code here
+        int n=arr.size();
+        for(int i=0;i<n;i++)
+        {
+            arr[i]=((A*arr[i]*arr[i])+(B*arr[i])+C);
+        }
+        sort(arr.begin(),arr.end());
+        return arr;
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() {
+    int t;
+    cin >> t;
+    cin.ignore();
+    while (t--) {
+        vector<int> arr;
+        string input;
+
+        getline(cin, input);
+
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+
+        int a, b, c;
+        cin >> a >> b >> c;
+        cin.ignore();
+
+        Solution obj;
+        vector<int> ans = obj.sortArray(arr, a, b, c);
+        for (int i = 0; i < ans.size(); i++)
+            cout << ans[i] << ' ';
+        cout << endl;
+
+        cout << "~" << endl;
+    }
+    return 0;
+}
+// } Driver Code Ends
