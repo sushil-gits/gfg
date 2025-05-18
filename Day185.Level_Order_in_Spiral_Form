@@ -1,0 +1,317 @@
+Problem Statement: Spiral Order Traversal of a Binary Tree
+Given the root of a binary tree, return the spiral (or zigzag) level order traversal of its nodes' values. The spiral traversal should start from the root level, print nodes from left to right, then right to left for the next level, and alternate between the two directions for subsequent levels.
+
+Example:
+Input:
+
+        1
+       / \
+      2   3
+     / \ / \
+    4  5 6  7
+Output:
+[1, 3, 2, 4, 5, 6, 7]
+
+Explanation:
+
+Level 0 (root): Left to Right → [1]
+
+Level 1: Right to Left → [3, 2]
+
+Level 2: Left to Right → [4, 5, 6, 7]
+
+Final result: [1, 3, 2, 4, 5, 6, 7]
+
+Stepwise Approach
+Intuition:
+A standard level-order traversal (BFS) processes nodes left to right at each level.
+
+For spiral order, we alternate the direction at each level.
+
+Using two stacks, we can efficiently switch between directions:
+
+Stack 1 (s1) processes nodes from right to left (next level: left to right).
+
+Stack 2 (s2) processes nodes from left to right (next level: right to left).
+
+Algorithm:
+Initialize two stacks:
+
+s1 (for right-to-left traversal).
+
+s2 (for left-to-right traversal).
+
+Push the root node into s1 (starting direction: right to left).
+
+Loop while either stack is not empty:
+
+Process s1 (right to left):
+
+Pop a node from s1 and add its value to the result.
+
+Push its right child first, then left child into s2 (for next level left-to-right processing).
+
+Process s2 (left to right):
+
+Pop a node from s2 and add its value to the result.
+
+Push its left child first, then right child into s1 (for next level right-to-left processing).
+
+Return the result vector.
+
+Complexity Analysis:
+Time Complexity: O(N) (each node is processed once).
+
+Space Complexity: O(N) (stacks store nodes level-wise).
+
+Solution Code
+cpp
+#include <vector>
+#include <stack>
+using namespace std;
+
+// Definition for a binary tree node.
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    Node(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+vector<int> findSpiral(Node* root) {
+    vector<int> result;
+    if (!root) return result;
+
+    stack<Node*> s1; // For right-to-left traversal
+    stack<Node*> s2; // For left-to-right traversal
+
+    s1.push(root);
+
+    while (!s1.empty() || !s2.empty()) {
+        // Process s1 (right to left)
+        while (!s1.empty()) {
+            Node* node = s1.top();
+            s1.pop();
+            result.push_back(node->data);
+
+            // Push right first, then left (for next level left-to-right)
+            if (node->right) s2.push(node->right);
+            if (node->left) s2.push(node->left);
+        }
+
+        // Process s2 (left to right)
+        while (!s2.empty()) {
+            Node* node = s2.top();
+            s2.pop();
+            result.push_back(node->data);
+
+            // Push left first, then right (for next level right-to-left)
+            if (node->left) s1.push(node->left);
+            if (node->right) s1.push(node->right);
+        }
+    }
+
+    return result;
+}
+Explanation:
+Initialization:
+
+s1 starts with the root node (1).
+
+First Iteration (s1 processing):
+
+Pop 1 → result = [1].
+
+Push right (3), then left (2) into s2.
+
+Second Iteration (s2 processing):
+
+Pop 2 → result = [1, 3, 2].
+
+Push left (4), then right (5) into s1.
+
+Pop 3 → result = [1, 3, 2].
+
+Push left (6), then right (7) into s1.
+
+Third Iteration (s1 processing):
+
+Pop 7 → result = [1, 3, 2, 4, 5, 6, 7].
+
+(No children, so nothing pushed into s2.)
+
+Pop 6 → result remains same (no children).
+
+Pop 5 → result remains same (no children).
+
+Pop 4 → result remains same (no children).
+
+Termination:
+
+Both stacks are empty → return result.
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+// Tree Node
+class Node {
+  public:
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int val) {
+        data = val;
+        left = right = NULL;
+    }
+};
+
+// Utility function to create a new Tree Node
+Node* newNode(int val) {
+    return new Node(val);
+}
+
+// Function to Build Tree
+Node* buildTree(string str) {
+    // Corner Case
+    if (str.length() == 0 || str[0] == 'N')
+        return NULL;
+
+    // Creating vector of strings from input string after splitting by space
+    vector<string> ip;
+    istringstream iss(str);
+    for (string str; iss >> str;)
+        ip.push_back(str);
+
+    // Create the root of the tree
+    Node* root = newNode(stoi(ip[0]));
+
+    // Push the root to the queue
+    queue<Node*> queue;
+    queue.push(root);
+
+    // Starting from the second element
+    int i = 1;
+    while (!queue.empty() && i < ip.size()) {
+        // Get and remove the front of the queue
+        Node* currNode = queue.front();
+        queue.pop();
+
+        // Get the current node's value from the string
+        string currVal = ip[i];
+
+        // If the left child is not null
+        if (currVal != "N") {
+            // Create the left child for the current node
+            currNode->left = newNode(stoi(currVal));
+
+            // Push it to the queue
+            queue.push(currNode->left);
+        }
+
+        // For the right child
+        i++;
+        if (i >= ip.size())
+            break;
+        currVal = ip[i];
+
+        // If the right child is not null
+        if (currVal != "N") {
+            // Create the right child for the current node
+            currNode->right = newNode(stoi(currVal));
+
+            // Push it to the queue
+            queue.push(currNode->right);
+        }
+        i++;
+    }
+
+    return root;
+}
+
+
+// } Driver Code Ends
+
+/* A binary tree node has data, pointer to left child
+   and a pointer to right child
+class Node
+{
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int x){
+        data = x;
+        left = right = NULL;
+    }
+}; */
+class Solution {
+  public:
+    vector<int> findSpiral(Node* root) {
+        // code here
+         vector<int> result;
+         if (!root) return result;
+
+          stack<Node*> s1; // for levels to be printed right to left
+          stack<Node*> s2; // for levels to be printed left to right
+
+          s1.push(root);
+
+          while (!s1.empty() || !s2.empty()) 
+          {
+          // Process s1 (right to left)
+           while (!s1.empty()) 
+           {
+            Node* node = s1.top(); s1.pop();
+            result.push_back(node->data);
+
+            // Push children left first, then right (for next level)
+            if (node->right) s2.push(node->right);
+            if (node->left) s2.push(node->left);
+           }
+
+            // Process s2 (left to right)
+             while (!s2.empty()) 
+             {
+              Node* node = s2.top(); s2.pop();
+              result.push_back(node->data);
+
+              // Push children right first, then left (for next level)
+              if (node->left) s1.push(node->left);
+              if (node->right) s1.push(node->right);
+             }
+          }
+
+     return result;
+    }
+};
+
+
+//{ Driver Code Starts.
+
+int main() {
+    int t;
+    string tc;
+    getline(cin, tc);
+    t = stoi(tc);
+    Solution sol; // Create Solution object
+    while (t--) {
+        string s;
+        getline(cin, s);
+        Node* root = buildTree(s);
+
+        // Call the findSpiral function from Solution class
+        vector<int> vec = sol.findSpiral(root);
+        for (int x : vec)
+            cout << x << " ";
+        cout << endl;
+        cout << "~" << endl;
+    }
+    return 0;
+}
+
+// } Driver Code Ends
