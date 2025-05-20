@@ -1,0 +1,185 @@
+Problem Statement:
+Given a binary tree and a target node, the task is to find the minimum time required to burn the entire tree if the burning starts from the target node. The burning spreads to adjacent nodes (left, right, and parent) in one unit of time. The solution should return the total time taken to burn the whole tree.
+
+Stepwise Approach:
+1. Understanding the Problem:
+The tree is given as a binary tree with nodes having data, left, and right pointers.
+
+The burning starts from the target node.
+
+In each unit of time, the fire spreads to all adjacent nodes (parent, left child, right child).
+
+The goal is to compute the total time taken to burn the entire tree.
+
+2. Key Observations:
+The time taken to burn the tree is the maximum distance from the target node to any other node in the tree.
+
+The burning can propagate in three directions:
+
+Downward through the left subtree.
+
+Downward through the right subtree.
+
+Upward through the parent and then downward through the other subtree.
+
+3. Intuition Behind the Solution:
+We need to compute the height of the subtree rooted at the target node (since burning spreads downward).
+
+Additionally, if the target node has ancestors, burning can spread upward, and then we must consider the height of the opposite subtree of the ancestor.
+
+The maximum of these values at each step will give the total burning time.
+
+4. Algorithm:
+Compute Maximum Depth (maxdep function):
+
+This is a helper function to compute the height of a given subtree.
+
+Recursively compute the height as 1 + max(left_height, right_height).
+
+Traverse and Compute Burning Time (travel function):
+
+Perform a post-order traversal to search for the target node.
+
+If the target is found:
+
+Compute the heights of its left and right subtrees.
+
+Update the answer (ans) with the maximum of these heights (since burning spreads downward).
+
+Return 1 to indicate that the target is found at this level.
+
+If the target is in the left subtree:
+
+The burning can spread to the right subtree of the current node.
+
+Update ans with max(ans, leftH + height of right subtree).
+
+Return 1 + leftH to propagate the distance from the target to the parent.
+
+Similarly, if the target is in the right subtree:
+
+Update ans with max(ans, rightH + height of left subtree).
+
+Return 1 + rightH.
+
+If the target is not found, return 0.
+
+Initialization (minTime function):
+
+Initialize ans = 0.
+
+Call the travel function to compute the answer.
+
+Return ans, which holds the total burning time.
+
+5. Solution Code:
+cpp
+int maxdep(Node* root) {
+    if (!root) return 0;
+    return 1 + max(maxdep(root->left), maxdep(root->right));
+}
+
+int travel(Node* root, int &ans, int &target) {
+    if (!root) return 0;
+    
+    if (root->data == target) {
+        int lft = maxdep(root->left);
+        int rft = maxdep(root->right);
+        ans = max(lft, rft);
+        return 1;
+    }
+    
+    int leftH = travel(root->left, ans, target);
+    if (leftH) {
+        ans = max(ans, leftH + maxdep(root->right));
+        return 1 + leftH;
+    }
+    
+    int rightH = travel(root->right, ans, target);
+    if (rightH) {
+        ans = max(ans, rightH + maxdep(root->left));
+        return 1 + rightH;
+    }
+    
+    return 0;
+}
+
+int minTime(Node* root, int target) {
+    int ans = 0;
+    travel(root, ans, target);
+    return ans;
+}
+6. Explanation:
+maxdep: Computes the height of a subtree rooted at a given node.
+
+travel: Performs a post-order traversal to:
+
+Identify the target node.
+
+Compute the burning time considering both downward and upward propagation.
+
+Propagates the distance from the target back to the root while updating the answer.
+
+minTime: Initializes the answer and triggers the traversal.
+
+7. Time Complexity:
+O(N): Each node is visited once during the traversal, where N is the number of nodes in the tree.
+
+8. Space Complexity:
+O(H): Recursion stack space, where H is the height of the tree (worst case: O(N) for a skewed tree).
+
+
+
+/*
+class Node {
+  public:
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int val) {
+        data = val;
+        left = right = NULL;
+    }
+};
+*/
+class Solution {
+  public:
+  int maxdep(Node* root)
+  {
+      if(!root)
+      return 0;
+      return 1+max(maxdep(root->left),maxdep(root->right));
+  }
+  int travel(Node* root,int &ans,int &target)
+  {
+      if(!root)
+      return 0;
+    if(root->data==target)
+    {
+        int lft=maxdep(root->left);
+        int rft=maxdep(root->right);
+        ans=max(lft,rft);
+        return 1;
+    }
+    int leftH=travel(root->left,ans,target);
+    if(leftH)
+    {
+        ans=max(ans,leftH+maxdep(root->right));
+        return 1+leftH;
+    }
+    int rightH=travel(root->right,ans,target);
+    if(rightH)
+    {
+        ans=max(ans,rightH+maxdep(root->left));
+        return 1+rightH;
+    }
+    return 0;
+  }
+    int minTime(Node* root, int target) {
+        // code here
+        int ans=0;
+        travel(root,ans,target);
+        return ans;
+    }
+};
