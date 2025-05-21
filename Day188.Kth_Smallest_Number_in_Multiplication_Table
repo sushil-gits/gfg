@@ -1,0 +1,153 @@
+Problem Analysis
+Given three integers m, n, and k, we need to find the k-th smallest element in an m x n multiplication table where each entry mat[i][j] = i * j (1-based indexing).
+
+Constraints:
+
+The brute force approach of generating the entire table, sorting it, and picking the k-th element is too slow for large m and n (e.g., m = 30000, n = 30000), as it would take O(m * n log(m * n)) time and O(m * n) space.
+
+Optimal Approach: Binary Search
+To optimize, we use Binary Search to efficiently determine the k-th smallest element without explicitly constructing the table.
+
+Key Insights:
+
+Range of Values: The smallest element is 1 (mat[1][1]), and the largest is m * n (mat[m][n]).
+
+Counting Elements ≤ mid: For a given mid, we can count how many numbers in the table are ≤ mid by iterating through each row and calculating how many elements in that row are ≤ mid.
+
+Algorithm Steps
+Initialize Binary Search Bounds:
+
+left = 1 (smallest possible value).
+
+right = m * n (largest possible value).
+
+Binary Search Loop:
+
+While left < right:
+
+Compute mid = left + (right - left) / 2.
+
+Count numbers ≤ mid in the table (count):
+
+For each row i (1 ≤ i ≤ m), the maximum j such that i * j ≤ mid is j = mid / i.
+
+Since j cannot exceed n, the count for row i is min(mid / i, n).
+
+Sum this count for all rows to get the total numbers ≤ mid.
+
+If count < k:
+
+The k-th smallest is in the right half → left = mid + 1.
+
+Else (count >= k):
+
+The k-th smallest is in the left half → right = mid.
+
+Return left:
+
+When the loop ends, left is the smallest number with count >= k, which is the k-th smallest element.
+
+Solution Code
+cpp
+int kthSmallest(int m, int n, int k) {
+    int left = 1, right = m * n;
+    
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        int count = 0;
+        
+        // Count numbers <= mid in the multiplication table
+        for (int i = 1; i <= m; i++) {
+            count += min(mid / i, n);
+        }
+        
+        if (count < k) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    
+    return left;
+}
+Explanation
+Binary Search Setup:
+
+We search for the smallest x such that at least k numbers in the table are ≤ x.
+
+Counting Numbers ≤ mid:
+
+For each row i, the maximum j where i * j ≤ mid is j = mid / i.
+
+Since j cannot exceed n, the count for row i is min(mid / i, n).
+
+Summing over all rows gives the total count of numbers ≤ mid.
+
+Binary Search Adjustment:
+
+If count < k, the k-th smallest is in the right half.
+
+If count >= k, the k-th smallest is in the left half.
+
+Termination:
+
+The loop ends when left == right, which is the k-th smallest number.
+
+Complexity Analysis
+Time Complexity: O(m * log(m * n))
+
+Binary Search runs in O(log(m * n)) iterations.
+
+Each iteration involves counting in O(m) time.
+
+Space Complexity: O(1)
+
+No extra space is used beyond a few variables.
+
+
+
+
+class Solution {
+  public:
+    int kthSmallest(int m, int n, int k) {
+        // code here
+        
+        // // brute force approach ---time limit exceeded and comsume more space
+        // vector<int>ans;
+        // for(int i=0;i<m;i++)
+        // {
+        //     for(int j=0;j<n;j++)
+        //     {
+        //         ans.push_back((i+1)*(j+1));
+        //     }
+        // }
+        // sort(ans.begin(),ans.end());
+        // return ans[k-1];
+        
+        
+        // optimized approach------using Binary search
+         int left = 1, right = m * n;
+          while (left < right) 
+          {
+            int mid = left + (right - left) / 2;
+            int count = 0;
+            
+            // Count numbers <= mid in the multiplication table
+            for (int i = 1; i <= m; i++) {
+                count += min(mid / i, n);
+            }
+            
+            if (count < k) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+         }
+        
+        return left;
+        
+        
+       
+    }
+};
+
