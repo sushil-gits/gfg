@@ -1,0 +1,98 @@
+Minimum Deletions to Make a String Palindrome
+Given a string s, you need to determine the minimum number of characters to delete from s to make it a palindrome. A palindrome is a string that reads the same backward as forward.
+
+Example:
+Input: s = "aebcbda"
+Output: 2
+Explanation: Deleting 'e' and 'd' results in the palindrome "abcba".
+
+Approach:
+The problem can be reduced to finding the length of the Longest Palindromic Subsequence (LPS) of s. The minimum deletions required to make s a palindrome is equal to the difference between the length of s and the length of its LPS.
+
+Steps:
+Reverse the String: The LPS of s is equivalent to the Longest Common Subsequence (LCS) of s and its reverse.
+
+Compute LCS using DP:
+
+Initialize a DP table dp of size (n+1) x (n+1) where n is the length of s.
+
+Fill the DP table by comparing characters of s and its reverse:
+
+If characters match, increment the value from the diagonal cell.
+
+If they don’t match, take the maximum of the left or top cell.
+
+Result Calculation: The length of the LPS is dp[n][n]. The minimum deletions required is n - LPS length.
+
+Solution Code:
+cpp
+#include <vector>
+#include <algorithm>
+#include <string>
+
+using namespace std;
+
+int minDeletions(string s) {
+    int n = s.size();
+    string rev_s = string(s.rbegin(), s.rend());
+    vector<vector<int>> dp(n + 1, vector<int>(n + 1, 0));
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (s[i - 1] == rev_s[j - 1]) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+    }
+
+    int lps_length = dp[n][n];
+    return n - lps_length;
+}
+Explanation:
+Reversing the String: The reversed string helps in finding the longest subsequence that reads the same forwards and backwards (LPS).
+
+DP Table Initialization: The table dp[i][j] represents the LCS length between the first i characters of s and the first j characters of rev_s.
+
+Filling DP Table:
+
+If characters s[i-1] and rev_s[j-1] match, the value is 1 + dp[i-1][j-1].
+
+If they don’t match, the value is the maximum of dp[i-1][j] or dp[i][j-1].
+
+Result: The LPS length is found in dp[n][n], and the answer is n - LPS length, representing the deletions needed to make s a palindrome.
+
+
+
+
+
+
+
+
+
+class Solution {
+  public:
+    int minDeletions(string s) {
+        // code here
+        int n =s.size();
+        string rev_s=string (s.rbegin(),s.rend());
+        vector<vector<int>>dp(n+1,vector<int>(n+1,0));
+        for(int i=1;i<=n;i++)
+        {
+            for(int j=1;j<=n;j++)
+            {
+                if(s[i-1]==rev_s[j-1])
+                {
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else
+                {
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        }
+        int ans=dp[n][n];
+        return n-ans;
+    }
+};
