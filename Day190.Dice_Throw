@@ -1,0 +1,79 @@
+Problem Statement
+Dice Throw Problem:
+Given m faces of a dice, n dice throws, and a target sum x, find the number of ways to obtain the sum x using all n dice throws. Each die has faces numbered from 1 to m.
+
+Example:
+Input: m = 6, n = 3, x = 8
+Output: 21
+(Explanation: There are 21 ways to get a sum of 8 with 3 dice, each with 6 faces.)
+
+Stepwise Solution
+Approach: Dynamic Programming (Memoization)
+Problem Breakdown:
+
+We need to count the number of ways to achieve sum x using n dice, where each die can show a value from 1 to m.
+
+The base case is when no dice are left (n = 0). If the remaining sum is exactly 0, we count it as 1 valid way.
+
+For each die, we recursively explore all possible face values (1 to m), reducing the remaining dice count (n-1) and updating the remaining sum (sum + i).
+
+Memoization:
+
+We use a DP table dp[n][sum] to store the number of ways to achieve sum with n dice to avoid recomputation.
+
+Solution Code:
+cpp
+#include <vector>
+using namespace std;
+
+int solve(int m, int n, vector<vector<int>>& dp, int sum, int x) {
+    // Base case: if no dice left, check if sum equals target
+    if (n == 0) {
+        return (sum == x) ? 1 : 0;
+    }
+    // If already computed, return the stored value
+    if (dp[n][sum] != -1) {
+        return dp[n][sum];
+    }
+    int ways = 0;
+    // Try all possible face values (1 to m)
+    for (int i = 1; i <= m; i++) {
+        if (sum + i <= x) {
+            ways += solve(m, n - 1, dp, sum + i, x);
+        }
+    }
+    // Store the result in DP table and return
+    return dp[n][sum] = ways;
+}
+
+int noOfWays(int m, int n, int x) {
+    // Initialize DP table with -1 (uncomputed)
+    vector<vector<int>> dp(n + 1, vector<int>(x + 1, -1));
+    return solve(m, n, dp, 0, x);
+}
+Complexity Analysis
+Time Complexity:
+DP State: The DP table has n rows (number of dice) and x columns (possible sums), leading to O(n * x) states.
+
+Transition: For each state, we iterate over m possible dice faces, resulting in O(m) work per state.
+
+Total Time Complexity: O(n * x * m)
+(We compute each state once, and for each state, we do O(m) work.)
+
+Space Complexity:
+DP Table: The memoization table occupies O(n * x) space.
+
+Recursion Stack: The recursion depth is O(n) (since we reduce n by 1 in each call).
+
+Total Space Complexity: O(n * x + n) = O(n * x)
+(The recursion stack is negligible compared to the DP table.)
+
+Key Observations
+Brute Force vs DP:
+The brute-force approach (commented in the code) has exponential time complexity O(m^n) due to repeated computations. DP optimizes this by storing intermediate results.
+
+Constraints Handling:
+The condition if (sum + i <= x) ensures we only explore valid paths where the sum does not exceed the target.
+
+Initialization:
+The DP table is initialized with -1 to denote uncomputed states, ensuring we only compute each state once.
