@@ -1,0 +1,109 @@
+Problem Statement
+Given a string s consisting of digits ('0'-'9'), compute the sum of all possible numeric substrings formed by its contiguous digits. Each substring should be treated as a separate number when calculating the sum.
+
+Example:
+
+Input: s = "123"
+
+Substrings: "1", "2", "3", "12", "23", "123"
+
+Sum: 1 + 2 + 3 + 12 + 23 + 123 = 164
+
+Output: 164
+
+Stepwise Approach
+1. Initialize Variables
+sum = 0: To store the cumulative sum of all substrings.
+
+n = s.size(): Length of the input string.
+
+2. Generate All Possible Substrings
+Use two nested loops to generate all contiguous substrings:
+
+Outer Loop (i) → Starting index of the substring (0 to n-1).
+
+Inner Loop (j) → Ending index of the substring (i to n-1).
+
+3. Extract Substring
+For each pair (i, j), extract the substring using:
+
+cpp
+string substring = s.substr(i, j - i + 1);
+s.substr(pos, len):
+
+pos = i (start index).
+
+len = j - i + 1 (number of characters to include).
+
+4. Convert Substring to Integer
+Use stoi(substring) to convert the substring to an integer.
+
+cpp
+int num = stoi(substring);
+5. Add to Cumulative Sum
+Add the integer value of the substring to sum:
+
+cpp
+sum += num;
+6. Return the Result
+After processing all substrings, return sum.
+
+Time Complexity Analysis
+Nested Loops:
+
+Outer loop runs n times.
+
+Inner loop runs n - i times for each i.
+
+Total Substrings: n + (n-1) + (n-2) + ... + 1 = n(n+1)/2 → O(n²).
+
+stoi Conversion: Each stoi takes O(k) time, where k is the substring length.
+
+Overall Time Complexity: O(n³) (due to nested loops + stoi).
+
+Space Complexity Analysis
+Auxiliary Space:
+
+O(1) for variables (sum, i, j).
+
+O(k) for temporary substring storage (where k ≤ n).
+
+Overall Space Complexity: O(n) (worst-case substring length).
+
+Optimization Insight
+The brute-force approach is inefficient for large n (e.g., n > 1000). A mathematical optimization can reduce the time complexity to O(n) by leveraging digit contributions (see previous explanation).
+
+Final Code
+cpp
+#include <string>
+using namespace std;
+
+int sumSubstrings(string &s) {
+    int sum = 0;
+    int n = s.size();
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {
+            string substring = s.substr(i, j - i + 1);
+            sum += stoi(substring); // Convert to int and add
+        }
+    }
+    
+    return sum;
+}
+Example Walkthrough (Input: s = "123")
+Iteration (i, j)	Substring	Numeric Value	Cumulative Sum
+(0, 0)	"1"	1	1
+(0, 1)	"12"	12	1 + 12 = 13
+(0, 2)	"123"	123	13 + 123 = 136
+(1, 1)	"2"	2	136 + 2 = 138
+(1, 2)	"23"	23	138 + 23 = 161
+(2, 2)	"3"	3	161 + 3 = 164
+Output: 164 ✅
+
+Key Takeaways
+Brute-Force Method: Simple but inefficient (O(n³) time).
+
+Use Cases: Suitable for small strings (n ≤ 100).
+
+Optimization Needed: For larger inputs, use the O(n) mathematical approach (discussed earlier).
