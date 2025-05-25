@@ -1,0 +1,132 @@
+Problem Statement: Pythagorean Triplet in an Array
+Given an array of integers arr, determine if there exists a triplet (a, b, c) such that a² + b² = c². Return true if such a triplet exists, otherwise return false.
+
+Stepwise Approach (Optimized Hash Set Method)
+Step 1: Store Squares in a Hash Set
+Compute the square of each element in the array and store them in an unordered set (unordered_set).
+
+This allows O(1) average-time complexity for checking if a number exists in the set.
+
+Step 2: Check All Possible Pairs for Triplet Condition
+Iterate through all possible pairs (arr[i], arr[j]) where i < j.
+
+For each pair, compute sum = arr[i]² + arr[j]².
+
+Check if sum exists in the set of squares.
+
+If found, return true immediately (early termination).
+
+If not, continue checking other pairs.
+
+Step 3: Return false if No Triplet Found
+If no valid triplet is found after checking all pairs, return false.
+
+Optimized Code (Hash Set Approach)
+cpp
+#include <vector>
+#include <unordered_set>
+
+using namespace std;
+
+bool pythagoreanTriplet(vector<int>& arr) {
+    unordered_set<int> squares;
+    // Step 1: Store squares of all elements in a set
+    for (int num : arr) {
+        squares.insert(num * num);
+    }
+
+    int n = arr.size();
+    // Step 2: Check all possible pairs (a, b) for a² + b² = c²
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            int sum = arr[i] * arr[i] + arr[j] * arr[j];
+            // Step 3: Check if sum exists in the set
+            if (squares.find(sum) != squares.end()) {
+                return true;  // Triplet found
+            }
+        }
+    }
+    return false;  // No triplet found
+}
+Time & Space Complexity
+Time Complexity:
+
+O(n²) (due to nested loops checking all pairs).
+
+Hash set operations (insert and find) are O(1) on average.
+
+Space Complexity:
+
+O(n) (to store squares in the set).
+
+Example
+Input: arr = [3, 1, 4, 6, 5]
+Execution Steps:
+
+Squares stored in set: {9, 1, 16, 36, 25}
+
+Check pairs:
+
+(3,1) → 9 + 1 = 10 → Not in set.
+
+(3,4) → 9 + 16 = 25 → Found in set (25) → Return true.
+
+Output: true
+
+Why This Approach?
+Efficient Lookups: Hash set provides O(1) average-time checks.
+
+Early Termination: Returns as soon as a valid triplet is found.
+
+
+
+
+
+class Solution {
+  public:
+    bool pythagoreanTriplet(vector<int>& arr) {
+    // int n = arr.size();
+    // for (int i = 0; i < n; i++) {
+    //     arr[i] = arr[i] * arr[i];
+    // }
+    // sort(arr.begin(), arr.end());
+
+    // for (int i = n - 1; i >= 2; i--) {
+    //     int left = 0;
+    //     int right = i - 1;
+    //     while (left < right) {
+    //         if (arr[left] + arr[right] == arr[i]) {
+    //             return true;
+    //         } else if (arr[left] + arr[right] < arr[i]) {
+    //             left++;
+    //         } else {
+    //             right--;
+    //         }
+    //     }
+    // }
+    // return false;
+    
+    // optimized approach 
+    unordered_set<int> squares;
+    for (int num : arr) 
+    {
+        squares.insert(num * num);
+    }
+
+    int n = arr.size();
+    for (int i = 0; i < n; i++) 
+    {
+        for (int j = i + 1; j < n; j++) 
+        {
+            int sum = arr[i] * arr[i] + arr[j] * arr[j];
+            if (squares.find(sum) != squares.end()) 
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+    }
+};
+
+No Sorting Needed: Avoids the O(n log n) sorting step required in the two-pointer approach.
