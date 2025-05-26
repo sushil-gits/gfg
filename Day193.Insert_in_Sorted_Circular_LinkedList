@@ -1,0 +1,105 @@
+Problem Statement:
+Given a sorted circular linked list, insert a new node with the given integer data such that the list remains sorted in ascending order after insertion. The function should return the head of the modified list.
+
+Note:
+
+A circular linked list is a linked list where the last node points back to the head.
+
+The list is initially sorted in non-decreasing order.
+
+The insertion should maintain the sorted order.
+
+If the list is empty, the new node should become the only node in the list, pointing to itself.
+
+Example:
+Input:
+
+head of a circular linked list: 1 → 3 → 4 → 1 (circular)
+
+data = 2
+
+Output:
+
+Modified list: 1 → 2 → 3 → 4 → 1 (circular)
+
+Return the head of the updated list (1 in this case).
+
+Approach:
+Handle the Empty List Case:
+
+If the list is empty (head == nullptr), create a new node and make it point to itself.
+
+Return the new node as the head.
+
+Insertion at the Beginning (New Node is the Smallest):
+
+If data is smaller than the current head’s value, the new node should become the new head.
+
+Traverse to the last node (where temp->next == head).
+
+Insert the new node before the current head and update the last node’s next to point to the new head.
+
+Return the new node as the new head.
+
+Insertion in the Middle or End:
+
+Traverse the list while temp->next->data < data and temp->next != head (to avoid infinite loops).
+
+Insert the new node between temp and temp->next.
+
+Return the original head (since the head remains unchanged).
+
+Solution Code:
+cpp
+Node* sortedInsert(Node* head, int data) {
+    Node* newNode = new Node(data);
+    
+    // Case 1: Empty list
+    if (!head) {
+        newNode->next = newNode;
+        return newNode;
+    }
+    
+    Node* temp = head;
+    
+    // Case 2: Insert at the beginning (new node becomes head)
+    if (head->data > data) {
+        while (temp->next != head) {
+            temp = temp->next;
+        }
+        newNode->next = head;
+        temp->next = newNode;
+        return newNode;
+    }
+    // Case 3: Insert in the middle or end
+    else {
+        while (temp->next->data < data && temp->next != head) {
+            temp = temp->next;
+        }
+        newNode->next = temp->next;
+        temp->next = newNode;
+        return head;
+    }
+}
+Explanation:
+Empty List Handling:
+
+If the list is empty, the new node becomes the only node, forming a self-loop (newNode->next = newNode).
+
+Insertion at the Beginning:
+
+If data is smaller than the head’s value, we traverse to the last node (temp).
+
+The new node is inserted before the current head (newNode->next = head).
+
+The last node’s next is updated to point to the new node (temp->next = newNode).
+
+The new node becomes the new head (return newNode).
+
+Insertion in the Middle or End:
+
+Traverse until we find the correct position (temp->next->data >= data or we loop back to head).
+
+Insert the new node between temp and temp->next.
+
+The head remains unchanged (return head).
