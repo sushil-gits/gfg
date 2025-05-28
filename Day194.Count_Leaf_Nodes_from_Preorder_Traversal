@@ -1,0 +1,66 @@
+Problem Statement:
+Given the preorder traversal of a binary search tree (BST), extract all the leaf nodes of the BST. A leaf node is a node with no children (both left and right children are NULL). The preorder traversal is given as a vector of integers.
+
+Function Signature:
+cpp
+vector<int> leafNodes(vector<int>& preorder);
+Input:
+A vector preorder representing the preorder traversal of a BST.
+
+Output:
+A vector of integers containing all the leaf nodes of the BST in the order they appear in the preorder traversal.
+
+Approach:
+Understanding Preorder Traversal: In preorder traversal, the root is visited first, followed by the left subtree, and then the right subtree. For a BST, the left subtree contains values less than the root, and the right subtree contains values greater than the root.
+
+Recursive Construction: The idea is to recursively construct the BST from the preorder traversal while keeping track of the valid range (mini and maxi) for each node. If a node doesn't have any children (i.e., it's a leaf node), it is added to the result list.
+
+Leaf Node Identification: A node is identified as a leaf if it doesn't have any left or right children in the preorder sequence. This is determined by checking if the next element in the sequence doesn't fall within the valid range for being a left or right child.
+
+Solution Code:
+cpp
+#include <vector>
+#include <climits>
+using namespace std;
+
+void solve(vector<int>& pre, int &idx, vector<int>& ans, int mini, int maxi) {
+    if (idx >= pre.size()) {
+        return;
+    }
+    int current = pre[idx];
+    bool isLeaf = true;
+    if (idx + 1 < pre.size() && pre[idx + 1] < current && pre[idx + 1] > mini) {
+        isLeaf = false;
+        solve(pre, ++idx, ans, mini, current);
+    }
+    if (idx + 1 < pre.size() && pre[idx + 1] > current && pre[idx + 1] < maxi) {
+        isLeaf = false;
+        solve(pre, ++idx, ans, current, maxi);
+    }
+    if (isLeaf) {
+        ans.push_back(current);
+    }
+}
+
+vector<int> leafNodes(vector<int>& preorder) {
+    vector<int> ans;
+    int idx = 0;
+    solve(preorder, idx, ans, INT_MIN, INT_MAX);
+    return ans;
+}
+Explanation:
+Initialization: The function leafNodes initializes the result vector ans and starts the recursive process with the initial index 0 and the full valid range (INT_MIN to INT_MAX).
+
+Recursive Function solve:
+
+Base Case: If the index exceeds the size of the preorder vector, return.
+
+Current Node: The current node is pre[idx].
+
+Check for Left Child: If the next element is within the valid range for a left child (greater than mini and less than current), recursively process the left subtree.
+
+Check for Right Child: If the next element is within the valid range for a right child (greater than current and less than maxi), recursively process the right subtree.
+
+Leaf Node Check: If no left or right child is found, the current node is a leaf node and is added to ans.
+
+Result Compilation: After processing all nodes, the result vector ans contains all leaf nodes in the order they appear in the preorder traversal.
