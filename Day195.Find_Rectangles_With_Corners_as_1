@@ -1,0 +1,52 @@
+Problem Statement:
+Given a binary matrix mat of size n x m, determine if there exists at least one corner (a sub-matrix of size 2x2) where all four corners are 1. In other words, check if there are two distinct rows and two distinct columns such that the elements at their intersections (mat[i][k], mat[i][l], mat[j][k], mat[j][l]) are all 1.
+
+Function Signature:
+cpp
+bool ValidCorner(vector<vector<int> >& mat);
+Input:
+A binary matrix mat of size n x m where mat[i][j] is either 0 or 1.
+
+Output:
+Return true if there exists at least one such valid corner (2x2 sub-matrix with all four corners as 1), otherwise return false.
+
+Approach:
+Iterate over all pairs of rows: For each pair of rows (i, j) where i < j, check if there are at least two columns (k, l) such that mat[i][k] = mat[i][l] = mat[j][k] = mat[j][l] = 1.
+
+Count common columns with 1s: For each pair of rows (i, j), count the number of columns k where both mat[i][k] and mat[j][k] are 1. If this count is at least 2, return true.
+
+Early termination: If any such pair of rows is found, immediately return true. If no such pair is found after all iterations, return false.
+
+Solution Code:
+bool ValidCorner(vector<vector<int> >& mat) {
+    int n = mat.size();
+    if (n == 0) return false;
+    int m = mat[0].size();
+    
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            int common_columns = 0;
+            for (int k = 0; k < m; ++k) {
+                if (mat[i][k] == 1 && mat[j][k] == 1) {
+                    common_columns++;
+                    if (common_columns >= 2) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+Explanation:
+Initialization: The function starts by checking if the matrix is empty. If it is, return false immediately.
+
+Row Pair Iteration: The outer loops iterate over all possible pairs of rows (i, j) where i < j.
+
+Column Check: For each pair of rows, the inner loop checks each column k to see if both mat[i][k] and mat[j][k] are 1. The count of such columns is maintained in common_columns.
+
+Early Termination: If at any point common_columns reaches 2, the function returns true immediately, as this confirms the existence of a valid corner.
+
+Final Check: If no such pair of rows is found after all iterations, the function returns false.
+
+This approach efficiently checks for the presence of a valid corner by leveraging early termination, thus optimizing the average-case performance. The worst-case time complexity is O(n^2 * m), where n is the number of rows and m is the number of columns.
